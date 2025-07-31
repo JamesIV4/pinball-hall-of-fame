@@ -59,7 +59,7 @@ export default function AddMachine() {
       // If name changed, update all player scores
       if (oldName && oldName !== editName) {
         const playersSnapshot = await getDocs(collection(db, "data/players/players"));
-        const updates = [];
+        const updates: Promise<void>[] = [];
         
         playersSnapshot.docs.forEach((playerDoc) => {
           const playerData = playerDoc.data();
