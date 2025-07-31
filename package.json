@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",
-    "export": "next export",
-    "start": "next start"
+    "start": "serve@latest out"
   },
   "dependencies": {
     "firebase": "^11.6.1",
