@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Arcade';
+  src: url('/fonts/ARCADE.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 html,
 body {
   @apply bg-neutral-900 text-neutral-100 font-sans antialiased;

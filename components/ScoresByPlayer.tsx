@@ -90,7 +90,7 @@ export default function ScoresByPlayer() {
                   </div>
                   <ul className="list-decimal list-inside space-y-1">
                     {scores.map((s, i) => (
-                      <li key={i} className="font-mono">
+                      <li key={i} className="font-arcade text-[28px]">
                         {s.toLocaleString()}
                       </li>
                     ))}

@@ -7,7 +7,11 @@ module.exports = {
     "./styles/**/*.{js,ts,jsx,tsx,scss}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        'arcade': ['Arcade', 'monospace'],
+      },
+    },
   },
   plugins: [],
 };

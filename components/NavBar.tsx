@@ -6,7 +6,8 @@ type View =
   | "addPlayer"
   | "addScore"
   | "scoresByMachine"
-  | "scoresByPlayer";
+  | "scoresByPlayer"
+  | "allScores";
 
 interface Props {
   view: View;
@@ -26,13 +27,20 @@ export default function NavBar({ view, setView }: Props) {
   );
 
   return (
-    <nav className="flex flex-wrap justify-center gap-2 mb-8">
-      {btn("home", "home", "Home")}
-      {btn("addMachine", "gamepad", "Add Machine")}
-      {btn("addPlayer", "user-plus", "Add Player")}
-      {btn("addScore", "star", "Add Score")}
-      {btn("scoresByMachine", "trophy", "Scores by Machine")}
-      {btn("scoresByPlayer", "user-astronaut", "Scores by Player")}
+    <nav className="mb-8 space-y-2">
+      <div className="flex justify-center">
+        {btn("home", "home", "Home")}
+      </div>
+      <div className="flex flex-wrap justify-center gap-2">
+        {btn("addMachine", "gamepad", "Machines")}
+        {btn("addPlayer", "user-plus", "Players")}
+        {btn("addScore", "star", "Add Score")}
+      </div>
+      <div className="flex flex-wrap justify-center gap-2">
+        {btn("scoresByMachine", "trophy", "Scores by Machine")}
+        {btn("scoresByPlayer", "user-astronaut", "Scores by Player")}
+        {btn("allScores", "list", "All Scores")}
+      </div>
     </nav>
   );
 }
