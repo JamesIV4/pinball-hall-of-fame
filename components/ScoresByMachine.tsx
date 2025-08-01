@@ -97,9 +97,9 @@ export default function ScoresByMachine() {
                     key={i}
                     className={i % 2 ? "bg-gray-700/50" : "bg-gray-800/50"}
                   >
-                    <td className="p-3 font-bold">{i + 1}</td>
+                    <td className="pl-6 font-bold ml-2">{i + 1}</td>
                     <td className="p-3">{s.player}</td>
-                    <td className="p-3 text-right font-arcade text-[28px] text-amber-300">
+                    <td className="p-3 text-right font-dotmatrix text-[51px] text-amber-300">
                       {s.score.toLocaleString()}
                     </td>
                   </tr>

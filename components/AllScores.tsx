@@ -84,13 +84,18 @@ export default function AllScores() {
                             {mName}
                           </h4>
                         </div>
-                        <ul className="list-decimal list-inside space-y-1">
+                        <div className="space-y-1">
                           {scores.map((s, i) => (
-                            <li key={i} className="font-arcade text-[28px]">
-                              {s.toLocaleString()}
-                            </li>
+                            <div key={i} className="flex items-center">
+                              <span className="text-[23px] font-bold mr-3 w-6 ml-2">
+                                {i + 1}.
+                              </span>
+                              <span className="font-dotmatrix text-[51px] text-amber-300">
+                                {s.toLocaleString()}
+                              </span>
+                            </div>
                           ))}
-                        </ul>
+                        </div>
                       </div>
                     );
                   })}

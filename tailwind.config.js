@@ -9,7 +9,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'arcade': ['Arcade', 'monospace'],
+        'dotmatrix': ['DotMatrix', 'monospace'],
       },
     },
   },
