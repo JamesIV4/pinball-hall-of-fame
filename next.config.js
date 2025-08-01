@@ -9,5 +9,4 @@ module.exports = {
   images: {
     unoptimized: true, // since export produces static HTML only
   },
-  distDir: "docs", // output to docs folder for GitHub Pages
 };
