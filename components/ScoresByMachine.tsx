@@ -15,9 +15,11 @@ interface Player {
 
 export default function ScoresByMachine() {
   const { db } = getFirebase();
+
   const [machines, setMachines] = useState<Machine[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
   const [machine, setMachine] = useState("");
+  const [bestOnly, setBestOnly] = useState(false); // NEW
 
   useEffect(() => {
     const unsubM = onSnapshot(
@@ -38,11 +40,28 @@ export default function ScoresByMachine() {
     };
   }, [db]);
 
-  const scores = players.flatMap((p) => {
+  // --- build score list -----------------------------------------------------
+  const allScores = players.flatMap((p) => {
     const list = p.scores?.[machine] || [];
     return list.map((s) => ({ player: p.name, score: s }));
   });
+
+  let scores = allScores;
+  if (bestOnly) {
+    const bestMap = new Map<string, number>();
+    for (const { player, score } of allScores) {
+      if (!bestMap.has(player) || score > bestMap.get(player)!) {
+        bestMap.set(player, score);
+      }
+    }
+    scores = Array.from(bestMap.entries()).map(([player, score]) => ({
+      player,
+      score,
+    }));
+  }
+
   scores.sort((a, b) => b.score - a.score);
+  // --------------------------------------------------------------------------
 
   const mInfo = machines.find((m) => m.name === machine);
 
@@ -51,8 +70,10 @@ export default function ScoresByMachine() {
       <h2 className="text-2xl font-bold mb-4 text-amber-400">
         High Scores by Machine
       </h2>
+
+      {/* machine selector */}
       <select
-        className="w-full p-2 rounded-lg bg-gray-700 mb-6"
+        className="w-full p-2 rounded-lg bg-gray-700 mb-4"
         value={machine}
         onChange={(e) => setMachine(e.target.value)}
       >
@@ -63,6 +84,17 @@ export default function ScoresByMachine() {
           </option>
         ))}
       </select>
+
+      {/* best-only toggle */}
+      <label className="flex items-center gap-2 text-gray-200 mb-6">
+        <input
+          type="checkbox"
+          className="h-4 w-4 accent-amber-500"
+          checked={bestOnly}
+          onChange={(e) => setBestOnly(e.target.checked)}
+        />
+        Show best score per player only
+      </label>
 
       {machine &&
         (!scores.length ? (
@@ -80,7 +112,7 @@ export default function ScoresByMachine() {
                 />
               )}
               <h3 className="text-xl font-bold text-amber-300">
-                {machine} – High Scores
+                {machine} – High Scores
               </h3>
             </div>
             <table className="w-full text-left">
@@ -97,7 +129,7 @@ export default function ScoresByMachine() {
                     key={i}
                     className={i % 2 ? "bg-gray-700/50" : "bg-gray-800/50"}
                   >
-                    <td className="pl-6 font-bold ml-2">{i + 1}</td>
+                    <td className="pl-6 font-bold">{i + 1}</td>
                     <td className="p-3">{s.player}</td>
                     <td className="p-3 text-right font-dotmatrix text-[23px] md:text-[51px] text-amber-300">
                       {s.score.toLocaleString()}
