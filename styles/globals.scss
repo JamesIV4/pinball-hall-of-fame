@@ -2,12 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Dot-matrix display font */
 @font-face {
   font-family: 'DotMatrix';
-  src: url('/fonts/pinside-dotmatrix-webfont.woff2') format('woff2');
-       url('/fonts/pinside-dotmatrix-webfont.ttf')   format('truetype');
+  src: url('fonts/pinside-dotmatrix-webfont.woff2') format('woff2'), /* modern */
+       url('fonts/pinside-dotmatrix-webfont.ttf')   format('truetype'); /* fallback for older Safari/iOS */
   font-weight: normal;
   font-style: normal;
+  font-display: swap; /* avoids “flash of invisible text” */
 }
 
 html,
