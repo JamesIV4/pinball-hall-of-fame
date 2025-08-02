@@ -21,9 +21,8 @@ export default function NavBar({ view, setView }: Props) {
     "scoresByPlayer",
     "allScores",
   ];
-  const manageActive = manageViews.includes(view);
-  const scoresActive = scoresViews.includes(view);
 
+  /** helper for individual buttons */
   const btn = (
     id: View,
     icon: string,
@@ -42,6 +41,7 @@ export default function NavBar({ view, setView }: Props) {
 
   return (
     <nav className="mb-8">
+      {/* top row – wraps if the screen is super-narrow */}
       <ul className="flex flex-wrap items-center justify-center gap-2">
         {/* Home */}
         <li>{btn("home", "home", "Home")}</li>
@@ -51,7 +51,7 @@ export default function NavBar({ view, setView }: Props) {
           <details className="group">
             <summary
               className={`nav-button flex items-center justify-between px-4 py-2 rounded-lg font-semibold transition-colors hover:bg-amber-500 hover:text-black cursor-pointer select-none ${
-                manageActive ? "active" : ""
+                manageViews.includes(view) ? "active" : ""
               }`}
             >
               <span className="flex items-center">
@@ -61,7 +61,8 @@ export default function NavBar({ view, setView }: Props) {
               <i className="fas fa-chevron-down ml-2 transition-transform group-open:rotate-180" />
             </summary>
 
-            <div className="flex flex-col gap-2 pl-4 mt-1 md:absolute md:pl-0 md:bg-gray-800 md:p-2 md:rounded-lg md:shadow-lg md:top-full md:left-0">
+            {/* overlay panel – absolute at *all* sizes */}
+            <div className="absolute z-20 top-full left-1/2 -translate-x-1/2 mt-1 min-w-[12rem] w-max flex flex-col gap-2 bg-gray-800 p-2 rounded-lg shadow-lg">
               {btn("addMachine", "gamepad", "Add Machine", "text-left")}
               {btn("addPlayer", "user-plus", "Add Player", "text-left")}
               {btn("addScore", "star", "Add Score", "text-left")}
@@ -74,7 +75,7 @@ export default function NavBar({ view, setView }: Props) {
           <details className="group">
             <summary
               className={`nav-button flex items-center justify-between px-4 py-2 rounded-lg font-semibold transition-colors hover:bg-amber-500 hover:text-black cursor-pointer select-none ${
-                scoresActive ? "active" : ""
+                scoresViews.includes(view) ? "active" : ""
               }`}
             >
               <span className="flex items-center">
@@ -84,7 +85,7 @@ export default function NavBar({ view, setView }: Props) {
               <i className="fas fa-chevron-down ml-2 transition-transform group-open:rotate-180" />
             </summary>
 
-            <div className="flex flex-col gap-2 pl-4 mt-1 md:absolute md:pl-0 md:bg-gray-800 md:p-2 md:rounded-lg md:shadow-lg md:top-full md:left-0">
+            <div className="absolute z-20 top-full left-1/2 -translate-x-1/2 mt-1 min-w-[12rem] w-max flex flex-col gap-2 bg-gray-800 p-2 rounded-lg shadow-lg">
               {btn("scoresByMachine", "trophy", "By Machine", "text-left")}
               {btn(
                 "scoresByPlayer",
