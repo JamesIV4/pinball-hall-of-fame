@@ -41,16 +41,16 @@ export default function NavBar({ view, setView }: Props) {
   );
 
   return (
-    <nav className="relative mb-8">
-      <ul className="flex flex-col mt-4 gap-2 md:flex md:flex-row md:items-center md:justify-center md:mt-0">
+    <nav className="mb-8">
+      <ul className="flex flex-wrap items-center justify-center gap-2">
         {/* Home */}
         <li>{btn("home", "home", "Home")}</li>
 
-        {/* Manage submenu */}
+        {/* Manage dropdown */}
         <li className="relative">
           <details className="group">
             <summary
-              className={`nav-button flex items-center justify-between md:justify-center px-4 py-2 rounded-lg font-semibold transition-colors hover:bg-amber-500 hover:text-black cursor-pointer select-none ${
+              className={`nav-button flex items-center justify-between px-4 py-2 rounded-lg font-semibold transition-colors hover:bg-amber-500 hover:text-black cursor-pointer select-none ${
                 manageActive ? "active" : ""
               }`}
             >
@@ -69,11 +69,11 @@ export default function NavBar({ view, setView }: Props) {
           </details>
         </li>
 
-        {/* Scores submenu */}
+        {/* Scores dropdown */}
         <li className="relative">
           <details className="group">
             <summary
-              className={`nav-button flex items-center justify-between md:justify-center px-4 py-2 rounded-lg font-semibold transition-colors hover:bg-amber-500 hover:text-black cursor-pointer select-none ${
+              className={`nav-button flex items-center justify-between px-4 py-2 rounded-lg font-semibold transition-colors hover:bg-amber-500 hover:text-black cursor-pointer select-none ${
                 scoresActive ? "active" : ""
               }`}
             >
