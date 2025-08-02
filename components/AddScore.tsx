@@ -50,14 +50,6 @@ export default function AddScore() {
     };
   }, [db]);
 
-  useEffect(() => {
-    // If nothing is selected yet and we have at least one machine,
-    // pre-select the first one.
-    if (!machine && machines.length > 0) {
-      setMachine(machines[0].name);
-    }
-  }, [machines, machine]);
-
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (!machine || !player || !score) return;

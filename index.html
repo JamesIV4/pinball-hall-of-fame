@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <title>Pinball Hall of Fame</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <style>
+      /* Custom styles for a better look and feel */
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #1a1a1a;
+        color: #f0f0f0;
+      }
+      .nav-button.active {
+        background-color: #f59e0b;
+        color: #1a1a1a;
+      }
+      .modal {
+        background-color: rgba(0, 0, 0, 0.8);
+      }
+      .modal-content {
+        background-color: #2d2d2d;
+      }
+      .table-header {
+        background-color: #3d3d3d;
+      }
+      .table-row:nth-child(even) {
+        background-color: #2a2a2a;
+      }
+      .table-row:nth-child(odd) {
+        background-color: #333333;
+      }
+      input,
+      select {
+        background-color: #3d3d3d;
+        border-color: #555;
+      }
+    </style>
+  </head>
+  <body class="antialiased">
+    <div id="app" class="container mx-auto p-4 max-w-4xl">
+      <header class="text-center mb-6">
+        <h1 class="text-4xl font-bold text-amber-400 tracking-wider">
+          Pinball Hall of Fame
+        </h1>
+        <p class="text-gray-400">
+          Track your high scores and dominate the silver ball!
+        </p>
+      </header>
+
+      <!-- Responsive Navigation -->
+      <nav class="relative mb-8">
+        <!-- Mobile hamburger -->
+        <button
+          id="menuToggle"
+          class="md:hidden text-amber-400 p-2 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-400"
+          aria-label="Toggle navigation"
+        >
+          <i class="fas fa-bars fa-lg"></i>
+        </button>
+
+        <!-- Navigation links -->
+        <ul
+          id="navLinks"
+          class="hidden flex-col mt-4 gap-2 md:flex md:flex-row md:items-center md:justify-center md:mt-0"
+        >
+          <!-- Home -->
+          <li>
+            <button
+              onclick="showView('home')"
+              class="nav-button active flex items-center px-4 py-2 rounded-lg font-semibold transition-colors duration-200 hover:bg-amber-500 hover:text-black"
+            >
+              <i class="fas fa-home mr-2"></i>Home
+            </button>
+          </li>
+
+          <!-- Manage submenu -->
+          <li class="relative">
+            <details class="group">
+              <summary
+                class="nav-button flex items-center justify-between md:justify-center px-4 py-2 rounded-lg font-semibold transition-colors duration-200 hover:bg-amber-500 hover:text-black cursor-pointer select-none"
+              >
+                <span class="flex items-center"
+                  ><i class="fas fa-wrench mr-2"></i>Manage</span
+                >
+                <i
+                  class="fas fa-chevron-down ml-2 transition-transform group-open:rotate-180"
+                ></i>
+              </summary>
+
+              <div
+                class="flex flex-col gap-2 pl-4 mt-1 md:absolute md:pl-0 md:bg-gray-800 md:p-2 md:rounded-lg md:shadow-lg md:top-full md:left-0"
+              >
+                <button
+                  onclick="showView('addMachine')"
+                  class="nav-button px-4 py-2 rounded-lg text-left"
+                >
+                  Add&nbsp;Machine
+                </button>
+                <button
+                  onclick="showView('addPlayer')"
+                  class="nav-button px-4 py-2 rounded-lg text-left"
+                >
+                  Add&nbsp;Player
+                </button>
+                <button
+                  onclick="showView('addScore')"
+                  class="nav-button px-4 py-2 rounded-lg text-left"
+                >
+                  Add&nbsp;Score
+                </button>
+              </div>
+            </details>
+          </li>
+
+          <!-- Scores submenu -->
+          <li class="relative">
+            <details class="group">
+              <summary
+                class="nav-button flex items-center justify-between md:justify-center px-4 py-2 rounded-lg font-semibold transition-colors duration-200 hover:bg-amber-500 hover:text-black cursor-pointer select-none"
+              >
+                <span class="flex items-center"
+                  ><i class="fas fa-trophy mr-2"></i>Scores</span
+                >
+                <i
+                  class="fas fa-chevron-down ml-2 transition-transform group-open:rotate-180"
+                ></i>
+              </summary>
+
+              <div
+                class="flex flex-col gap-2 pl-4 mt-1 md:absolute md:pl-0 md:bg-gray-800 md:p-2 md:rounded-lg md:shadow-lg md:top-full md:left-0"
+              >
+                <button
+                  onclick="showView('viewScoresByMachine')"
+                  class="nav-button px-4 py-2 rounded-lg text-left"
+                >
+                  By&nbsp;Machine
+                </button>
+                <button
+                  onclick="showView('viewScoresByPlayer')"
+                  class="nav-button px-4 py-2 rounded-lg text-left"
+                >
+                  By&nbsp;Player
+                </button>
+              </div>
+            </details>
+          </li>
+        </ul>
+      </nav>
+
+      <main id="main-content">
+        <!-- Home View -->
+        <div id="home" class="view">
+          <div class="bg-gray-800 p-6 rounded-lg shadow-lg text-center">
+            <h2 class="text-2xl font-bold mb-4 text-amber-400">Welcome!</h2>
+            <p class="text-gray-300">
+              Use the navigation above to manage machines, players, and high
+              scores.
+            </p>
+            <div class="mt-6 flex justify-center gap-4">
+              <div class="p-4 bg-gray-700 rounded-lg">
+                <p class="text-xl font-bold" id="total-machines">0</p>
+                <p class="text-sm text-gray-400">Machines</p>
+              </div>
+              <div class="p-4 bg-gray-700 rounded-lg">
+                <p class="text-xl font-bold" id="total-players">0</p>
+                <p class="text-sm text-gray-400">Players</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Machine View -->
+        <div id="addMachine" class="view hidden">
+          <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold mb-4 text-amber-400">
+              Add a New Pinball Machine
+            </h2>
+            <form id="addMachineForm">
+              <div class="mb-4">
+                <label for="machineName" class="block text-gray-300 mb-2"
+                  >Machine Name</label
+                >
+                <input
+                  type="text"
+                  id="machineName"
+                  class="w-full p-2 rounded-lg text-white"
+                  required
+                />
+              </div>
+              <div class="mb-4">
+                <label for="machineImage" class="block text-gray-300 mb-2"
+                  >Image URL (optional)</label
+                >
+                <input
+                  type="url"
+                  id="machineImage"
+                  class="w-full p-2 rounded-lg text-white"
+                />
+              </div>
+              <button
+                type="submit"
+                class="w-full bg-amber-500 text-black font-bold py-2 px-4 rounded-lg hover:bg-amber-600 transition-colors"
+              >
+                Add Machine
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Add Player View -->
+        <div id="addPlayer" class="view hidden">
+          <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold mb-4 text-amber-400">
+              Add a New Player
+            </h2>
+            <form id="addPlayerForm">
+              <div class="mb-4">
+                <label for="playerName" class="block text-gray-300 mb-2"
+                  >Player Name</label
+                >
+                <input
+                  type="text"
+                  id="playerName"
+                  class="w-full p-2 rounded-lg text-white"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                class="w-full bg-amber-500 text-black font-bold py-2 px-4 rounded-lg hover:bg-amber-600 transition-colors"
+              >
+                Add Player
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Add Score View -->
+        <div id="addScore" class="view hidden">
+          <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold mb-4 text-amber-400">
+              Add a High Score
+            </h2>
+            <form id="addScoreForm">
+              <div class="mb-4">
+                <label for="scoreMachine" class="block text-gray-300 mb-2"
+                  >Select Machine</label
+                >
+                <select
+                  id="scoreMachine"
+                  class="w-full p-2 rounded-lg text-white"
+                  required
+                ></select>
+              </div>
+              <div class="mb-4">
+                <label for="scorePlayer" class="block text-gray-300 mb-2"
+                  >Select Player</label
+                >
+                <select
+                  id="scorePlayer"
+                  class="w-full p-2 rounded-lg text-white"
+                  required
+                ></select>
+              </div>
+              <div class="mb-4">
+                <label for="scoreValue" class="block text-gray-300 mb-2"
+                  >Score</label
+                >
+                <input
+                  type="number"
+                  id="scoreValue"
+                  class="w-full p-2 rounded-lg text-white"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                class="w-full bg-amber-500 text-black font-bold py-2 px-4 rounded-lg hover:bg-amber-600 transition-colors"
+              >
+                Add Score
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- View Scores by Machine -->
+        <div id="viewScoresByMachine" class="view hidden">
+          <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold mb-4 text-amber-400">
+              High Scores by Machine
+            </h2>
+            <div class="mb-4">
+              <label for="selectMachineScores" class="block text-gray-300 mb-2"
+                >Select a Machine</label
+              >
+              <select
+                id="selectMachineScores"
+                class="w-full p-2 rounded-lg text-white"
+              ></select>
+            </div>
+            <div id="machineScoresOutput" class="mt-6"></div>
+          </div>
+        </div>
+
+        <!-- View Scores by Player -->
+        <div id="viewScoresByPlayer" class="view hidden">
+          <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold mb-4 text-amber-400">
+              High Scores by Player
+            </h2>
+            <div class="mb-4">
+              <label for="selectPlayerScores" class="block text-gray-300 mb-2"
+                >Select a Player</label
+              >
+              <select
+                id="selectPlayerScores"
+                class="w-full p-2 rounded-lg text-white"
+              ></select>
+            </div>
+            <div id="playerScoresOutput" class="mt-6 space-y-6"></div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Toast Notification -->
+      <div
+        id="toast"
+        class="fixed bottom-5 right-5 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-0"
+      >
+        <p id="toast-message"></p>
+      </div>
+    </div>
+
+    <!-- Main application script -->
+    <script type="module">
+      /* (Unchanged Firebase + app logic from your original file) */
+
+      // Firebase imports
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        doc,
+        addDoc,
+        getDocs,
+        onSnapshot,
+        setDoc,
+        updateDoc,
+        arrayUnion,
+        getDoc,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+      // --- IMPORTANT: PASTE YOUR FIREBASE CONFIG HERE ---
+      //
+      // --- END OF FIREBASE CONFIG ---
+
+      // Initialize Firebase
+      let app;
+      let db;
+
+      try {
+        const config =
+          typeof __firebase_config !== "undefined"
+            ? JSON.parse(__firebase_config)
+            : firebaseConfig;
+        app = initializeApp(config);
+        db = getFirestore(app);
+        console.log("Firebase Initialized Successfully");
+      } catch (e) {
+        console.error(
+          "Firebase initialization failed. Please provide your config.",
+          e
+        );
+        showToast("Firebase connection failed. Check console.", "error");
+        // Disable app functionality if firebase fails
+        document.getElementById("main-content").innerHTML = `
+                <div class="bg-red-900 text-white p-6 rounded-lg text-center">
+                    <h2 class="text-2xl font-bold">Firebase Connection Error</h2>
+                    <p>Please configure your Firebase settings in the script tag to use the app.</p>
+                </div>
+            `;
+      }
+
+      // Global state
+      let machines = [];
+      let players = [];
+      let currentView = "home";
+
+      // --- UI HELPER FUNCTIONS ---
+
+      function showView(viewId) {
+        document
+          .querySelectorAll(".view")
+          .forEach((view) => view.classList.add("hidden"));
+        document.getElementById(viewId).classList.remove("hidden");
+
+        document
+          .querySelectorAll(".nav-button")
+          .forEach((btn) => btn.classList.remove("active"));
+        const btn = document.querySelector(
+          `button[onclick="showView('${viewId}')"]`
+        );
+        if (btn) btn.classList.add("active");
+
+        currentView = viewId;
+      }
+
+      function showToast(message, type = "success") {
+        const toast = document.getElementById("toast");
+        const toastMessage = document.getElementById("toast-message");
+
+        toastMessage.textContent = message;
+        toast.className = `fixed bottom-5 right-5 text-white py-2 px-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-100 ${
+          type === "success" ? "bg-green-500" : "bg-red-500"
+        }`;
+
+        setTimeout(() => {
+          toast.style.opacity = "0";
+        }, 3000);
+      }
+
+      // --- DATA POPULATION FUNCTIONS ---
+
+      function populateSelect(elementId, data, keyField, valueField) {
+        const select = document.getElementById(elementId);
+        select.innerHTML = '<option value="">-- Select --</option>';
+        data.forEach((item) => {
+          const option = document.createElement("option");
+          option.value = item[keyField];
+          option.textContent = item[valueField];
+          select.appendChild(option);
+        });
+      }
+
+      // --- DATA FETCHING & REAL-TIME LISTENERS ---
+
+      if (db) {
+        // Listen for changes in Machines
+        const machinesCol = collection(db, "data/machines/machines");
+        onSnapshot(
+          machinesCol,
+          (snapshot) => {
+            machines = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            document.getElementById("total-machines").textContent =
+              machines.length;
+            populateSelect("scoreMachine", machines, "name", "name");
+            populateSelect("selectMachineScores", machines, "name", "name");
+            console.log("Machines updated: ", machines);
+          },
+          (error) => {
+            console.error("Error fetching machines:", error);
+            showToast("Error fetching machines.", "error");
+          }
+        );
+
+        // Listen for changes in Players
+        const playersCol = collection(db, "data/players/players");
+        onSnapshot(
+          playersCol,
+          (snapshot) => {
+            players = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            document.getElementById("total-players").textContent =
+              players.length;
+            populateSelect("scorePlayer", players, "id", "name");
+            populateSelect("selectPlayerScores", players, "id", "name");
+            console.log("Players updated: ", players);
+          },
+          (error) => {
+            console.error("Error fetching players:", error);
+            showToast("Error fetching players.", "error");
+          }
+        );
+      }
+
+      // --- FORM SUBMISSION HANDLERS ---
+
+      // Add Machine
+      document
+        .getElementById("addMachineForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const name = document.getElementById("machineName").value;
+          const image = document.getElementById("machineImage").value;
+
+          try {
+            const machinesCollectionRef = collection(
+              db,
+              "data/machines/machines"
+            );
+            await addDoc(machinesCollectionRef, { name, image: image || "" });
+            showToast("Machine added successfully!");
+            e.target.reset();
+            showView("home");
+          } catch (error) {
+            console.error("Error adding machine: ", error);
+            showToast("Error adding machine.", "error");
+          }
+        });
+
+      // Add Player
+      document
+        .getElementById("addPlayerForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const name = document.getElementById("playerName").value;
+          try {
+            const playersCollectionRef = collection(db, "data/players/players");
+            await addDoc(playersCollectionRef, { name, scores: {} });
+            showToast("Player added successfully!");
+            e.target.reset();
+            showView("home");
+          } catch (error) {
+            console.error("Error adding player: ", error);
+            showToast("Error adding player.", "error");
+          }
+        });
+
+      // Add Score
+      document
+        .getElementById("addScoreForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const machineName = document.getElementById("scoreMachine").value;
+          const playerId = document.getElementById("scorePlayer").value;
+          const score = parseInt(
+            document.getElementById("scoreValue").value,
+            10
+          );
+
+          if (!machineName || !playerId || isNaN(score)) {
+            showToast("Please fill all fields correctly.", "error");
+            return;
+          }
+
+          try {
+            const playerDocRef = doc(db, "data/players/players", playerId);
+            const fieldToUpdate = `scores.${machineName}`;
+
+            await updateDoc(playerDocRef, {
+              [fieldToUpdate]: arrayUnion(score),
+            });
+
+            showToast("Score added successfully!");
+            e.target.reset();
+            showView("home");
+          } catch (error) {
+            console.error("Error adding score: ", error);
+            showToast("Error adding score.", "error");
+          }
+        });
+
+      // --- SCORE VIEWING LOGIC ---
+
+      // View Scores by Machine
+      document
+        .getElementById("selectMachineScores")
+        .addEventListener("change", (e) => {
+          const selectedMachine = e.target.value;
+          const outputDiv = document.getElementById("machineScoresOutput");
+          if (!selectedMachine) {
+            outputDiv.innerHTML = "";
+            return;
+          }
+
+          let scoresForMachine = [];
+          players.forEach((player) => {
+            if (player.scores && player.scores[selectedMachine]) {
+              player.scores[selectedMachine].forEach((score) => {
+                scoresForMachine.push({ playerName: player.name, score });
+              });
+            }
+          });
+
+          scoresForMachine.sort((a, b) => b.score - a.score);
+
+          if (scoresForMachine.length === 0) {
+            outputDiv.innerHTML =
+              '<p class="text-gray-400">No scores recorded for this machine yet.</p>';
+            return;
+          }
+
+          const machineDetails = machines.find(
+            (m) => m.name === selectedMachine
+          );
+
+          let html = `
+                <div class="flex items-center mb-4">
+                    ${
+                      machineDetails && machineDetails.image
+                        ? `<img src="${machineDetails.image}" alt="${selectedMachine}" class="w-24 h-32 object-cover rounded-lg mr-4" onerror="this.style.display='none'">`
+                        : ""
+                    }
+                    <h3 class="text-xl font-bold text-amber-300">${selectedMachine} - High Scores</h3>
+                </div>
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="table-header">
+                            <th class="p-3">Rank</th>
+                            <th class="p-3">Player</th>
+                            <th class="p-3 text-right">Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${scoresForMachine
+                          .map(
+                            (s, index) => `
+                            <tr class="table-row border-b border-gray-700">
+                                <td class="p-3 font-bold">${index + 1}</td>
+                                <td class="p-3">${s.playerName}</td>
+                                <td class="p-3 text-right font-mono">${s.score.toLocaleString()}</td>
+                            </tr>
+                        `
+                          )
+                          .join("")}
+                    </tbody>
+                </table>
+            `;
+          outputDiv.innerHTML = html;
+        });
+
+      // View Scores by Player
+      document
+        .getElementById("selectPlayerScores")
+        .addEventListener("change", (e) => {
+          const selectedPlayerId = e.target.value;
+          const outputDiv = document.getElementById("playerScoresOutput");
+          if (!selectedPlayerId) {
+            outputDiv.innerHTML = "";
+            return;
+          }
+
+          const player = players.find((p) => p.id === selectedPlayerId);
+          if (
+            !player ||
+            !player.scores ||
+            Object.keys(player.scores).length === 0
+          ) {
+            outputDiv.innerHTML = `<p class="text-gray-400">No scores recorded for ${
+              player ? player.name : "this player"
+            } yet.</p>`;
+            return;
+          }
+
+          let html = `<h3 class="text-xl font-bold text-amber-300 mb-4">Scores for ${player.name}</h3>`;
+
+          const sortedMachines = Object.keys(player.scores).sort();
+
+          sortedMachines.forEach((machineName) => {
+            const scores = player.scores[machineName].sort((a, b) => b - a);
+            const machineDetails = machines.find((m) => m.name === machineName);
+
+            html += `
+                    <div class="bg-gray-700 p-4 rounded-lg">
+                        <div class="flex items-center mb-3">
+                            ${
+                              machineDetails && machineDetails.image
+                                ? `<img src="${machineDetails.image}" alt="${machineName}" class="w-16 h-20 object-cover rounded-md mr-4" onerror="this.style.display='none'">`
+                                : ""
+                            }
+                            <h4 class="text-lg font-semibold text-amber-200">${machineName}</h4>
+                        </div>
+                        <ul class="list-decimal list-inside space-y-1">
+                            ${scores
+                              .map(
+                                (score) =>
+                                  `<li class="font-mono">${score.toLocaleString()}</li>`
+                              )
+                              .join("")}
+                        </ul>
+                    </div>
+                `;
+          });
+
+          outputDiv.innerHTML = html;
+        });
+
+      // Expose functions to global scope for onclick handlers
+      window.showView = showView;
+    </script>
+
+    <!-- Tiny script for hamburger functionality -->
+    <script>
+      // Toggle nav visibility on small screens
+      document
+        .getElementById("menuToggle")
+        .addEventListener("click", () =>
+          document.getElementById("navLinks").classList.toggle("hidden")
+        );
+
+      // Close mobile nav after a link tap
+      document.querySelectorAll("#navLinks button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (window.innerWidth < 768) {
+            document.getElementById("navLinks").classList.add("hidden");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
