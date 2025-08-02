@@ -1,12 +1,13 @@
 const repo = "pinball-hall-of-fame";
+const isProd = process.env.NODE_ENV === "production";
 
 /** @type {import('next').NextConfig} */
 module.exports = {
   output: "export",
-  trailingSlash: true, // better for GitHub Pages
-  basePath: process.env.NODE_ENV === "production" ? `/${repo}` : "",
-  assetPrefix: process.env.NODE_ENV === "production" ? `/${repo}/` : "",
+  trailingSlash: true,
+  basePath: isProd ? `/${repo}` : "",
+  assetPrefix: isProd ? `/${repo}` : "",
   images: {
-    unoptimized: true, // since export produces static HTML only
+    unoptimized: true,
   },
 };

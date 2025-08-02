@@ -5,6 +5,7 @@ import Home from "../components/Home";
 import AddMachine from "../components/AddMachine";
 import AddPlayer from "../components/AddPlayer";
 import AddScore from "../components/AddScore";
+import ManageScores from "../components/ManageScores";
 import ScoresByMachine from "../components/ScoresByMachine";
 import ScoresByPlayer from "../components/ScoresByPlayer";
 import AllScores from "../components/AllScores";
@@ -51,6 +52,7 @@ export default function IndexPage() {
       {view === "addMachine" && <AddMachine />}
       {view === "addPlayer" && <AddPlayer />}
       {view === "addScore" && <AddScore />}
+      {view === "manageScores" && <ManageScores />}
       {view === "scoresByMachine" && <ScoresByMachine />}
       {view === "scoresByPlayer" && <ScoresByPlayer />}
       {view === "allScores" && <AllScores />}

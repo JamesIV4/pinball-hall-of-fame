@@ -11,6 +11,7 @@ type View =
   | "addMachine"
   | "addPlayer"
   | "addScore"
+  | "manageScores"
   | "scoresByMachine"
   | "scoresByPlayer"
   | "allScores";
@@ -57,7 +58,7 @@ export default function NavBar({ view, setView }: Props) {
     </button>
   );
 
-  const manageViews: View[] = ["addMachine", "addPlayer", "addScore"];
+  const manageViews: View[] = ["addMachine", "addPlayer", "addScore", "manageScores"];
   const scoresViews: View[] = [
     "scoresByMachine",
     "scoresByPlayer",
@@ -93,6 +94,7 @@ export default function NavBar({ view, setView }: Props) {
               {btn("addMachine", "gamepad", "Add Machine", manageRef, "text-left")}
               {btn("addPlayer", "user-plus", "Add Player", manageRef, "text-left")}
               {btn("addScore", "star", "Add Score", manageRef, "text-left")}
+              {btn("manageScores", "trash", "Manage Scores", manageRef, "text-left")}
             </div>
           </details>
         </li>
