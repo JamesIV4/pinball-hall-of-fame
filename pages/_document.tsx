@@ -23,19 +23,22 @@ export default function Document() {
           crossOrigin="anonymous"
           referrerPolicy="no-referrer"
         />
-      </Head>
-      <body className="min-h-full">
         <style jsx global>{`
           @font-face {
-            font-family: 'DotMatrix';
-            src: url('${assetPrefix}/fonts/pinside-dotmatrix-webfont.woff2') format('woff2'),
-                 url('${assetPrefix}/fonts/pinside-dotmatrix-webfont.woff') format('woff'), 
-                 url('${assetPrefix}/fonts/pinside-dotmatrix-webfont.ttf') format('truetype');
+            font-family: "DotMatrix";
+            src: url("${assetPrefix}/fonts/pinside-dotmatrix-webfont.woff2")
+                format("woff2"),
+              url("${assetPrefix}/fonts/pinside-dotmatrix-webfont.woff")
+                format("woff"),
+              url("${assetPrefix}/fonts/pinside-dotmatrix-webfont.ttf")
+                format("truetype");
             font-weight: normal;
             font-style: normal;
             font-display: swap;
           }
         `}</style>
+      </Head>
+      <body className="min-h-full">
         <Main />
         <NextScript />
       </body>
