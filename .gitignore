@@ -2,9 +2,6 @@
 .next
 node_modules
 
-docs
-out
-
 # Local env vars
 .env.local
 .env.*.local
