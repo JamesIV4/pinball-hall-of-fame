@@ -6,7 +6,7 @@ import AddMachine from "../components/AddMachine";
 import AddPlayer from "../components/AddPlayer";
 import AddScore from "../components/AddScore";
 import ManageScores from "../components/ManageScores";
-import HighScores from "../components/ScoresByMachine";
+import HighScores from "../components/HighScores";
 import ScoresByPlayer from "../components/ScoresByPlayer";
 import AllScores from "../components/AllScores";
 import { getFirebase } from "@/lib/firebase";

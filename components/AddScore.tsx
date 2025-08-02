@@ -8,20 +8,7 @@ import {
 } from "firebase/firestore";
 import Toast from "./Toast";
 import { getFirebase } from "@/lib/firebase";
-
-interface Machine {
-  id: string;
-  name: string;
-}
-interface Player {
-  id: string;
-  name: string;
-}
-
-export interface ScoreEntry {
-  score: number;
-  timestamp?: string;
-}
+import { Machine, Player } from "./types";
 
 export default function AddScore() {
   const { db } = getFirebase();

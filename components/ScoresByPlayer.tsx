@@ -1,23 +1,8 @@
 import { useEffect, useState } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
 import { getFirebase } from "@/lib/firebase";
-
-interface Machine {
-  id: string;
-  name: string;
-  image?: string;
-}
-
-interface ScoreEntry {
-  score: number;
-  timestamp?: string;
-}
-
-interface Player {
-  id: string;
-  name: string;
-  scores?: Record<string, ScoreEntry[]>;
-}
+import { Machine, Player, ScoreEntry } from "./types";
+import ScoreWithTooltip from "./ScoreWithTooltip";
 
 export default function ScoresByPlayer() {
   const { db } = getFirebase();
@@ -110,9 +95,7 @@ export default function ScoresByPlayer() {
                         <span className="md:text-[23px] font-bold mr-3 w-6 ml-2">
                           {i + 1}.
                         </span>
-                        <span className="font-dotmatrix text-[36px] md:text-[51px] text-amber-300">
-                          {s.score.toLocaleString()}
-                        </span>
+                        <ScoreWithTooltip score={s} />
                       </div>
                     ))}
                   </div>

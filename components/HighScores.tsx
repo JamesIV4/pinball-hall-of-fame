@@ -4,7 +4,7 @@ import { getFirebase } from "@/lib/firebase";
 import { Machine, Player, ScoreEntry } from "./types";
 import ScoreWithTooltip from "./ScoreWithTooltip";
 
-export default function ScoresByMachine() {
+export default function HighScores() {
   const { db } = getFirebase();
 
   const [machines, setMachines] = useState<Machine[]>([]);
