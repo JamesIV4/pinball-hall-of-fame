@@ -24,14 +24,17 @@ export default function NavBar({ view, setView }: Props) {
   const manageRef = useRef<HTMLDetailsElement>(null);
   const scoresRef = useRef<HTMLDetailsElement>(null);
 
-  // Close panels when clicking outside
+  // Close panels when clicking outside – delayed one tick so native controls can open first
   useEffect(() => {
     const closeIfOutside = (e: MouseEvent) => {
-      [manageRef, scoresRef].forEach((r) => {
-        if (r.current?.open && !r.current.contains(e.target as Node)) {
-          r.current.open = false;
-        }
-      });
+      // Let <select>, <input>, etc. handle the click before collapsing
+      setTimeout(() => {
+        [manageRef, scoresRef].forEach((r) => {
+          if (r.current?.open && !r.current.contains(e.target as Node)) {
+            r.current.open = false;
+          }
+        });
+      }, 0);
     };
     document.addEventListener("click", closeIfOutside);
     return () => document.removeEventListener("click", closeIfOutside);
@@ -49,11 +52,12 @@ export default function NavBar({ view, setView }: Props) {
         setView(id);
         parent?.current && (parent.current.open = false);
       }}
-      className={`nav-button flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors hover:bg-amber-500 hover:text-black ${
-        view === id ? "active" : ""
+      className={`flex items-center gap-2 px-3 py-1 rounded hover:bg-gray-600 transition-colors ${
+        view === id ? "bg-gray-600" : ""
       } ${extra}`}
     >
-      <i className={`fas fa-${icon}`} /> {label}
+      <span className="material-symbols-outlined text-lg">{icon}</span>
+      <span className="hidden sm:inline-block">{label}</span>
     </button>
   );
 
@@ -66,56 +70,38 @@ export default function NavBar({ view, setView }: Props) {
 
   // Shared overlay panel classes — note the new max-width
   const panelClasses =
-    "absolute z-20 top-full left-1/2 -translate-x-1/2 mt-1 min-w-[12rem] max-w-[90vw] w-max flex flex-col gap-2 bg-gray-700 p-2 rounded-lg shadow-lg";
+    "absolute z-20 top-full left-1/2 -translate-x-1/2 mt-1 min-w-max flex flex-col gap-2 bg-gray-700 p-2 rounded-lg shadow-lg";
 
   return (
     <nav className="mb-8">
       <ul className="flex flex-wrap items-center justify-center gap-2">
         {/* Home */}
-        <li>{btn("home", "home", "Home")}</li>
+        <li>{btn("home", "cottage", "Home")}</li>
 
         {/* Manage dropdown */}
-        <li className="relative">
-          <details ref={manageRef} className="group">
-            <summary
-              className={`nav-button flex items-center justify-between px-4 py-2 rounded-lg font-semibold transition-colors hover:bg-amber-500 hover:text-black cursor-pointer select-none ${
-                manageViews.includes(view) ? "active" : ""
-              }`}
-            >
-              <span className="flex items-center">
-                <i className="fas fa-wrench mr-2" />
-                Manage
-              </span>
-              <i className="fas fa-chevron-down ml-2 transition-transform group-open:rotate-180" />
+        <li>
+          <details ref={manageRef} className="relative">
+            <summary className="list-none">
+              {btn("addMachine", "build", "Manage")}
             </summary>
-
             <div className={panelClasses}>
-              {btn("addMachine", "gamepad", "Add Machine", manageRef, "text-left")}
-              {btn("addPlayer", "user-plus", "Add Player", manageRef, "text-left")}
-              {btn("addScore", "star", "Add Score", manageRef, "text-left")}
+              {manageViews.map((v) => (
+                <div key={v}>{btn(v, "", v.replace(/([A-Z])/g, " $1"))}</div>
+              ))}
             </div>
           </details>
         </li>
 
         {/* Scores dropdown */}
-        <li className="relative">
-          <details ref={scoresRef} className="group">
-            <summary
-              className={`nav-button flex items-center justify-between px-4 py-2 rounded-lg font-semibold transition-colors hover:bg-amber-500 hover:text-black cursor-pointer select-none ${
-                scoresViews.includes(view) ? "active" : ""
-              }`}
-            >
-              <span className="flex items-center">
-                <i className="fas fa-trophy mr-2" />
-                Scores
-              </span>
-              <i className="fas fa-chevron-down ml-2 transition-transform group-open:rotate-180" />
+        <li>
+          <details ref={scoresRef} className="relative">
+            <summary className="list-none">
+              {btn("scoresByMachine", "emoji_events", "Scores")}
             </summary>
-
             <div className={panelClasses}>
-              {btn("scoresByMachine", "trophy", "By Machine", scoresRef, "text-left")}
-              {btn("scoresByPlayer", "user-astronaut", "By Player", scoresRef, "text-left")}
-              {btn("allScores", "list", "All Scores", scoresRef, "text-left")}
+              {scoresViews.map((v) => (
+                <div key={v}>{btn(v, "", v.replace(/([A-Z])/g, " $1"))}</div>
+              ))}
             </div>
           </details>
         </li>
