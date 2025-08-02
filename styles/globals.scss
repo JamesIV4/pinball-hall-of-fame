@@ -5,7 +5,8 @@
 /* Dot-matrix display font */
 @font-face {
   font-family: 'DotMatrix';
-  src: url('/fonts/pinside-dotmatrix-webfont.woff2') format('woff2'), /* modern */
+  src: url('/fonts/pinside-dotmatrix-webfont.woff2') format('woff2'),
+       url('/fonts/pinside-dotmatrix-webfont.woff') format('woff'), 
        url('/fonts/pinside-dotmatrix-webfont.ttf')   format('truetype'); /* fallback for older Safari/iOS */
   font-weight: normal;
   font-style: normal;
