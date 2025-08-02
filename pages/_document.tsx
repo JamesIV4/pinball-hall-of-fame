@@ -13,12 +13,12 @@ export default function Document() {
         <link
           rel="icon"
           sizes="192x192"
-          href="/imgs/pinball-icon-192.png"
+          href="../public/imgs/pinball-icon-192.png"
         />
         <link
           rel="apple-touch-icon"
           sizes="512x512"
-          href="/imgs/pinball-icon-512.png"
+          href="../public/imgs/pinball-icon-512.png"
         />
         <title>Pinball Hall of Fame</title>
         <link
