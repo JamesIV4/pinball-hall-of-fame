@@ -18,9 +18,12 @@ export default function ScoresByMachine() {
 
   const [machines, setMachines] = useState<Machine[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
-  const [machine, setMachine] = useState("");
-  const [bestOnly, setBestOnly] = useState(false); // NEW
+  const [machine, setMachine] = useState("");          // selected machine
+  const [bestOnly, setBestOnly] = useState(false);     // toggle “best per player”
 
+  /* ────────────────────────────────────────────
+   * Load machines & players
+   * ────────────────────────────────────────── */
   useEffect(() => {
     const unsubM = onSnapshot(
       collection(db, "data/machines/machines"),
@@ -40,7 +43,18 @@ export default function ScoresByMachine() {
     };
   }, [db]);
 
-  // --- build score list -----------------------------------------------------
+  /* ────────────────────────────────────────────
+   *  NEW: pick first machine as default
+   * ────────────────────────────────────────── */
+  useEffect(() => {
+    if (!machine && machines.length) {
+      setMachine(machines[0].name);
+    }
+  }, [machines, machine]);
+
+  /* ────────────────────────────────────────────
+   * Assemble and (optionally) collapse scores
+   * ────────────────────────────────────────── */
   const allScores = players.flatMap((p) => {
     const list = p.scores?.[machine] || [];
     return list.map((s) => ({ player: p.name, score: s }));
@@ -61,10 +75,12 @@ export default function ScoresByMachine() {
   }
 
   scores.sort((a, b) => b.score - a.score);
-  // --------------------------------------------------------------------------
 
   const mInfo = machines.find((m) => m.name === machine);
 
+  /* ────────────────────────────────────────────
+   *  Render
+   * ────────────────────────────────────────── */
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold mb-4 text-amber-400">
