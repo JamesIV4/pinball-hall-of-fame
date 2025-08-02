@@ -99,7 +99,7 @@ export default function ScoresByMachine() {
                   >
                     <td className="pl-6 font-bold ml-2">{i + 1}</td>
                     <td className="p-3">{s.player}</td>
-                    <td className="p-3 text-right font-dotmatrix text-[51px] text-amber-300">
+                    <td className="p-3 text-right font-dotmatrix text-[23px] md:text-[51px] text-amber-300">
                       {s.score.toLocaleString()}
                     </td>
                   </tr>
