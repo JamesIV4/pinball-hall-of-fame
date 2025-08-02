@@ -1,5 +1,12 @@
 import { FormEvent, useState, useEffect } from "react";
-import { collection, addDoc, onSnapshot, doc, updateDoc, getDocs } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  onSnapshot,
+  doc,
+  updateDoc,
+  getDocs,
+} from "firebase/firestore";
 import Toast from "./Toast";
 import { getFirebase } from "@/lib/firebase";
 
@@ -17,10 +24,9 @@ export default function AddMachine() {
   const [editingId, setEditingId] = useState("");
   const [editName, setEditName] = useState("");
   const [editImage, setEditImage] = useState("");
-  const [toast, setToast] = useState<{
-    msg: string;
-    type?: "success" | "error";
-  }>({ msg: "" });
+  const [toast, setToast] = useState<{ msg: string; type?: "success" | "error" }>(
+    { msg: "" }
+  );
 
   useEffect(() => {
     const unsubM = onSnapshot(
@@ -46,21 +52,21 @@ export default function AddMachine() {
   }
 
   async function saveEdit(id: string) {
-    const oldMachine = machines.find(m => m.id === id);
+    const oldMachine = machines.find((m) => m.id === id);
     const oldName = oldMachine?.name;
-    
+
     try {
-      // Update machine
-      await updateDoc(doc(db, "data/machines/machines", id), { 
-        name: editName, 
-        image: editImage 
+      await updateDoc(doc(db, "data/machines/machines", id), {
+        name: editName,
+        image: editImage,
       });
-      
-      // If name changed, update all player scores
+
       if (oldName && oldName !== editName) {
-        const playersSnapshot = await getDocs(collection(db, "data/players/players"));
+        const playersSnapshot = await getDocs(
+          collection(db, "data/players/players")
+        );
         const updates: Promise<void>[] = [];
-        
+
         playersSnapshot.docs.forEach((playerDoc) => {
           const playerData = playerDoc.data();
           if (playerData.scores && playerData.scores[oldName]) {
@@ -69,17 +75,17 @@ export default function AddMachine() {
             delete newScores[oldName];
             updates.push(
               updateDoc(doc(db, "data/players/players", playerDoc.id), {
-                scores: newScores
+                scores: newScores,
               })
             );
           }
         });
-        
+
         if (updates.length > 0) {
           await Promise.all(updates);
         }
       }
-      
+
       setEditingId("");
       setToast({ msg: "Machine updated!" });
     } catch (err) {
@@ -95,6 +101,8 @@ export default function AddMachine() {
         type={toast.type}
         clear={() => setToast({ msg: "" })}
       />
+
+      {/* Add Machine Form */}
       <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-lg mx-auto">
         <h2 className="text-2xl font-bold mb-4 text-amber-400">
           Add a New Pinball Machine
@@ -123,12 +131,14 @@ export default function AddMachine() {
         </form>
       </div>
 
+      {/* Edit Machines */}
       <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-lg mx-auto mt-6">
         <h2 className="text-2xl font-bold mb-4 text-amber-400">Edit Machines</h2>
         <div className="space-y-3">
           {machines.map((m) => (
             <div key={m.id} className="bg-gray-700 p-3 rounded">
               {editingId === m.id ? (
+                /* Edit mode */
                 <div className="space-y-2">
                   <input
                     className="w-full p-2 rounded bg-gray-600"
@@ -158,6 +168,7 @@ export default function AddMachine() {
                   </div>
                 </div>
               ) : (
+                /* View mode */
                 <div className="flex items-center gap-3">
                   {m.image && (
                     <img
@@ -166,10 +177,22 @@ export default function AddMachine() {
                       className="w-12 h-16 object-cover rounded"
                     />
                   )}
-                  <div className="flex-1">
-                    <div className="font-semibold">{m.name}</div>
-                    {m.image && <div className="text-xs text-gray-400 truncate">{m.image}</div>}
+
+                  {/* min-w-0 enables truncate to actually work */}
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold truncate" title={m.name}>
+                      {m.name}
+                    </div>
+                    {m.image && (
+                      <div
+                        className="text-xs text-gray-400 truncate"
+                        title={m.image}
+                      >
+                        {m.image}
+                      </div>
+                    )}
                   </div>
+
                   <button
                     className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
                     onClick={() => {
