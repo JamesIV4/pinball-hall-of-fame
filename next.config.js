@@ -10,4 +10,14 @@ module.exports = {
   images: {
     unoptimized: true,
   },
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.(woff|woff2|ttf)$/,
+      type: 'asset/resource',
+      generator: {
+        filename: 'static/fonts/[name][ext]'
+      }
+    });
+    return config;
+  },
 };
