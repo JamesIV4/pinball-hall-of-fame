@@ -7,6 +7,7 @@ interface Machine {
   name: string;
   image?: string;
 }
+
 interface Player {
   id: string;
   name: string;
@@ -19,24 +20,31 @@ export default function ScoresByPlayer() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [playerId, setPlayerId] = useState("");
 
+  // Fetch machines and players in real time
   useEffect(() => {
     const unsubM = onSnapshot(
       collection(db, "data/machines/machines"),
-      (snap) => {
-        setMachines(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })));
-      }
+      (snap) =>
+        setMachines(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })))
     );
     const unsubP = onSnapshot(
       collection(db, "data/players/players"),
-      (snap) => {
-        setPlayers(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })));
-      }
+      (snap) =>
+        setPlayers(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })))
     );
     return () => {
       unsubM();
       unsubP();
     };
   }, [db]);
+
+  // --- NEW: default to the first player once the list is available ---
+  useEffect(() => {
+    if (!playerId && players.length) {
+      setPlayerId(players[0].id);
+    }
+  }, [players, playerId]);
+  // ------------------------------------------------------------------
 
   const player = players.find((p) => p.id === playerId);
   const machineNames = Object.keys(player?.scores || {}).sort();
@@ -46,6 +54,7 @@ export default function ScoresByPlayer() {
       <h2 className="text-2xl font-bold mb-4 text-amber-400">
         High Scores by Player
       </h2>
+
       <select
         className="w-full p-2 rounded-lg bg-gray-700 mb-6"
         value={playerId}
