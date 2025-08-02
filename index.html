@@ -62,44 +62,104 @@
         </p>
       </header>
 
-      <!-- Navigation -->
-      <nav class="flex flex-wrap justify-center gap-2 mb-8">
+      <!-- Responsive Navigation -->
+      <nav class="relative mb-8">
+        <!-- Mobile hamburger -->
         <button
-          onclick="showView('home')"
-          class="nav-button active px-4 py-2 rounded-lg font-semibold transition-colors duration-200 hover:bg-amber-500 hover:text-black"
+          id="menuToggle"
+          class="md:hidden text-amber-400 p-2 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-400"
+          aria-label="Toggle navigation"
         >
-          <i class="fas fa-home mr-2"></i>Home
+          <i class="fas fa-bars fa-lg"></i>
         </button>
-        <button
-          onclick="showView('addMachine')"
-          class="nav-button px-4 py-2 rounded-lg font-semibold transition-colors duration-200 hover:bg-amber-500 hover:text-black"
+
+        <!-- Navigation links -->
+        <ul
+          id="navLinks"
+          class="hidden flex-col mt-4 gap-2 md:flex md:flex-row md:items-center md:justify-center md:mt-0"
         >
-          <i class="fas fa-gamepad mr-2"></i>Add Machine
-        </button>
-        <button
-          onclick="showView('addPlayer')"
-          class="nav-button px-4 py-2 rounded-lg font-semibold transition-colors duration-200 hover:bg-amber-500 hover:text-black"
-        >
-          <i class="fas fa-user-plus mr-2"></i>Add Player
-        </button>
-        <button
-          onclick="showView('addScore')"
-          class="nav-button px-4 py-2 rounded-lg font-semibold transition-colors duration-200 hover:bg-amber-500 hover:text-black"
-        >
-          <i class="fas fa-star mr-2"></i>Add Score
-        </button>
-        <button
-          onclick="showView('viewScoresByMachine')"
-          class="nav-button px-4 py-2 rounded-lg font-semibold transition-colors duration-200 hover:bg-amber-500 hover:text-black"
-        >
-          <i class="fas fa-trophy mr-2"></i>Scores by Machine
-        </button>
-        <button
-          onclick="showView('viewScoresByPlayer')"
-          class="nav-button px-4 py-2 rounded-lg font-semibold transition-colors duration-200 hover:bg-amber-500 hover:text-black"
-        >
-          <i class="fas fa-user-astronaut mr-2"></i>Scores by Player
-        </button>
+          <!-- Home -->
+          <li>
+            <button
+              onclick="showView('home')"
+              class="nav-button active flex items-center px-4 py-2 rounded-lg font-semibold transition-colors duration-200 hover:bg-amber-500 hover:text-black"
+            >
+              <i class="fas fa-home mr-2"></i>Home
+            </button>
+          </li>
+
+          <!-- Manage submenu -->
+          <li class="relative">
+            <details class="group">
+              <summary
+                class="nav-button flex items-center justify-between md:justify-center px-4 py-2 rounded-lg font-semibold transition-colors duration-200 hover:bg-amber-500 hover:text-black cursor-pointer select-none"
+              >
+                <span class="flex items-center"
+                  ><i class="fas fa-wrench mr-2"></i>Manage</span
+                >
+                <i
+                  class="fas fa-chevron-down ml-2 transition-transform group-open:rotate-180"
+                ></i>
+              </summary>
+
+              <div
+                class="flex flex-col gap-2 pl-4 mt-1 md:absolute md:pl-0 md:bg-gray-800 md:p-2 md:rounded-lg md:shadow-lg md:top-full md:left-0"
+              >
+                <button
+                  onclick="showView('addMachine')"
+                  class="nav-button px-4 py-2 rounded-lg text-left"
+                >
+                  Add&nbsp;Machine
+                </button>
+                <button
+                  onclick="showView('addPlayer')"
+                  class="nav-button px-4 py-2 rounded-lg text-left"
+                >
+                  Add&nbsp;Player
+                </button>
+                <button
+                  onclick="showView('addScore')"
+                  class="nav-button px-4 py-2 rounded-lg text-left"
+                >
+                  Add&nbsp;Score
+                </button>
+              </div>
+            </details>
+          </li>
+
+          <!-- Scores submenu -->
+          <li class="relative">
+            <details class="group">
+              <summary
+                class="nav-button flex items-center justify-between md:justify-center px-4 py-2 rounded-lg font-semibold transition-colors duration-200 hover:bg-amber-500 hover:text-black cursor-pointer select-none"
+              >
+                <span class="flex items-center"
+                  ><i class="fas fa-trophy mr-2"></i>Scores</span
+                >
+                <i
+                  class="fas fa-chevron-down ml-2 transition-transform group-open:rotate-180"
+                ></i>
+              </summary>
+
+              <div
+                class="flex flex-col gap-2 pl-4 mt-1 md:absolute md:pl-0 md:bg-gray-800 md:p-2 md:rounded-lg md:shadow-lg md:top-full md:left-0"
+              >
+                <button
+                  onclick="showView('viewScoresByMachine')"
+                  class="nav-button px-4 py-2 rounded-lg text-left"
+                >
+                  By&nbsp;Machine
+                </button>
+                <button
+                  onclick="showView('viewScoresByPlayer')"
+                  class="nav-button px-4 py-2 rounded-lg text-left"
+                >
+                  By&nbsp;Player
+                </button>
+              </div>
+            </details>
+          </li>
+        </ul>
       </nav>
 
       <main id="main-content">
@@ -286,7 +346,10 @@
       </div>
     </div>
 
+    <!-- Main application script -->
     <script type="module">
+      /* (Unchanged Firebase + app logic from your original file) */
+
       // Firebase imports
       import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
       import {
@@ -349,9 +412,10 @@
         document
           .querySelectorAll(".nav-button")
           .forEach((btn) => btn.classList.remove("active"));
-        document
-          .querySelector(`button[onclick="showView('${viewId}')"]`)
-          .classList.add("active");
+        const btn = document.querySelector(
+          `button[onclick="showView('${viewId}')"]`
+        );
+        if (btn) btn.classList.add("active");
 
         currentView = viewId;
       }
@@ -633,6 +697,25 @@
 
       // Expose functions to global scope for onclick handlers
       window.showView = showView;
+    </script>
+
+    <!-- Tiny script for hamburger functionality -->
+    <script>
+      // Toggle nav visibility on small screens
+      document
+        .getElementById("menuToggle")
+        .addEventListener("click", () =>
+          document.getElementById("navLinks").classList.toggle("hidden")
+        );
+
+      // Close mobile nav after a link tap
+      document.querySelectorAll("#navLinks button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (window.innerWidth < 768) {
+            document.getElementById("navLinks").classList.add("hidden");
+          }
+        });
+      });
     </script>
   </body>
 </html>
