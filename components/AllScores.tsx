@@ -87,10 +87,10 @@ export default function AllScores() {
                         <div className="space-y-1">
                           {scores.map((s, i) => (
                             <div key={i} className="flex items-center">
-                              <span className="text-[23px] font-bold mr-3 w-6 ml-2">
+                              <span className="md:text-[23px] font-bold mr-3 w-6 ml-2">
                                 {i + 1}.
                               </span>
-                              <span className="font-dotmatrix text-[23px] md:text-[51px] text-amber-300">
+                              <span className="font-dotmatrix text-[32px] md:text-[51px] text-amber-300">
                                 {s.toLocaleString()}
                               </span>
                             </div>
