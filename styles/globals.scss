@@ -4,10 +4,10 @@
 
 /* Dot-matrix display font */
 @font-face {
-  font-family: 'DotMatrix';
-  src: url('../public/fonts/pinside-dotmatrix-webfont.woff2') format('woff2'),
-       url('../public/fonts/pinside-dotmatrix-webfont.woff') format('woff'), 
-       url('../public/fonts/pinside-dotmatrix-webfont.ttf') format('truetype');
+  font-family: "DotMatrix";
+  src: url("../public/fonts/pinside-dotmatrix-webfont.woff2") format("woff2"),
+    url("../public/fonts/pinside-dotmatrix-webfont.woff") format("woff"),
+    url("../public/fonts/pinside-dotmatrix-webfont.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -16,4 +16,8 @@
 html,
 body {
   @apply bg-neutral-900 text-neutral-100 font-sans antialiased;
+}
+
+html {
+  scrollbar-gutter: stable;
 }

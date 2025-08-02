@@ -1,12 +1,23 @@
 import { FormEvent, useState, useEffect } from "react";
 import Toast from "./Toast";
 import { getFirebase } from "@/lib/firebase";
-import { addDoc, collection, onSnapshot, doc, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  onSnapshot,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
+
+interface ScoreEntry {
+  score: number;
+  timestamp?: string;
+}
 
 interface Player {
   id: string;
   name: string;
-  scores?: Record<string, number[]>;
+  scores?: Record<string, (number | ScoreEntry)[]>;
 }
 
 export default function AddPlayer() {
@@ -24,7 +35,11 @@ export default function AddPlayer() {
     const unsubP = onSnapshot(
       collection(db, "data/players/players"),
       (snap) => {
-        setPlayers(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })));
+        setPlayers(
+          snap.docs
+            .map((d) => ({ id: d.id, ...(d.data() as any) }))
+            .sort((a, b) => a.name.localeCompare(b.name))
+        );
       }
     );
     return () => unsubP();
@@ -87,7 +102,10 @@ export default function AddPlayer() {
         <h2 className="text-2xl font-bold mb-4 text-amber-400">Edit Players</h2>
         <div className="space-y-2">
           {players.map((p) => (
-            <div key={p.id} className="flex items-center gap-2 bg-gray-700 p-2 rounded">
+            <div
+              key={p.id}
+              className="flex items-center gap-2 bg-gray-700 p-2 rounded"
+            >
               {editingId === p.id ? (
                 <>
                   <input

@@ -28,7 +28,11 @@ export default function ScoresByPlayer() {
         setMachines(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })))
     );
     const unsubP = onSnapshot(collection(db, "data/players/players"), (snap) =>
-      setPlayers(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })))
+      setPlayers(
+        snap.docs
+          .map((d) => ({ id: d.id, ...(d.data() as any) }))
+          .sort((a, b) => a.name.localeCompare(b.name))
+      )
     );
     return () => {
       unsubM();
