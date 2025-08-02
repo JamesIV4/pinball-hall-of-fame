@@ -18,8 +18,8 @@ export default function ScoresByMachine() {
 
   const [machines, setMachines] = useState<Machine[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
-  const [machine, setMachine] = useState("");          // selected machine
-  const [bestOnly, setBestOnly] = useState(false);     // toggle “best per player”
+  const [machine, setMachine] = useState(""); // selected machine
+  const [bestOnly, setBestOnly] = useState(false); // toggle “best per player”
 
   /* ────────────────────────────────────────────
    * Load machines & players
@@ -147,7 +147,7 @@ export default function ScoresByMachine() {
                   >
                     <td className="pl-6 font-bold">{i + 1}</td>
                     <td className="p-3">{s.player}</td>
-                    <td className="p-3 text-right font-dotmatrix text-[23px] md:text-[51px] text-amber-300">
+                    <td className="p-3 text-right font-dotmatrix text-[36px] md:text-[51px] text-amber-300">
                       {s.score.toLocaleString()}
                     </td>
                   </tr>

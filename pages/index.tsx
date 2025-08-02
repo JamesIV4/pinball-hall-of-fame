@@ -6,7 +6,7 @@ import AddMachine from "../components/AddMachine";
 import AddPlayer from "../components/AddPlayer";
 import AddScore from "../components/AddScore";
 import ManageScores from "../components/ManageScores";
-import ScoresByMachine from "../components/ScoresByMachine";
+import HighScores from "../components/ScoresByMachine";
 import ScoresByPlayer from "../components/ScoresByPlayer";
 import AllScores from "../components/AllScores";
 import { getFirebase } from "@/lib/firebase";
@@ -53,7 +53,7 @@ export default function IndexPage() {
       {view === "addPlayer" && <AddPlayer />}
       {view === "addScore" && <AddScore />}
       {view === "manageScores" && <ManageScores />}
-      {view === "scoresByMachine" && <ScoresByMachine />}
+      {view === "highScores" && <HighScores />}
       {view === "scoresByPlayer" && <ScoresByPlayer />}
       {view === "allScores" && <AllScores />}
     </div>

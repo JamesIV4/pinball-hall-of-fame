@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { collection, onSnapshot, doc, updateDoc, arrayRemove } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  doc,
+  updateDoc,
+  arrayRemove,
+} from "firebase/firestore";
 import { getFirebase } from "@/lib/firebase";
 import Toast from "./Toast";
 
@@ -42,7 +48,11 @@ export default function ManageScores() {
     };
   }, [db]);
 
-  async function deleteScore(playerId: string, machineName: string, score: number) {
+  async function deleteScore(
+    playerId: string,
+    machineName: string,
+    score: number
+  ) {
     try {
       await updateDoc(doc(db, "data/players/players", playerId), {
         [`scores.${machineName}`]: arrayRemove(score),
@@ -62,7 +72,9 @@ export default function ManageScores() {
         clear={() => setToast({ msg: "" })}
       />
       <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold mb-6 text-amber-400">Manage Scores</h2>
+        <h2 className="text-2xl font-bold mb-6 text-amber-400">
+          Manage Scores
+        </h2>
 
         {players.length === 0 ? (
           <p className="text-gray-400">No players found.</p>
@@ -109,17 +121,22 @@ export default function ManageScores() {
                           </div>
                           <div className="space-y-1">
                             {scores.map((s, i) => (
-                              <div key={i} className="flex items-center justify-between">
+                              <div
+                                key={i}
+                                className="flex items-center justify-between"
+                              >
                                 <div className="flex items-center">
                                   <span className="md:text-[23px] font-bold mr-3 w-6 ml-2">
                                     {i + 1}.
                                   </span>
-                                  <span className="font-dotmatrix text-[23px] md:text-[51px] text-amber-300">
+                                  <span className="font-dotmatrix text-[36px] md:text-[51px] text-amber-300">
                                     {s.toLocaleString()}
                                   </span>
                                 </div>
                                 <button
-                                  onClick={() => deleteScore(player.id, mName, s)}
+                                  onClick={() =>
+                                    deleteScore(player.id, mName, s)
+                                  }
                                   className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-semibold transition-colors"
                                 >
                                   Delete

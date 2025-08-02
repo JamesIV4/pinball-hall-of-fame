@@ -27,10 +27,8 @@ export default function ScoresByPlayer() {
       (snap) =>
         setMachines(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })))
     );
-    const unsubP = onSnapshot(
-      collection(db, "data/players/players"),
-      (snap) =>
-        setPlayers(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })))
+    const unsubP = onSnapshot(collection(db, "data/players/players"), (snap) =>
+      setPlayers(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })))
     );
     return () => {
       unsubM();
@@ -103,7 +101,7 @@ export default function ScoresByPlayer() {
                         <span className="md:text-[23px] font-bold mr-3 w-6 ml-2">
                           {i + 1}.
                         </span>
-                        <span className="font-dotmatrix text-[23px] md:text-[51px] text-amber-300">
+                        <span className="font-dotmatrix text-[36px] md:text-[51px] text-amber-300">
                           {s.toLocaleString()}
                         </span>
                       </div>
