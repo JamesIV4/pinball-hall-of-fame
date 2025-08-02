@@ -1,16 +1,21 @@
 import { useEffect, useState } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
 import { getFirebase } from "@/lib/firebase";
-
 interface Machine {
   id: string;
   name: string;
   image?: string;
 }
+
+interface ScoreEntry {
+  score: number;
+  timestamp?: string;
+}
+
 interface Player {
   id: string;
   name: string;
-  scores?: Record<string, number[]>;
+  scores?: Record<string, ScoreEntry[]>;
 }
 
 export default function AllScores() {
@@ -72,7 +77,7 @@ export default function AllScores() {
                   {machineNames.map((mName) => {
                     const mInfo = machines.find((m) => m.name === mName);
                     const scores = [...(player.scores?.[mName] || [])].sort(
-                      (a, b) => b - a
+                      (a, b) => b.score - a.score
                     );
                     return (
                       <div key={mName} className="bg-gray-600 p-3 rounded-lg">
@@ -95,7 +100,7 @@ export default function AllScores() {
                                 {i + 1}.
                               </span>
                               <span className="font-dotmatrix text-[36px] md:text-[51px] text-amber-300">
-                                {s.toLocaleString()}
+                                {s.score.toLocaleString()}
                               </span>
                             </div>
                           ))}

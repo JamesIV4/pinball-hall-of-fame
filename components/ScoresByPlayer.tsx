@@ -8,10 +8,15 @@ interface Machine {
   image?: string;
 }
 
+interface ScoreEntry {
+  score: number;
+  timestamp?: string;
+}
+
 interface Player {
   id: string;
   name: string;
-  scores?: Record<string, number[]>;
+  scores?: Record<string, ScoreEntry[]>;
 }
 
 export default function ScoresByPlayer() {
@@ -83,7 +88,7 @@ export default function ScoresByPlayer() {
             {machineNames.map((mName) => {
               const mInfo = machines.find((m) => m.name === mName);
               const scores = [...(player?.scores?.[mName] || [])].sort(
-                (a, b) => b - a
+                (a, b) => b.score - a.score
               );
               return (
                 <div key={mName} className="bg-gray-700 p-4 rounded-lg">
@@ -106,7 +111,7 @@ export default function ScoresByPlayer() {
                           {i + 1}.
                         </span>
                         <span className="font-dotmatrix text-[36px] md:text-[51px] text-amber-300">
-                          {s.toLocaleString()}
+                          {s.score.toLocaleString()}
                         </span>
                       </div>
                     ))}

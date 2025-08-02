@@ -1,17 +1,8 @@
 import { useEffect, useState } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
 import { getFirebase } from "@/lib/firebase";
-
-interface Machine {
-  id: string;
-  name: string;
-  image?: string;
-}
-interface Player {
-  id: string;
-  name: string;
-  scores?: Record<string, number[]>;
-}
+import { Machine, Player, ScoreEntry } from "./types";
+import ScoreWithTooltip from "./ScoreWithTooltip";
 
 export default function ScoresByMachine() {
   const { db } = getFirebase();
@@ -62,9 +53,9 @@ export default function ScoresByMachine() {
 
   let scores = allScores;
   if (bestOnly) {
-    const bestMap = new Map<string, number>();
+    const bestMap = new Map<string, ScoreEntry>();
     for (const { player, score } of allScores) {
-      if (!bestMap.has(player) || score > bestMap.get(player)!) {
+      if (!bestMap.has(player) || score.score > bestMap.get(player)!.score) {
         bestMap.set(player, score);
       }
     }
@@ -74,7 +65,7 @@ export default function ScoresByMachine() {
     }));
   }
 
-  scores.sort((a, b) => b.score - a.score);
+  scores.sort((a, b) => b.score.score - a.score.score);
 
   const mInfo = machines.find((m) => m.name === machine);
 
@@ -147,8 +138,8 @@ export default function ScoresByMachine() {
                   >
                     <td className="pl-6 font-bold">{i + 1}</td>
                     <td className="p-3">{s.player}</td>
-                    <td className="p-3 text-right font-dotmatrix text-[36px] md:text-[51px] text-amber-300">
-                      {s.score.toLocaleString()}
+                    <td className="p-3 text-right">
+                      <ScoreWithTooltip score={s.score} />
                     </td>
                   </tr>
                 ))}

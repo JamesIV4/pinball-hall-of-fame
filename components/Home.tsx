@@ -9,7 +9,7 @@ export default function Home({ totalMachines, totalPlayers }: Props) {
     <>
       <div className="flex justify-center my-6">
         <Image
-          src="/imgs/pinball-icon-512.png"
+          src="imgs/pinball-icon-512.png"
           alt="Pinball Icon"
           width={256}
           height={256}

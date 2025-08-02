@@ -18,6 +18,11 @@ interface Player {
   name: string;
 }
 
+export interface ScoreEntry {
+  score: number;
+  timestamp?: string;
+}
+
 export default function AddScore() {
   const { db } = getFirebase();
   const [machines, setMachines] = useState<Machine[]>([]);
@@ -67,7 +72,10 @@ export default function AddScore() {
     if (!machine || !player || !score) return;
     try {
       await updateDoc(doc(db, "data/players/players", player), {
-        [`scores.${machine}`]: arrayUnion(Number(score)),
+        [`scores.${machine}`]: arrayUnion({
+          score: Number(score),
+          timestamp: new Date().toISOString(),
+        }),
       });
       setToast({ msg: "Score added!" });
       setMachine("");

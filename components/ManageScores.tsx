@@ -8,17 +8,8 @@ import {
 } from "firebase/firestore";
 import { getFirebase } from "@/lib/firebase";
 import Toast from "./Toast";
-
-interface Machine {
-  id: string;
-  name: string;
-  image?: string;
-}
-interface Player {
-  id: string;
-  name: string;
-  scores?: Record<string, number[]>;
-}
+import { Machine, Player, ScoreEntry } from "./types";
+import ScoreWithTooltip from "./ScoreWithTooltip";
 
 export default function ManageScores() {
   const { db } = getFirebase();
@@ -55,7 +46,7 @@ export default function ManageScores() {
   async function deleteScore(
     playerId: string,
     machineName: string,
-    score: number
+    score: ScoreEntry
   ) {
     try {
       await updateDoc(doc(db, "data/players/players", playerId), {
@@ -107,7 +98,7 @@ export default function ManageScores() {
                     {machineNames.map((mName) => {
                       const mInfo = machines.find((m) => m.name === mName);
                       const scores = [...(player.scores?.[mName] || [])].sort(
-                        (a, b) => b - a
+                        (a, b) => b.score - a.score
                       );
                       return (
                         <div key={mName} className="bg-gray-600 p-3 rounded-lg">
@@ -133,9 +124,7 @@ export default function ManageScores() {
                                   <span className="md:text-[23px] font-bold mr-3 w-6 ml-2">
                                     {i + 1}.
                                   </span>
-                                  <span className="font-dotmatrix text-[36px] md:text-[51px] text-amber-300">
-                                    {s.toLocaleString()}
-                                  </span>
+                                  <ScoreWithTooltip score={s} />
                                 </div>
                                 <button
                                   onClick={() =>
