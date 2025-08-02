@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 
 type View =
   | "home"
@@ -15,8 +15,6 @@ interface Props {
 }
 
 export default function NavBar({ view, setView }: Props) {
-  const [menuOpen, setMenuOpen] = useState(false);
-
   const manageViews: View[] = ["addMachine", "addPlayer", "addScore"];
   const scoresViews: View[] = [
     "scoresByMachine",
@@ -26,15 +24,6 @@ export default function NavBar({ view, setView }: Props) {
   const manageActive = manageViews.includes(view);
   const scoresActive = scoresViews.includes(view);
 
-  const handleNav = (id: View) => {
-    setView(id);
-    // Close hamburger after click (only runs client-side)
-    if (typeof window !== "undefined" && window.innerWidth < 768) {
-      setMenuOpen(false);
-    }
-  };
-
-  /** helper for individual nav buttons */
   const btn = (
     id: View,
     icon: string,
@@ -42,7 +31,7 @@ export default function NavBar({ view, setView }: Props) {
     extraClass = ""
   ) => (
     <button
-      onClick={() => handleNav(id)}
+      onClick={() => setView(id)}
       className={`nav-button flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors hover:bg-amber-500 hover:text-black ${
         view === id ? "active" : ""
       } ${extraClass}`}
@@ -53,21 +42,7 @@ export default function NavBar({ view, setView }: Props) {
 
   return (
     <nav className="relative mb-8">
-      {/* Hamburger (mobile only) */}
-      <button
-        onClick={() => setMenuOpen((o) => !o)}
-        className="md:hidden text-amber-400 p-2 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-400"
-        aria-label="Toggle navigation"
-      >
-        <i className="fas fa-bars fa-lg" />
-      </button>
-
-      {/* Nav links */}
-      <ul
-        className={`${
-          menuOpen ? "flex" : "hidden"
-        } flex-col mt-4 gap-2 md:flex md:flex-row md:items-center md:justify-center md:mt-0`}
-      >
+      <ul className="flex flex-col mt-4 gap-2 md:flex md:flex-row md:items-center md:justify-center md:mt-0">
         {/* Home */}
         <li>{btn("home", "home", "Home")}</li>
 
