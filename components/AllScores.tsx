@@ -90,7 +90,7 @@ export default function AllScores() {
                               <span className="text-[23px] font-bold mr-3 w-6 ml-2">
                                 {i + 1}.
                               </span>
-                              <span className="font-dotmatrix text-[51px] text-amber-300">
+                              <span className="font-dotmatrix text-[23px] md:text-[51px] text-amber-300">
                                 {s.toLocaleString()}
                               </span>
                             </div>
