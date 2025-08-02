@@ -10,15 +10,12 @@ export default function Document() {
           name="apple-mobile-web-app-status-bar-style"
           content="black-translucent"
         />
-        <link
-          rel="icon"
-          sizes="192x192"
-          href="../public/imgs/pinball-icon-192.png"
-        />
+        <link rel="icon" href="imgs/pinball-icon-192.png" />
+        <link rel="icon" sizes="192x192" href="imgs/pinball-icon-192.png" />
         <link
           rel="apple-touch-icon"
           sizes="512x512"
-          href="../public/imgs/pinball-icon-512.png"
+          href="imgs/pinball-icon-512.png"
         />
         <title>Pinball Hall of Fame</title>
         <link
