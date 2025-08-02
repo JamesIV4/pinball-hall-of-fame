@@ -26,8 +26,14 @@ export default function Document() {
       </Head>
       <body className="min-h-full">
         <style jsx global>{`
-          :root {
-            --asset-prefix: "${assetPrefix}";
+          @font-face {
+            font-family: 'DotMatrix';
+            src: url('${assetPrefix}/fonts/pinside-dotmatrix-webfont.woff2') format('woff2'),
+                 url('${assetPrefix}/fonts/pinside-dotmatrix-webfont.woff') format('woff'), 
+                 url('${assetPrefix}/fonts/pinside-dotmatrix-webfont.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
           }
         `}</style>
         <Main />
