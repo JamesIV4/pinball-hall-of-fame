@@ -28,17 +28,19 @@ export default function NavBar({ view, setView }: Props) {
 
   const handleNav = (id: View) => {
     setView(id);
-    // Close the hamburger menu on small screens
-    if (window.innerWidth < 768) setMenuOpen(false);
+    // Close hamburger after click (only runs client-side)
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      setMenuOpen(false);
+    }
   };
 
-  /** basic button helper */
+  /** helper for individual nav buttons */
   const btn = (
     id: View,
     icon: string,
     label: string,
     extraClass = ""
-  ): JSX.Element => (
+  ) => (
     <button
       onClick={() => handleNav(id)}
       className={`nav-button flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors hover:bg-amber-500 hover:text-black ${
@@ -108,12 +110,7 @@ export default function NavBar({ view, setView }: Props) {
             </summary>
 
             <div className="flex flex-col gap-2 pl-4 mt-1 md:absolute md:pl-0 md:bg-gray-800 md:p-2 md:rounded-lg md:shadow-lg md:top-full md:left-0">
-              {btn(
-                "scoresByMachine",
-                "trophy",
-                "By Machine",
-                "text-left"
-              )}
+              {btn("scoresByMachine", "trophy", "By Machine", "text-left")}
               {btn(
                 "scoresByPlayer",
                 "user-astronaut",
