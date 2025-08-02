@@ -1,5 +1,9 @@
 import { Html, Head, Main, NextScript } from "next/document";
 
+const repo = "pinball-hall-of-fame";
+const isProd = process.env.NODE_ENV === "production";
+const assetPrefix = isProd ? `/${repo}` : "";
+
 export default function Document() {
   return (
     <Html lang="en" className="h-full">
@@ -21,6 +25,11 @@ export default function Document() {
         />
       </Head>
       <body className="min-h-full">
+        <style jsx global>{`
+          :root {
+            --asset-prefix: "${assetPrefix}";
+          }
+        `}</style>
         <Main />
         <NextScript />
       </body>
