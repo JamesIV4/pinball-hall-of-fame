@@ -1,0 +1,1 @@
+{...machines].sort((a, b) => a.name.localeCompare(b.name)).map((m) => (
