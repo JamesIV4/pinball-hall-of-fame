@@ -10,7 +10,7 @@ export default function HighScores() {
   const [machines, setMachines] = useState<Machine[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
   const [machine, setMachine] = useState(""); // selected machine
-  const [bestOnly, setBestOnly] = useState(false); // toggle “best per player”
+  const [bestOnly, setBestOnly] = useState(false); // toggle "best per player"
 
   /* ────────────────────────────────────────────
    * Load machines & players
@@ -19,7 +19,10 @@ export default function HighScores() {
     const unsubM = onSnapshot(
       collection(db, "data/machines/machines"),
       (snap) => {
-        setMachines(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })));
+        const machineList = snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) }));
+        // Sort machines alphabetically by name
+        machineList.sort((a, b) => a.name.localeCompare(b.name));
+        setMachines(machineList);
       }
     );
     const unsubP = onSnapshot(
@@ -109,7 +112,7 @@ export default function HighScores() {
             No scores recorded for this machine yet.
           </p>
         ) : (
-          <>
+          <>  
             <div className="flex items-center mb-4">
               {mInfo?.image && (
                 <img
