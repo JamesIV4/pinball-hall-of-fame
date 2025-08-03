@@ -27,7 +27,15 @@ export default function AddScore() {
     const unsubMachines = onSnapshot(
       collection(db, "data/machines/machines"),
       (snap) => {
-        setMachines(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })));
+        const machinesList = snap.docs.map((d) => ({
+          id: d.id,
+          ...(d.data() as any),
+        }));
+        // Sort machines alphabetically by name
+        const sortedMachines = machinesList.sort((a, b) =>
+          a.name.localeCompare(b.name)
+        );
+        setMachines(sortedMachines);
       }
     );
     const unsubPlayers = onSnapshot(
