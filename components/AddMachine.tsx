@@ -33,7 +33,7 @@ export default function AddMachine() {
       collection(db, "data/machines/machines"),
       (snap) => {
         const machineList = snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) }));
-        machineList.sort((a, b) => a.name.localeCompare(b.name));
+        machineList.sort((a, b) => a.name.localeCompare(b.name)); // Sorting alphabetically
         setMachines(machineList);
       }
     );
