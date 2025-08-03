@@ -32,7 +32,9 @@ export default function AddMachine() {
     const unsubM = onSnapshot(
       collection(db, "data/machines/machines"),
       (snap) => {
-        setMachines(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })));
+        const machineList = snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) }));
+        machineList.sort((a, b) => a.name.localeCompare(b.name));
+        setMachines(machineList);
       }
     );
     return () => unsubM();
