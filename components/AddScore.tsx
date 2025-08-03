@@ -17,6 +17,20 @@ export default function AddScore() {
   const [machine, setMachine] = useState("");
   const [player, setPlayer] = useState("");
   const [score, setScore] = useState("");
+
+  // Format number with commas for display
+  const formatScore = (value: string) => {
+    // Remove all non-digits
+    const digits = value.replace(/\D/g, "");
+    // Add commas
+    return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+  // Handle score input change with formatting
+  const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatScore(e.target.value);
+    setScore(formatted);
+  };
   const [toast, setToast] = useState<{
     msg: string;
     type?: "success" | "error";
@@ -66,9 +80,11 @@ export default function AddScore() {
     e.preventDefault();
     if (!machine || !player || !score) return;
     try {
+      // Strip everything but digits and convert to number
+      const numericScore = Number(score.replace(/\D/g, ""));
       await updateDoc(doc(db, "data/players/players", player), {
         [`scores.${machine}`]: arrayUnion({
-          score: Number(score),
+          score: numericScore,
           timestamp: new Date().toISOString(),
         }),
       });
@@ -129,10 +145,10 @@ export default function AddScore() {
           <div className="mb-4">
             <label className="block mb-2">Score</label>
             <input
-              type="number"
+              type="text"
               className="w-full p-2 rounded-lg bg-gray-700"
               value={score}
-              onChange={(e) => setScore(e.target.value)}
+              onChange={handleScoreChange}
               required
             />
           </div>
