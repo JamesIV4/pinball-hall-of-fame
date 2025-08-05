@@ -38,10 +38,11 @@ export default function IndexPage() {
   }, []);
 
   // Enhanced setView that updates browser history
-  const navigateToView = (newView: View) => {
-    if (newView !== view) {
-      window.history.pushState(null, '', `#${newView}`);
-      setView(newView);
+  const navigateToView = (newView: View | ((prevState: View) => View)) => {
+    const resolvedView = typeof newView === 'function' ? newView(view) : newView;
+    if (resolvedView !== view) {
+      window.history.pushState(null, '', `#${resolvedView}`);
+      setView(resolvedView);
     }
   };
 
