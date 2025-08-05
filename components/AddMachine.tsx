@@ -1,10 +1,11 @@
 import { FormEvent, useState } from "react";
-import { collection, addDoc, doc, updateDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc, getDocs, deleteDoc } from "firebase/firestore";
 import Toast from "./ui/Toast";
 import FormContainer from "./ui/FormContainer";
 import Input from "./ui/Input";
 import Button from "./ui/Button";
 import MachineInfo from "./ui/MachineInfo";
+import DeleteButton from "./ui/DeleteButton";
 import { useFirebaseData } from "../hooks/useFirebaseData";
 import { getFirebase } from "@/lib/firebase";
 
@@ -75,6 +76,37 @@ export default function AddMachine() {
     }
   }
 
+  async function deleteMachine(id: string, name: string) {
+    try {
+      await deleteDoc(doc(db, "data/machines/machines", id));
+      
+      const playersSnapshot = await getDocs(collection(db, "data/players/players"));
+      const updates: Promise<void>[] = [];
+
+      playersSnapshot.docs.forEach((playerDoc) => {
+        const playerData = playerDoc.data();
+        if (playerData.scores && playerData.scores[name]) {
+          const newScores = { ...playerData.scores };
+          delete newScores[name];
+          updates.push(
+            updateDoc(doc(db, "data/players/players", playerDoc.id), {
+              scores: newScores,
+            }),
+          );
+        }
+      });
+
+      if (updates.length > 0) {
+        await Promise.all(updates);
+      }
+
+      setToast({ msg: "Machine deleted!" });
+    } catch (err) {
+      console.error(err);
+      setToast({ msg: "Error deleting machine", type: "error" });
+    }
+  }
+
   return (
     <>
       <Toast message={toast.msg} type={toast.type} clear={() => setToast({ msg: "" })} />
@@ -133,6 +165,12 @@ export default function AddMachine() {
                   >
                     Edit
                   </Button>
+                  <DeleteButton
+                    onDelete={() => deleteMachine(m.id, m.name)}
+                    itemName={m.name}
+                    itemType="machine"
+                    className="flex-shrink-0"
+                  />
                 </div>
               )}
             </div>

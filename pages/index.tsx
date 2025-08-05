@@ -8,6 +8,7 @@ import ManageScores from "../components/ManageScores";
 import HighScores from "../components/HighScores";
 import ScoresByPlayer from "../components/ScoresByPlayer";
 import AllScores from "../components/AllScores";
+import ManageDatabase from "../components/ManageDatabase";
 import { getFirebase } from "@/lib/firebase";
 import { View } from "../types/types";
 import NavBar from "@/components/ui/NavBar";
@@ -34,6 +35,7 @@ export default function IndexPage() {
           "highScoresWeekly",
           "scoresByPlayer",
           "allScores",
+          "manageDatabase",
         ].includes(hash)
       ) {
         setView(hash);
@@ -87,6 +89,7 @@ export default function IndexPage() {
       {view === "highScoresWeekly" && <HighScores initialViewMode="weekly" />}
       {view === "scoresByPlayer" && <ScoresByPlayer />}
       {view === "allScores" && <AllScores />}
+      {view === "manageDatabase" && <ManageDatabase />}
     </div>
   );
 }

@@ -3,9 +3,10 @@ import Toast from "./ui/Toast";
 import FormContainer from "./ui/FormContainer";
 import Input from "./ui/Input";
 import Button from "./ui/Button";
+import DeleteButton from "./ui/DeleteButton";
 import { useFirebaseData } from "../hooks/useFirebaseData";
 import { getFirebase } from "@/lib/firebase";
-import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, updateDoc, deleteDoc } from "firebase/firestore";
 
 export default function AddPlayer() {
   const { db } = getFirebase();
@@ -41,6 +42,16 @@ export default function AddPlayer() {
     } catch (err) {
       console.error(err);
       setToast({ msg: "Error updating player", type: "error" });
+    }
+  }
+
+  async function deletePlayer(id: string) {
+    try {
+      await deleteDoc(doc(db, "data/players/players", id));
+      setToast({ msg: "Player deleted!" });
+    } catch (err) {
+      console.error(err);
+      setToast({ msg: "Error deleting player", type: "error" });
     }
   }
 
@@ -87,6 +98,11 @@ export default function AddPlayer() {
                   >
                     Edit
                   </Button>
+                  <DeleteButton
+                    onDelete={() => deletePlayer(p.id)}
+                    itemName={p.name}
+                    itemType="player"
+                  />
                 </>
               )}
             </div>

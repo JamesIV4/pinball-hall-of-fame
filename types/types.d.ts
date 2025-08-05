@@ -7,7 +7,8 @@ export type View =
   | "highScores"
   | "highScoresWeekly"
   | "scoresByPlayer"
-  | "allScores";
+  | "allScores"
+  | "manageDatabase";
 
 export interface ScoreEntry {
   score: number;
