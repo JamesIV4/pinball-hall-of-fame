@@ -5,6 +5,7 @@ export type View =
   | "addScore"
   | "manageScores"
   | "highScores"
+  | "highScoresWeekly"
   | "scoresByPlayer"
   | "allScores";
 

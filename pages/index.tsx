@@ -18,6 +18,33 @@ export default function IndexPage() {
   const [machineCount, setMachineCount] = useState(0);
   const [playerCount, setPlayerCount] = useState(0);
 
+  // Initialize view from URL on mount
+  useEffect(() => {
+    const handlePopState = () => {
+      const hash = window.location.hash.slice(1) as View;
+      if (hash && ['home', 'addMachine', 'addPlayer', 'addScore', 'manageScores', 'highScores', 'highScoresWeekly', 'scoresByPlayer', 'allScores'].includes(hash)) {
+        setView(hash);
+      } else {
+        setView('home');
+      }
+    };
+
+    // Set initial view from URL
+    handlePopState();
+
+    // Listen for browser back/forward
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Enhanced setView that updates browser history
+  const navigateToView = (newView: View) => {
+    if (newView !== view) {
+      window.history.pushState(null, '', `#${newView}`);
+      setView(newView);
+    }
+  };
+
   // counts realtime
   useEffect(() => {
     const unsubM = onSnapshot(
@@ -44,16 +71,17 @@ export default function IndexPage() {
         </p>
       </header>
 
-      <NavBar view={view} setView={setView} />
+      <NavBar view={view} setView={navigateToView} />
 
       {view === "home" && (
-        <Home totalMachines={machineCount} totalPlayers={playerCount} setView={setView} />
+        <Home totalMachines={machineCount} totalPlayers={playerCount} setView={navigateToView} />
       )}
       {view === "addMachine" && <AddMachine />}
       {view === "addPlayer" && <AddPlayer />}
       {view === "addScore" && <AddScore />}
       {view === "manageScores" && <ManageScores />}
       {view === "highScores" && <HighScores />}
+      {view === "highScoresWeekly" && <HighScores initialViewMode="weekly" />}
       {view === "scoresByPlayer" && <ScoresByPlayer />}
       {view === "allScores" && <AllScores />}
     </div>

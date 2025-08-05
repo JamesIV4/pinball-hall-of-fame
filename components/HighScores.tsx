@@ -34,14 +34,18 @@ function formatWeekRange(weekStart: Date): string {
   })}`;
 }
 
-export default function HighScores() {
+interface HighScoresProps {
+  initialViewMode?: "allTime" | "weekly";
+}
+
+export default function HighScores({ initialViewMode = "allTime" }: HighScoresProps) {
   const { db } = getFirebase();
 
   const [machines, setMachines] = useState<Machine[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
   const [machine, setMachine] = useState(""); // selected machine
   const [bestOnly, setBestOnly] = useState(false); // toggle "best per player"
-  const [viewMode, setViewMode] = useState<"allTime" | "weekly">("allTime");
+  const [viewMode, setViewMode] = useState<"allTime" | "weekly">(initialViewMode);
   const [selectedWeek, setSelectedWeek] = useState(() =>
     getWeekStart(new Date())
   );
