@@ -157,7 +157,7 @@ export default function HighScores() {
       {viewMode === 'weekly' && (
         <div className="flex items-center justify-center gap-4 mb-4">
           <button
-            className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-lg text-gray-200"
+            className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-lg text-gray-200 select-none"
             onClick={() => {
               const prevWeek = new Date(selectedWeek);
               prevWeek.setDate(prevWeek.getDate() - 7);
@@ -170,7 +170,7 @@ export default function HighScores() {
             {formatWeekRange(selectedWeek)}
           </span>
           <button
-            className={`px-3 py-1 rounded-lg ${
+            className={`px-3 py-1 rounded-lg select-none ${
               selectedWeek >= getWeekStart(new Date())
                 ? 'bg-gray-600 text-gray-500 cursor-not-allowed'
                 : 'bg-gray-700 hover:bg-gray-600 text-gray-200'
