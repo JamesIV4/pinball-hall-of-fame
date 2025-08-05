@@ -144,10 +144,10 @@ export default function Home({ totalMachines, totalPlayers, setView }: Props) {
       </div>
 
       <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-lg shadow-lg text-center border border-gray-700">
-        <h2 className="text-3xl font-bold mb-2 text-amber-400 bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">
-          Pinball Hall of Fame
+        <h2 className="text-2xl font-bold mb-2 text-amber-400">
+          Highlights at a Glance
         </h2>
-        <p className="text-gray-300 mb-6">Track your legendary scores and dominate the silver ball!</p>
+        <p className="text-gray-300 mb-6">See what's happening in your pinball universe right now</p>
 
         {/* Main Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
