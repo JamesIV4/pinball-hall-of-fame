@@ -5,10 +5,11 @@ import Toast from "./ui/Toast";
 import FormContainer from "./ui/FormContainer";
 import PlayerScoreSection from "./ui/PlayerScoreSection";
 import Button from "./ui/Button";
+import PasswordModal from "./ui/PasswordModal";
 import { ScoreEntry } from "../types/types";
 import { useFirebaseData } from "../hooks/useFirebaseData";
 import { formatScore } from "../utils/scoreUtils";
-import { verifyPassword } from "../utils/passwordUtils";
+
 
 export default function ManageScores() {
   const { db } = getFirebase();
@@ -30,8 +31,6 @@ export default function ManageScores() {
     machineName: string;
     score: ScoreEntry;
   } | null>(null);
-  const [password, setPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
 
   const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatScore(e.target.value);
@@ -50,12 +49,6 @@ export default function ManageScores() {
 
   async function confirmDeleteScore() {
     if (!deleteModal) return;
-    
-    const isValid = await verifyPassword(password);
-    if (!isValid) {
-      setPasswordError("Incorrect password");
-      return;
-    }
 
     try {
       const player = players.find(p => p.id === deleteModal.playerId);
@@ -74,18 +67,10 @@ export default function ManageScores() {
       }
       setToast({ msg: "Score deleted!" });
       setDeleteModal(null);
-      setPassword("");
-      setPasswordError("");
     } catch (err) {
       console.error(err);
       setToast({ msg: "Error deleting score", type: "error" });
     }
-  }
-
-  function cancelDelete() {
-    setDeleteModal(null);
-    setPassword("");
-    setPasswordError("");
   }
 
   function startEdit(playerId: string, machineName: string, score: ScoreEntry) {
@@ -202,31 +187,13 @@ export default function ManageScores() {
         </div>
       )}
 
-      {/* Delete Score Password Modal */}
-      {deleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
-            <h3 className="text-xl font-bold text-amber-400 mb-4">Enter Password to Delete Score</h3>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-2 rounded-lg bg-gray-700 text-white mb-2"
-              placeholder="Password"
-              onKeyDown={(e) => e.key === "Enter" && confirmDeleteScore()}
-            />
-            {passwordError && <p className="text-red-400 text-sm mb-4">{passwordError}</p>}
-            <div className="flex gap-2">
-              <Button variant="danger" className="flex-1" onClick={confirmDeleteScore}>
-                Delete Score
-              </Button>
-              <Button variant="cancel" className="flex-1" onClick={cancelDelete}>
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <PasswordModal
+        isOpen={!!deleteModal}
+        title="Enter Password to Delete Score"
+        onConfirm={confirmDeleteScore}
+        onCancel={() => setDeleteModal(null)}
+        confirmText="Delete Score"
+      />
     </>
   );
 }

@@ -8,7 +8,7 @@ import { useFirebaseData } from "../hooks/useFirebaseData";
 import { getFirebase } from "@/lib/firebase";
 import { addDoc, collection, doc, updateDoc, deleteDoc } from "firebase/firestore";
 
-export default function AddPlayer() {
+export default function ManagePlayers() {
   const { db } = getFirebase();
   const { players } = useFirebaseData();
   const [name, setName] = useState("");
@@ -98,11 +98,7 @@ export default function AddPlayer() {
                   >
                     Edit
                   </Button>
-                  <DeleteButton
-                    onDelete={() => deletePlayer(p.id)}
-                    itemName={p.name}
-                    itemType="player"
-                  />
+                  <DeleteButton onDelete={() => deletePlayer(p.id)} itemName={p.name} itemType="player" />
                 </>
               )}
             </div>

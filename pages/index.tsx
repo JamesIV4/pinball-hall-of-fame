@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
 import Home from "../components/Home";
-import AddMachine from "../components/AddMachine";
-import AddPlayer from "../components/AddPlayer";
 import AddScore from "../components/AddScore";
 import ManageScores from "../components/ManageScores";
 import HighScores from "../components/HighScores";
@@ -12,6 +10,8 @@ import ManageDatabase from "../components/ManageDatabase";
 import { getFirebase } from "@/lib/firebase";
 import { View } from "../types/types";
 import NavBar from "@/components/ui/NavBar";
+import ManagePlayers from "@/components/ManagePlayers";
+import ManageMachines from "../components/ManageMachines";
 
 export default function IndexPage() {
   const [view, setView] = useState<View>("home");
@@ -27,8 +27,8 @@ export default function IndexPage() {
         hash &&
         [
           "home",
-          "addMachine",
-          "addPlayer",
+          "manageMachines",
+          "managePlayers",
           "addScore",
           "manageScores",
           "highScores",
@@ -81,8 +81,8 @@ export default function IndexPage() {
       <NavBar view={view} setView={navigateToView} />
 
       {view === "home" && <Home totalMachines={machineCount} totalPlayers={playerCount} setView={navigateToView} />}
-      {view === "addMachine" && <AddMachine />}
-      {view === "addPlayer" && <AddPlayer />}
+      {view === "manageMachines" && <ManageMachines />}
+      {view === "managePlayers" && <ManagePlayers />}
       {view === "addScore" && <AddScore />}
       {view === "manageScores" && <ManageScores />}
       {view === "highScores" && <HighScores />}

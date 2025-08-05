@@ -1,7 +1,7 @@
 export type View =
   | "home"
-  | "addMachine"
-  | "addPlayer"
+  | "manageMachines"
+  | "managePlayers"
   | "addScore"
   | "manageScores"
   | "highScores"

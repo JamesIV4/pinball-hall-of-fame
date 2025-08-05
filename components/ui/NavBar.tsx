@@ -43,8 +43,8 @@ export default function NavBar({ view, setView }: Props) {
     </button>
   );
 
-  const manageViews: View[] = ["addMachine", "addPlayer", "addScore", "manageScores", "manageDatabase"];
-  const scoresViews: View[] = ["highScores", "scoresByPlayer", "allScores"];
+  const manageViews: View[] = ["manageScores", "managePlayers", "manageMachines", "manageDatabase"];
+  const scoresViews: View[] = ["addScore", "highScores", "scoresByPlayer", "allScores"];
 
   // Shared overlay panel classes — note the new max-width
   const panelClasses =
@@ -72,10 +72,9 @@ export default function NavBar({ view, setView }: Props) {
             </summary>
 
             <div className={panelClasses}>
-              {btn("addMachine", "gamepad", "Add Machine", manageRef, "text-left")}
-              {btn("addPlayer", "user-plus", "Add Player", manageRef, "text-left")}
-              {btn("addScore", "star", "Add Score", manageRef, "text-left")}
               {btn("manageScores", "trash", "Manage Scores", manageRef, "text-left")}
+              {btn("managePlayers", "user-plus", "Manage Players", manageRef, "text-left")}
+              {btn("manageMachines", "gamepad", "Manage Machines", manageRef, "text-left")}
               {btn("manageDatabase", "database", "Manage Database", manageRef, "text-left")}
             </div>
           </details>
@@ -97,6 +96,7 @@ export default function NavBar({ view, setView }: Props) {
             </summary>
 
             <div className={panelClasses}>
+              {btn("addScore", "star", "Add Score", scoresRef, "text-left")}
               {btn("highScores", "trophy", "High Scores", scoresRef, "text-left")}
               {btn("scoresByPlayer", "user-astronaut", "By Player", scoresRef, "text-left")}
               {btn("allScores", "list", "All Scores", scoresRef, "text-left")}

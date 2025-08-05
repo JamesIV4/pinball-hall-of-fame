@@ -9,7 +9,7 @@ import DeleteButton from "./ui/DeleteButton";
 import { useFirebaseData } from "../hooks/useFirebaseData";
 import { getFirebase } from "@/lib/firebase";
 
-export default function AddMachine() {
+export default function ManageMachines() {
   const { db } = getFirebase();
   const { machines } = useFirebaseData();
   const [name, setName] = useState("");
@@ -79,7 +79,7 @@ export default function AddMachine() {
   async function deleteMachine(id: string, name: string) {
     try {
       await deleteDoc(doc(db, "data/machines/machines", id));
-      
+
       const playersSnapshot = await getDocs(collection(db, "data/players/players"));
       const updates: Promise<void>[] = [];
 

@@ -255,7 +255,7 @@ export default function Home({ totalMachines, totalPlayers, setView }: Props) {
             🏆 High Scores
           </button>
           <button
-            onClick={() => setView("addPlayer")}
+            onClick={() => setView("managePlayers")}
             className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold rounded-lg hover:from-green-500 hover:to-green-600 transition-all duration-200 transform hover:scale-105"
           >
             👤 Add Player
