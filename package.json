@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "start": "next dev -p 3000",
-    "build": "next build",
     "tsc": "tsc --noEmit"
   },
   "dependencies": {
