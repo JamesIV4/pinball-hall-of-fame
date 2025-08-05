@@ -1,38 +1,22 @@
-import { FormEvent, useState, useEffect } from "react";
+import { FormEvent, useState } from "react";
 import Toast from "./Toast";
+import FormContainer from "./ui/FormContainer";
+import Input from "./ui/Input";
+import Button from "./ui/Button";
+import { useFirebaseData } from "../hooks/useFirebaseData";
 import { getFirebase } from "@/lib/firebase";
-import { addDoc, collection, onSnapshot, doc, updateDoc } from "firebase/firestore";
-
-interface ScoreEntry {
-  score: number;
-  timestamp?: string;
-}
-
-interface Player {
-  id: string;
-  name: string;
-  scores?: Record<string, (number | ScoreEntry)[]>;
-}
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 
 export default function AddPlayer() {
   const { db } = getFirebase();
+  const { players } = useFirebaseData();
   const [name, setName] = useState("");
-  const [players, setPlayers] = useState<Player[]>([]);
   const [editingId, setEditingId] = useState("");
   const [editName, setEditName] = useState("");
   const [toast, setToast] = useState<{
     msg: string;
     type?: "success" | "error";
   }>({ msg: "" });
-
-  useEffect(() => {
-    const unsubP = onSnapshot(collection(db, "data/players/players"), (snap) => {
-      setPlayers(
-        snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })).sort((a, b) => a.name.localeCompare(b.name)),
-      );
-    });
-    return () => unsubP();
-  }, [db]);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -63,26 +47,21 @@ export default function AddPlayer() {
   return (
     <>
       <Toast message={toast.msg} type={toast.type} clear={() => setToast({ msg: "" })} />
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-lg mx-auto">
-        <h2 className="text-2xl font-bold mb-4 text-amber-400">Add a New Player</h2>
+      <FormContainer title="Add a New Player" className="max-w-lg mx-auto">
         <form onSubmit={onSubmit}>
-          <div className="mb-4">
-            <label className="block mb-2">Player Name</label>
-            <input
-              className="w-full p-2 rounded-lg bg-gray-700"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </div>
-          <button className="w-full bg-amber-500 text-black font-bold py-2 rounded-lg hover:bg-amber-600">
+          <Input
+            label="Player Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+          <Button type="submit" size="lg">
             Add Player
-          </button>
+          </Button>
         </form>
-      </div>
+      </FormContainer>
 
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-lg mx-auto mt-6">
-        <h2 className="text-2xl font-bold mb-4 text-amber-400">Edit Players</h2>
+      <FormContainer title="Edit Players" className="max-w-lg mx-auto mt-6">
         <div className="space-y-2">
           {players.map((p) => (
             <div key={p.id} className="flex items-center gap-2 bg-gray-700 p-2 rounded">
@@ -93,37 +72,32 @@ export default function AddPlayer() {
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
                   />
-                  <button
-                    className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700"
-                    onClick={() => saveEdit(p.id)}
-                  >
+                  <Button variant="success" size="sm" onClick={() => saveEdit(p.id)}>
                     Save
-                  </button>
-                  <button
-                    className="px-3 py-1 bg-gray-600 text-white rounded text-sm hover:bg-gray-700"
-                    onClick={() => setEditingId("")}
-                  >
+                  </Button>
+                  <Button variant="cancel" size="sm" onClick={() => setEditingId("")}>
                     Cancel
-                  </button>
+                  </Button>
                 </>
               ) : (
                 <>
                   <span className="flex-1">{p.name}</span>
-                  <button
-                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  <Button
+                    variant="edit"
+                    size="sm"
                     onClick={() => {
                       setEditingId(p.id);
                       setEditName(p.name);
                     }}
                   >
                     Edit
-                  </button>
+                  </Button>
                 </>
               )}
             </div>
           ))}
         </div>
-      </div>
+      </FormContainer>
     </>
   );
 }

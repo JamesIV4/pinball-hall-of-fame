@@ -1,60 +1,26 @@
 import { FormEvent, useEffect, useState } from "react";
-import { collection, doc, onSnapshot, updateDoc, arrayUnion } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 import Toast from "./Toast";
+import FormContainer from "./ui/FormContainer";
+import Input from "./ui/Input";
+import Select from "./ui/Select";
+import Button from "./ui/Button";
+import { useFirebaseData } from "../hooks/useFirebaseData";
+import { handleScoreChange } from "../utils/scoreUtils";
 import { getFirebase } from "@/lib/firebase";
-import { Machine, Player } from "../types/types";
 
 export default function AddScore() {
   const { db } = getFirebase();
-  const [machines, setMachines] = useState<Machine[]>([]);
-  const [players, setPlayers] = useState<Player[]>([]);
+  const { machines, players } = useFirebaseData();
   const [machine, setMachine] = useState("");
   const [player, setPlayer] = useState("");
   const [score, setScore] = useState("");
-
-  // Format number with commas for display
-  const formatScore = (value: string) => {
-    // Remove all non-digits
-    const digits = value.replace(/\D/g, "");
-    // Add commas
-    return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  };
-
-  // Handle score input change with formatting
-  const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatScore(e.target.value);
-    setScore(formatted);
-  };
   const [toast, setToast] = useState<{
     msg: string;
     type?: "success" | "error";
   }>({ msg: "" });
 
-  // realtime listeners
   useEffect(() => {
-    const unsubMachines = onSnapshot(collection(db, "data/machines/machines"), (snap) => {
-      const machinesList = snap.docs.map((d) => ({
-        id: d.id,
-        ...(d.data() as any),
-      }));
-      // Sort machines alphabetically by name
-      const sortedMachines = machinesList.sort((a, b) => a.name.localeCompare(b.name));
-      setMachines(sortedMachines);
-    });
-    const unsubPlayers = onSnapshot(collection(db, "data/players/players"), (snap) => {
-      setPlayers(
-        snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })).sort((a, b) => a.name.localeCompare(b.name)),
-      );
-    });
-    return () => {
-      unsubMachines();
-      unsubPlayers();
-    };
-  }, [db]);
-
-  useEffect(() => {
-    // If nothing is selected yet and we have at least one machine,
-    // pre-select the first one.
     if (!machine && machines.length > 0) {
       setMachine(machines[0].name);
     }
@@ -64,7 +30,6 @@ export default function AddScore() {
     e.preventDefault();
     if (!machine || !player || !score) return;
     try {
-      // Strip everything but digits and convert to number
       const numericScore = Number(score.replace(/\D/g, ""));
       await updateDoc(doc(db, "data/players/players", player), {
         [`scores.${machine}`]: arrayUnion({
@@ -85,56 +50,36 @@ export default function AddScore() {
   return (
     <>
       <Toast message={toast.msg} type={toast.type} clear={() => setToast({ msg: "" })} />
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-lg mx-auto">
-        <h2 className="text-2xl font-bold mb-4 text-amber-400">Add a High Score</h2>
+      <FormContainer title="Add a High Score" className="max-w-lg mx-auto">
         <form onSubmit={onSubmit}>
-          <div className="mb-4">
-            <label className="block mb-2">Machine</label>
-            <select
-              className="w-full p-2 rounded-lg bg-gray-700"
-              value={machine}
-              onChange={(e) => setMachine(e.target.value)}
-              required
-            >
-              <option value="">-- select --</option>
-              {machines.map((m) => (
-                <option key={m.id} value={m.name}>
-                  {m.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="mb-4">
-            <label className="block mb-2">Player</label>
-            <select
-              className="w-full p-2 rounded-lg bg-gray-700"
-              value={player}
-              onChange={(e) => setPlayer(e.target.value)}
-              required
-            >
-              <option value="">-- select --</option>
-              {players.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="mb-4">
-            <label className="block mb-2">Score</label>
-            <input
-              type="text"
-              className="w-full p-2 rounded-lg bg-gray-700"
-              value={score}
-              onChange={handleScoreChange}
-              required
-            />
-          </div>
-          <button className="w-full bg-amber-500 text-black font-bold py-2 rounded-lg hover:bg-amber-600">
+          <Select
+            label="Machine"
+            value={machine}
+            onChange={(e) => setMachine(e.target.value)}
+            options={machines.map((m) => ({ value: m.name, label: m.name }))}
+            placeholder="-- select --"
+            required
+          />
+          <Select
+            label="Player"
+            value={player}
+            onChange={(e) => setPlayer(e.target.value)}
+            options={players.map((p) => ({ value: p.id, label: p.name }))}
+            placeholder="-- select --"
+            required
+          />
+          <Input
+            label="Score"
+            type="text"
+            value={score}
+            onChange={(e) => handleScoreChange(e, setScore)}
+            required
+          />
+          <Button type="submit" size="lg">
             Add Score
-          </button>
+          </Button>
         </form>
-      </div>
+      </FormContainer>
     </>
   );
 }

@@ -1,58 +1,32 @@
 import { useEffect, useState } from "react";
-import { collection, onSnapshot } from "firebase/firestore";
-import { getFirebase } from "@/lib/firebase";
-import { Machine, Player, ScoreEntry } from "../types/types";
-import ScoreWithTooltip from "./ScoreWithTooltip";
+import FormContainer from "./ui/FormContainer";
+import Select from "./ui/Select";
+import MachineInfo from "./ui/MachineInfo";
+import ScoreList from "./ui/ScoreList";
+import { useFirebaseData } from "../hooks/useFirebaseData";
 
 export default function ScoresByPlayer() {
-  const { db } = getFirebase();
-  const [machines, setMachines] = useState<Machine[]>([]);
-  const [players, setPlayers] = useState<Player[]>([]);
+  const { machines, players } = useFirebaseData();
   const [playerId, setPlayerId] = useState("");
 
-  // Fetch machines and players in real time
-  useEffect(() => {
-    const unsubM = onSnapshot(collection(db, "data/machines/machines"), (snap) =>
-      setMachines(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) }))),
-    );
-    const unsubP = onSnapshot(collection(db, "data/players/players"), (snap) =>
-      setPlayers(
-        snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })).sort((a, b) => a.name.localeCompare(b.name)),
-      ),
-    );
-    return () => {
-      unsubM();
-      unsubP();
-    };
-  }, [db]);
-
-  // --- NEW: default to the first player once the list is available ---
   useEffect(() => {
     if (!playerId && players.length) {
       setPlayerId(players[0].id);
     }
   }, [players, playerId]);
-  // ------------------------------------------------------------------
 
   const player = players.find((p) => p.id === playerId);
   const machineNames = Object.keys(player?.scores || {}).sort();
 
   return (
-    <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-4 text-amber-400">High Scores by Player</h2>
-
-      <select
-        className="w-full p-2 rounded-lg bg-gray-700 mb-6"
+    <FormContainer title="High Scores by Player">
+      <Select
         value={playerId}
         onChange={(e) => setPlayerId(e.target.value)}
-      >
-        <option value="">-- select --</option>
-        {players.map((p) => (
-          <option key={p.id} value={p.id}>
-            {p.name}
-          </option>
-        ))}
-      </select>
+        options={players.map((p) => ({ value: p.id, label: p.name }))}
+        placeholder="-- select --"
+        className="mb-6"
+      />
 
       {playerId &&
         (!machineNames.length ? (
@@ -61,43 +35,23 @@ export default function ScoresByPlayer() {
           <div className="space-y-6">
             <h3 className="text-xl font-bold text-amber-300">Scores for {player?.name}</h3>
             {machineNames.map((mName) => {
-              const mInfo = machines.find((m) => m.name === mName);
+              const machine = machines.find((m) => m.name === mName);
               const scores = [...(player?.scores?.[mName] || [])].sort((a, b) => b.score - a.score);
               return (
                 <div key={mName} className="bg-gray-700 p-4 rounded-lg">
-                  <div className="flex items-center mb-3">
-                    {mInfo?.image && (
-                      <img src={mInfo.image} alt={mName} className="w-16 h-20 object-cover rounded-md mr-4" />
+                  <div className="mb-3">
+                    {machine ? (
+                      <MachineInfo machine={machine} imageSize="md" />
+                    ) : (
+                      <h4 className="text-lg font-semibold text-amber-200">{mName}</h4>
                     )}
-                    <h4 className="text-lg font-semibold text-amber-200">{mName}</h4>
                   </div>
-                  <div className="space-y-1">
-                    {scores.map((s, i) => (
-                      <div key={i} className="flex items-center">
-                        <span className="md:text-[23px] font-bold mr-3 w-6 ml-2">{i + 1}.</span>
-                        <ScoreWithTooltip score={s} />
-                        {s.timestamp && (
-                          <>
-                            <div className="flex-1 h-px bg-gray-600 mx-3"></div>
-                            <span className="text-gray-400 text-sm whitespace-nowrap">
-                              {new Date(s.timestamp).toLocaleString(undefined, {
-                                year: "numeric",
-                                month: "numeric",
-                                day: "numeric",
-                                hour: "numeric",
-                                minute: "2-digit",
-                              })}
-                            </span>
-                          </>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                  <ScoreList scores={scores} />
                 </div>
               );
             })}
           </div>
         ))}
-    </div>
+    </FormContainer>
   );
 }

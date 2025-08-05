@@ -1,19 +1,18 @@
-import { FormEvent, useState, useEffect } from "react";
-import { collection, addDoc, onSnapshot, doc, updateDoc, getDocs } from "firebase/firestore";
+import { FormEvent, useState } from "react";
+import { collection, addDoc, doc, updateDoc, getDocs } from "firebase/firestore";
 import Toast from "./Toast";
+import FormContainer from "./ui/FormContainer";
+import Input from "./ui/Input";
+import Button from "./ui/Button";
+import MachineInfo from "./ui/MachineInfo";
+import { useFirebaseData } from "../hooks/useFirebaseData";
 import { getFirebase } from "@/lib/firebase";
-
-interface Machine {
-  id: string;
-  name: string;
-  image?: string;
-}
 
 export default function AddMachine() {
   const { db } = getFirebase();
+  const { machines } = useFirebaseData();
   const [name, setName] = useState("");
   const [image, setImage] = useState("");
-  const [machines, setMachines] = useState<Machine[]>([]);
   const [editingId, setEditingId] = useState("");
   const [editName, setEditName] = useState("");
   const [editImage, setEditImage] = useState("");
@@ -21,18 +20,6 @@ export default function AddMachine() {
     msg: string;
     type?: "success" | "error";
   }>({ msg: "" });
-
-  useEffect(() => {
-    const unsubM = onSnapshot(collection(db, "data/machines/machines"), (snap) => {
-      const machineList = snap.docs.map((d) => ({
-        id: d.id,
-        ...(d.data() as any),
-      }));
-      machineList.sort((a, b) => a.name.localeCompare(b.name)); // Sorting alphabetically
-      setMachines(machineList);
-    });
-    return () => unsubM();
-  }, [db]);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -92,41 +79,30 @@ export default function AddMachine() {
     <>
       <Toast message={toast.msg} type={toast.type} clear={() => setToast({ msg: "" })} />
 
-      {/* Add Machine Form */}
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-lg mx-auto">
-        <h2 className="text-2xl font-bold mb-4 text-amber-400">Add a New Pinball Machine</h2>
+      <FormContainer title="Add a New Pinball Machine" className="max-w-lg mx-auto">
         <form onSubmit={onSubmit}>
-          <div className="mb-4">
-            <label className="block mb-2">Machine Name</label>
-            <input
-              className="w-full p-2 rounded-lg bg-gray-700"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-2">Image URL (optional)</label>
-            <input
-              className="w-full p-2 rounded-lg bg-gray-700"
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-            />
-          </div>
-          <button className="w-full bg-amber-500 text-black font-bold py-2 rounded-lg hover:bg-amber-600">
+          <Input
+            label="Machine Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+          <Input
+            label="Image URL (optional)"
+            value={image}
+            onChange={(e) => setImage(e.target.value)}
+          />
+          <Button type="submit" size="lg">
             Add Machine
-          </button>
+          </Button>
         </form>
-      </div>
+      </FormContainer>
 
-      {/* Edit Machines */}
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-lg mx-auto mt-6">
-        <h2 className="text-2xl font-bold mb-4 text-amber-400">Edit Machines</h2>
+      <FormContainer title="Edit Machines" className="max-w-lg mx-auto mt-6">
         <div className="space-y-3">
           {machines.map((m) => (
             <div key={m.id} className="bg-gray-700 p-3 rounded">
               {editingId === m.id ? (
-                /* Edit mode */
                 <div className="space-y-2">
                   <input
                     className="w-full p-2 rounded bg-gray-600"
@@ -141,39 +117,23 @@ export default function AddMachine() {
                     onChange={(e) => setEditImage(e.target.value)}
                   />
                   <div className="flex gap-2">
-                    <button
-                      className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700"
-                      onClick={() => saveEdit(m.id)}
-                    >
+                    <Button variant="success" size="sm" onClick={() => saveEdit(m.id)}>
                       Save
-                    </button>
-                    <button
-                      className="px-3 py-1 bg-gray-600 text-white rounded text-sm hover:bg-gray-700"
-                      onClick={() => setEditingId("")}
-                    >
+                    </Button>
+                    <Button variant="cancel" size="sm" onClick={() => setEditingId("")}>
                       Cancel
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ) : (
-                /* View mode */
                 <div className="flex items-center gap-3">
-                  {m.image && <img src={m.image} alt={m.name} className="w-12 h-16 object-cover rounded" />}
-
-                  {/* min-w-0 enables truncate to actually work */}
                   <div className="flex-1 min-w-0">
-                    <div className="font-semibold truncate" title={m.name}>
-                      {m.name}
-                    </div>
-                    {m.image && (
-                      <div className="text-xs text-gray-400 truncate" title={m.image}>
-                        {m.image}
-                      </div>
-                    )}
+                    <MachineInfo machine={m} showUrl />
                   </div>
-
-                  <button
-                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  <Button
+                    variant="edit"
+                    size="sm"
+                    className="flex-shrink-0"
                     onClick={() => {
                       setEditingId(m.id);
                       setEditName(m.name);
@@ -181,13 +141,13 @@ export default function AddMachine() {
                     }}
                   >
                     Edit
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>
           ))}
         </div>
-      </div>
+      </FormContainer>
     </>
   );
 }

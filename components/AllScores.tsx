@@ -1,96 +1,25 @@
-import { useEffect, useState } from "react";
-import { collection, onSnapshot } from "firebase/firestore";
-import { getFirebase } from "@/lib/firebase";
-import { Machine, Player, ScoreEntry } from "../types/types";
-import ScoreWithTooltip from "./ScoreWithTooltip";
+import FormContainer from "./ui/FormContainer";
+import PlayerScoreSection from "./ui/PlayerScoreSection";
+import { useFirebaseData } from "../hooks/useFirebaseData";
 
 export default function AllScores() {
-  const { db } = getFirebase();
-  const [machines, setMachines] = useState<Machine[]>([]);
-  const [players, setPlayers] = useState<Player[]>([]);
-
-  useEffect(() => {
-    const unsubM = onSnapshot(collection(db, "data/machines/machines"), (snap) => {
-      setMachines(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })));
-    });
-    const unsubP = onSnapshot(collection(db, "data/players/players"), (snap) => {
-      setPlayers(
-        snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })).sort((a, b) => a.name.localeCompare(b.name)),
-      );
-    });
-    return () => {
-      unsubM();
-      unsubP();
-    };
-  }, [db]);
+  const { machines, players } = useFirebaseData();
 
   return (
-    <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-6 text-amber-400">All Scores</h2>
-
+    <FormContainer title="All Scores">
       {players.length === 0 ? (
         <p className="text-gray-400">No players found.</p>
       ) : (
         <div className="space-y-8">
-          {players.map((player) => {
-            const machineNames = Object.keys(player.scores || {}).sort();
-
-            if (machineNames.length === 0) {
-              return (
-                <div key={player.id} className="bg-gray-700 p-4 rounded-lg">
-                  <h3 className="text-xl font-bold text-amber-300 mb-2">{player.name}</h3>
-                  <p className="text-gray-400">No scores recorded yet.</p>
-                </div>
-              );
-            }
-
-            return (
-              <div key={player.id} className="bg-gray-700 p-4 rounded-lg">
-                <h3 className="text-xl font-bold text-amber-300 mb-4">{player.name}</h3>
-                <div className="space-y-4">
-                  {machineNames.map((mName) => {
-                    const mInfo = machines.find((m) => m.name === mName);
-                    const scores = [...(player.scores?.[mName] || [])].sort((a, b) => b.score - a.score);
-                    return (
-                      <div key={mName} className="bg-gray-600 p-3 rounded-lg">
-                        <div className="flex items-center mb-3">
-                          {mInfo?.image && (
-                            <img src={mInfo.image} alt={mName} className="w-12 h-16 object-cover rounded-md mr-3" />
-                          )}
-                          <h4 className="text-lg font-semibold text-amber-200">{mName}</h4>
-                        </div>
-                        <div className="space-y-1">
-                          {scores.map((s, i) => (
-                            <div key={i} className="flex items-center">
-                              <span className="md:text-[23px] font-bold mr-3 w-6 ml-2">{i + 1}.</span>
-                              <ScoreWithTooltip score={s} />
-                              {s.timestamp && (
-                                <>
-                                  <div className="flex-1 h-px bg-gray-500 mx-3"></div>
-                                  <div className="text-gray-400 text-sm flex flex-wrap justify-center leading-tight">
-                                    <span>{new Date(s.timestamp).toLocaleDateString()},</span>
-                                    <span>
-                                      {" "}
-                                      {new Date(s.timestamp).toLocaleTimeString(undefined, {
-                                        hour: "numeric",
-                                        minute: "2-digit",
-                                      })}
-                                    </span>
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
+          {players.map((player) => (
+            <PlayerScoreSection
+              key={player.id}
+              player={player}
+              machines={machines}
+            />
+          ))}
         </div>
       )}
-    </div>
+    </FormContainer>
   );
 }

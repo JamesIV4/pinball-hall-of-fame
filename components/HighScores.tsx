@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
-import { collection, onSnapshot } from "firebase/firestore";
-import { getFirebase } from "@/lib/firebase";
 import { Machine, Player, ScoreEntry } from "../types/types";
 import ScoreWithTooltip from "./ScoreWithTooltip";
+import FormContainer from "./ui/FormContainer";
+import Select from "./ui/Select";
+import Button from "./ui/Button";
+import MachineInfo from "./ui/MachineInfo";
+import { useFirebaseData } from "../hooks/useFirebaseData";
 
 function getWeekStart(date: Date): Date {
   const d = new Date(date);
@@ -39,40 +42,12 @@ interface HighScoresProps {
 }
 
 export default function HighScores({ initialViewMode = "allTime" }: HighScoresProps) {
-  const { db } = getFirebase();
-
-  const [machines, setMachines] = useState<Machine[]>([]);
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [machine, setMachine] = useState(""); // selected machine
-  const [bestOnly, setBestOnly] = useState(false); // toggle "best per player"
+  const { machines, players } = useFirebaseData();
+  const [machine, setMachine] = useState("");
+  const [bestOnly, setBestOnly] = useState(false);
   const [viewMode, setViewMode] = useState<"allTime" | "weekly">(initialViewMode);
   const [selectedWeek, setSelectedWeek] = useState(() => getWeekStart(new Date()));
 
-  /* ────────────────────────────────────────────
-   * Load machines & players
-   * ────────────────────────────────────────── */
-  useEffect(() => {
-    const unsubM = onSnapshot(collection(db, "data/machines/machines"), (snap) => {
-      const machineList = snap.docs.map((d) => ({
-        id: d.id,
-        ...(d.data() as any),
-      }));
-      // Sort machines alphabetically by name
-      machineList.sort((a, b) => a.name.localeCompare(b.name));
-      setMachines(machineList);
-    });
-    const unsubP = onSnapshot(collection(db, "data/players/players"), (snap) => {
-      setPlayers(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })));
-    });
-    return () => {
-      unsubM();
-      unsubP();
-    };
-  }, [db]);
-
-  /* ────────────────────────────────────────────
-   *  NEW: pick first machine as default
-   * ────────────────────────────────────────── */
   useEffect(() => {
     if (!machine && machines.length) {
       setMachine(machines[0].name);
@@ -116,45 +91,30 @@ export default function HighScores({ initialViewMode = "allTime" }: HighScoresPr
 
   const mInfo = machines.find((m) => m.name === machine);
 
-  /* ────────────────────────────────────────────
-   *  Render
-   * ────────────────────────────────────────── */
   return (
-    <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-4 text-amber-400">High Scores by Machine</h2>
+    <FormContainer title="High Scores by Machine">
 
-      {/* machine selector */}
-      <select
-        className="w-full p-2 rounded-lg bg-gray-700 mb-4"
+      <Select
         value={machine}
-        onChange={(e) => setMachine(e.target.value)}
-      >
-        <option value="">-- select --</option>
-        {machines.map((m) => (
-          <option key={m.id} value={m.name}>
-            {m.name}
-          </option>
-        ))}
-      </select>
+        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setMachine(e.target.value)}
+        options={machines.map((m) => ({ value: m.name, label: m.name }))}
+        placeholder="-- select --"
+        className="mb-4"
+      />
 
-      {/* View mode toggle */}
       <div className="flex gap-2 mb-4">
-        <button
-          className={`px-4 py-2 rounded-lg font-medium ${
-            viewMode === "allTime" ? "bg-amber-500 text-black" : "bg-gray-700 text-gray-200 hover:bg-gray-600"
-          }`}
+        <Button
+          variant={viewMode === "allTime" ? "primary" : "secondary"}
           onClick={() => setViewMode("allTime")}
         >
           All Time
-        </button>
-        <button
-          className={`px-4 py-2 rounded-lg font-medium ${
-            viewMode === "weekly" ? "bg-amber-500 text-black" : "bg-gray-700 text-gray-200 hover:bg-gray-600"
-          }`}
+        </Button>
+        <Button
+          variant={viewMode === "weekly" ? "primary" : "secondary"}
           onClick={() => setViewMode("weekly")}
         >
           Weekly
-        </button>
+        </Button>
       </div>
 
       {/* Week selector for weekly mode */}
@@ -210,10 +170,8 @@ export default function HighScores({ initialViewMode = "allTime" }: HighScoresPr
         ) : (
           <>
             <div className="flex items-center mb-4">
-              {mInfo?.image && (
-                <img src={mInfo.image} alt="machine" className="w-24 h-32 object-cover rounded-lg mr-4" />
-              )}
-              <h3 className="text-xl font-bold text-amber-300">{machine} – High Scores</h3>
+              {mInfo && <MachineInfo machine={mInfo} imageSize="lg" />}
+              <h3 className="text-xl font-bold text-amber-300 ml-4">{machine} – High Scores</h3>
             </div>
             <table className="w-full text-left table-auto">
               <thead>
@@ -249,6 +207,6 @@ export default function HighScores({ initialViewMode = "allTime" }: HighScoresPr
             </table>
           </>
         ))}
-    </div>
+    </FormContainer>
   );
 }
