@@ -81,6 +81,7 @@ export default function HighScores() {
   // Filter by week if in weekly mode
   const filteredScores = viewMode === 'weekly' 
     ? allScores.filter(({ score }) => {
+        if (!score.timestamp) return false;
         const scoreDate = new Date(score.timestamp);
         const weekEnd = getWeekEnd(selectedWeek);
         return scoreDate >= selectedWeek && scoreDate <= weekEnd;

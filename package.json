@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "next dev -p 3000",
-    "build": "next build"
+    "build": "next build",
+    "tsc": "tsc --noEmit"
   },
   "dependencies": {
     "firebase": "^11.6.1",
