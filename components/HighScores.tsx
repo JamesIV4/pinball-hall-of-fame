@@ -23,7 +23,15 @@ function getWeekEnd(weekStart: Date): Date {
 function formatWeekRange(weekStart: Date): string {
   const weekEnd = new Date(weekStart);
   weekEnd.setDate(weekStart.getDate() + 6);
-  return `${weekStart.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} -> ${weekEnd.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
+  return `${weekStart.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  })} -> ${weekEnd.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  })}`;
 }
 
 export default function HighScores() {
@@ -33,8 +41,10 @@ export default function HighScores() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [machine, setMachine] = useState(""); // selected machine
   const [bestOnly, setBestOnly] = useState(false); // toggle "best per player"
-  const [viewMode, setViewMode] = useState<'allTime' | 'weekly'>('allTime');
-  const [selectedWeek, setSelectedWeek] = useState(() => getWeekStart(new Date()));
+  const [viewMode, setViewMode] = useState<"allTime" | "weekly">("allTime");
+  const [selectedWeek, setSelectedWeek] = useState(() =>
+    getWeekStart(new Date())
+  );
 
   /* ────────────────────────────────────────────
    * Load machines & players
@@ -43,7 +53,10 @@ export default function HighScores() {
     const unsubM = onSnapshot(
       collection(db, "data/machines/machines"),
       (snap) => {
-        const machineList = snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) }));
+        const machineList = snap.docs.map((d) => ({
+          id: d.id,
+          ...(d.data() as any),
+        }));
         // Sort machines alphabetically by name
         machineList.sort((a, b) => a.name.localeCompare(b.name));
         setMachines(machineList);
@@ -79,14 +92,15 @@ export default function HighScores() {
   });
 
   // Filter by week if in weekly mode
-  const filteredScores = viewMode === 'weekly' 
-    ? allScores.filter(({ score }) => {
-        if (!score.timestamp) return false;
-        const scoreDate = new Date(score.timestamp);
-        const weekEnd = getWeekEnd(selectedWeek);
-        return scoreDate >= selectedWeek && scoreDate <= weekEnd;
-      })
-    : allScores;
+  const filteredScores =
+    viewMode === "weekly"
+      ? allScores.filter(({ score }) => {
+          if (!score.timestamp) return false;
+          const scoreDate = new Date(score.timestamp);
+          const weekEnd = getWeekEnd(selectedWeek);
+          return scoreDate >= selectedWeek && scoreDate <= weekEnd;
+        })
+      : allScores;
 
   let scores = filteredScores;
   if (bestOnly) {
@@ -133,57 +147,61 @@ export default function HighScores() {
       <div className="flex gap-2 mb-4">
         <button
           className={`px-4 py-2 rounded-lg font-medium ${
-            viewMode === 'allTime'
-              ? 'bg-amber-500 text-black'
-              : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+            viewMode === "allTime"
+              ? "bg-amber-500 text-black"
+              : "bg-gray-700 text-gray-200 hover:bg-gray-600"
           }`}
-          onClick={() => setViewMode('allTime')}
+          onClick={() => setViewMode("allTime")}
         >
           All Time
         </button>
         <button
           className={`px-4 py-2 rounded-lg font-medium ${
-            viewMode === 'weekly'
-              ? 'bg-amber-500 text-black'
-              : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+            viewMode === "weekly"
+              ? "bg-amber-500 text-black"
+              : "bg-gray-700 text-gray-200 hover:bg-gray-600"
           }`}
-          onClick={() => setViewMode('weekly')}
+          onClick={() => setViewMode("weekly")}
         >
           Weekly
         </button>
       </div>
 
       {/* Week selector for weekly mode */}
-      {viewMode === 'weekly' && (
-        <div className="flex items-center justify-center gap-4 mb-4">
-          <button
-            className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-lg text-gray-200 select-none"
-            onClick={() => {
-              const prevWeek = new Date(selectedWeek);
-              prevWeek.setDate(prevWeek.getDate() - 7);
-              setSelectedWeek(prevWeek);
-            }}
-          >
-            ←
-          </button>
-          <span className="text-gray-200 font-medium">
-            {formatWeekRange(selectedWeek)}
-          </span>
-          <button
-            className={`px-3 py-1 rounded-lg select-none ${
-              selectedWeek >= getWeekStart(new Date())
-                ? 'bg-gray-600 text-gray-500 cursor-not-allowed'
-                : 'bg-gray-700 hover:bg-gray-600 text-gray-200'
-            }`}
-            disabled={selectedWeek >= getWeekStart(new Date())}
-            onClick={() => {
-              const nextWeek = new Date(selectedWeek);
-              nextWeek.setDate(nextWeek.getDate() + 7);
-              setSelectedWeek(nextWeek);
-            }}
-          >
-            →
-          </button>
+      {viewMode === "weekly" && (
+        <div className="flex justify-center mb-4">
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="text-center text-gray-200 font-medium mb-3">
+              {formatWeekRange(selectedWeek)}
+            </div>
+            <div className="flex gap-2">
+              <button
+                className="w-[160px] px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded-lg text-gray-200 select-none transition-colors"
+                onClick={() => {
+                  const prevWeek = new Date(selectedWeek);
+                  prevWeek.setDate(prevWeek.getDate() - 7);
+                  setSelectedWeek(prevWeek);
+                }}
+              >
+                ← Previous Week
+              </button>
+              <button
+                className={`w-[160px] px-4 py-2 rounded-lg select-none transition-colors ${
+                  selectedWeek >= getWeekStart(new Date())
+                    ? "bg-gray-800 text-gray-500 cursor-not-allowed"
+                    : "bg-gray-600 hover:bg-gray-500 text-gray-200"
+                }`}
+                disabled={selectedWeek >= getWeekStart(new Date())}
+                onClick={() => {
+                  const nextWeek = new Date(selectedWeek);
+                  nextWeek.setDate(nextWeek.getDate() + 7);
+                  setSelectedWeek(nextWeek);
+                }}
+              >
+                Next Week →
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -204,7 +222,7 @@ export default function HighScores() {
             No scores recorded for this machine yet.
           </p>
         ) : (
-          <>  
+          <>
             <div className="flex items-center mb-4">
               {mInfo?.image && (
                 <img
