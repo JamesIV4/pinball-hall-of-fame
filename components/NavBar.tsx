@@ -1,10 +1,4 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useRef,
-  useEffect,
-  MutableRefObject,
-} from "react";
+import { Dispatch, SetStateAction, useRef, useEffect, MutableRefObject } from "react";
 import { View } from "../types/types";
 
 interface Props {
@@ -34,7 +28,7 @@ export default function NavBar({ view, setView }: Props) {
     icon: string,
     label: string,
     parent?: MutableRefObject<HTMLDetailsElement | null>,
-    extra = ""
+    extra = "",
   ) => (
     <button
       onClick={() => {
@@ -49,12 +43,7 @@ export default function NavBar({ view, setView }: Props) {
     </button>
   );
 
-  const manageViews: View[] = [
-    "addMachine",
-    "addPlayer",
-    "addScore",
-    "manageScores",
-  ];
+  const manageViews: View[] = ["addMachine", "addPlayer", "addScore", "manageScores"];
   const scoresViews: View[] = ["highScores", "scoresByPlayer", "allScores"];
 
   // Shared overlay panel classes — note the new max-width
@@ -83,28 +72,10 @@ export default function NavBar({ view, setView }: Props) {
             </summary>
 
             <div className={panelClasses}>
-              {btn(
-                "addMachine",
-                "gamepad",
-                "Add Machine",
-                manageRef,
-                "text-left"
-              )}
-              {btn(
-                "addPlayer",
-                "user-plus",
-                "Add Player",
-                manageRef,
-                "text-left"
-              )}
+              {btn("addMachine", "gamepad", "Add Machine", manageRef, "text-left")}
+              {btn("addPlayer", "user-plus", "Add Player", manageRef, "text-left")}
               {btn("addScore", "star", "Add Score", manageRef, "text-left")}
-              {btn(
-                "manageScores",
-                "trash",
-                "Manage Scores",
-                manageRef,
-                "text-left"
-              )}
+              {btn("manageScores", "trash", "Manage Scores", manageRef, "text-left")}
             </div>
           </details>
         </li>
@@ -125,20 +96,8 @@ export default function NavBar({ view, setView }: Props) {
             </summary>
 
             <div className={panelClasses}>
-              {btn(
-                "highScores",
-                "trophy",
-                "High Scores",
-                scoresRef,
-                "text-left"
-              )}
-              {btn(
-                "scoresByPlayer",
-                "user-astronaut",
-                "By Player",
-                scoresRef,
-                "text-left"
-              )}
+              {btn("highScores", "trophy", "High Scores", scoresRef, "text-left")}
+              {btn("scoresByPlayer", "user-astronaut", "By Player", scoresRef, "text-left")}
               {btn("allScores", "list", "All Scores", scoresRef, "text-left")}
             </div>
           </details>

@@ -31,18 +31,12 @@ export default function Home({ totalMachines, totalPlayers, setView }: Props) {
   });
 
   useEffect(() => {
-    const unsubP = onSnapshot(
-      collection(db, "data/players/players"),
-      (snap) => {
-        setPlayers(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })));
-      }
-    );
-    const unsubM = onSnapshot(
-      collection(db, "data/machines/machines"),
-      (snap) => {
-        setMachines(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })));
-      }
-    );
+    const unsubP = onSnapshot(collection(db, "data/players/players"), (snap) => {
+      setPlayers(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })));
+    });
+    const unsubM = onSnapshot(collection(db, "data/machines/machines"), (snap) => {
+      setMachines(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })));
+    });
     return () => {
       unsubP();
       unsubM();
@@ -67,8 +61,7 @@ export default function Home({ totalMachines, totalPlayers, setView }: Props) {
       Object.entries(player.scores).forEach(([machine, scores]) => {
         scores.forEach((score) => {
           totalScores++;
-          playerScoreCounts[player.name] =
-            (playerScoreCounts[player.name] || 0) + 1;
+          playerScoreCounts[player.name] = (playerScoreCounts[player.name] || 0) + 1;
           machineScoreCounts[machine] = (machineScoreCounts[machine] || 0) + 1;
 
           if (score.score > highestScore) {
@@ -84,13 +77,8 @@ export default function Home({ totalMachines, totalPlayers, setView }: Props) {
       });
     });
 
-    const mostActivePlayer =
-      Object.entries(playerScoreCounts).sort(([, a], [, b]) => b - a)[0]?.[0] ||
-      "";
-    const mostPopularMachine =
-      Object.entries(machineScoreCounts).sort(
-        ([, a], [, b]) => b - a
-      )[0]?.[0] || "";
+    const mostActivePlayer = Object.entries(playerScoreCounts).sort(([, a], [, b]) => b - a)[0]?.[0] || "";
+    const mostPopularMachine = Object.entries(machineScoreCounts).sort(([, a], [, b]) => b - a)[0]?.[0] || "";
 
     setStats({
       totalScores,
@@ -114,10 +102,8 @@ export default function Home({ totalMachines, totalPlayers, setView }: Props) {
         scores.forEach((score) => {
           if (score.timestamp && new Date(score.timestamp) > weekAgo) {
             weeklyScores.push(score.score);
-            weeklyPlayerCounts[player.name] =
-              (weeklyPlayerCounts[player.name] || 0) + 1;
-            weeklyMachineCounts[machine] =
-              (weeklyMachineCounts[machine] || 0) + 1;
+            weeklyPlayerCounts[player.name] = (weeklyPlayerCounts[player.name] || 0) + 1;
+            weeklyMachineCounts[machine] = (weeklyMachineCounts[machine] || 0) + 1;
 
             if (score.score > weeklyHighScore) {
               weeklyHighScore = score.score;
@@ -129,17 +115,10 @@ export default function Home({ totalMachines, totalPlayers, setView }: Props) {
     });
 
     // Find hottest machine by number of plays this week
-    const weeklyTopMachine =
-      Object.entries(weeklyMachineCounts).sort(
-        ([, a], [, b]) => b - a
-      )[0]?.[0] || "";
+    const weeklyTopMachine = Object.entries(weeklyMachineCounts).sort(([, a], [, b]) => b - a)[0]?.[0] || "";
 
     const weeklyAvgScore =
-      weeklyScores.length > 0
-        ? Math.round(
-            weeklyScores.reduce((a, b) => a + b, 0) / weeklyScores.length
-          )
-        : 0;
+      weeklyScores.length > 0 ? Math.round(weeklyScores.reduce((a, b) => a + b, 0) / weeklyScores.length) : 0;
 
     setWeeklyStats({
       weeklyHighScore,
@@ -168,9 +147,7 @@ export default function Home({ totalMachines, totalPlayers, setView }: Props) {
         <h2 className="text-3xl font-bold mb-2 text-amber-400 bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">
           Pinball Hall of Fame
         </h2>
-        <p className="text-gray-300 mb-6">
-          Track your legendary scores and dominate the silver ball!
-        </p>
+        <p className="text-gray-300 mb-6">Track your legendary scores and dominate the silver ball!</p>
 
         {/* Main Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -178,36 +155,28 @@ export default function Home({ totalMachines, totalPlayers, setView }: Props) {
             onClick={() => setView("highScores")}
             className="p-4 bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg border border-gray-600 hover:border-amber-500/50 transition-all cursor-pointer hover:scale-105"
           >
-            <div className="text-[22px] font-bold text-amber-400">
-              {totalMachines}
-            </div>
+            <div className="text-[22px] font-bold text-amber-400">{totalMachines}</div>
             <div className="text-sm text-gray-400">Machines</div>
           </div>
           <div
             onClick={() => setView("scoresByPlayer")}
             className="p-4 bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg border border-gray-600 hover:border-blue-500/50 transition-all cursor-pointer hover:scale-105"
           >
-            <div className="text-[22px] font-bold text-blue-400">
-              {totalPlayers}
-            </div>
+            <div className="text-[22px] font-bold text-blue-400">{totalPlayers}</div>
             <div className="text-sm text-gray-400">Players</div>
           </div>
           <div
             onClick={() => setView("highScores")}
             className="p-4 bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg border border-gray-600 hover:border-green-500/50 transition-all cursor-pointer hover:scale-105"
           >
-            <div className="text-[22px] font-bold text-green-400">
-              {stats.totalScores.toLocaleString()}
-            </div>
+            <div className="text-[22px] font-bold text-green-400">{stats.totalScores.toLocaleString()}</div>
             <div className="text-sm text-gray-400">Total Scores</div>
           </div>
           <div
             onClick={() => setView("highScoresWeekly")}
             className="p-4 bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg border border-gray-600 hover:border-purple-500/50 transition-all cursor-pointer hover:scale-105"
           >
-            <div className="text-[22px] font-bold text-purple-400">
-              {stats.recentScores}
-            </div>
+            <div className="text-[22px] font-bold text-purple-400">{stats.recentScores}</div>
             <div className="text-sm text-gray-400">This Week</div>
           </div>
         </div>
@@ -215,26 +184,18 @@ export default function Home({ totalMachines, totalPlayers, setView }: Props) {
         {/* Featured Stats */}
         {stats.highestScore > 0 && (
           <div className="bg-gradient-to-r from-amber-500/10 to-yellow-500/10 border border-amber-500/30 rounded-lg p-4 pb-6 mb-4">
-            <h3 className="text-[22px] font-bold text-amber-400 mb-4">
-              🏆 Hall of Fame
-            </h3>
+            <h3 className="text-[22px] font-bold text-amber-400 mb-4">🏆 Hall of Fame</h3>
             <div className="grid md:grid-cols-3 gap-4 text-sm">
               <div className="text-center">
-                <div className="text-[22px] mb-1 font-bold text-amber-300">
-                  {stats.highestScore.toLocaleString()}
-                </div>
+                <div className="text-[22px] mb-1 font-bold text-amber-300">{stats.highestScore.toLocaleString()}</div>
                 <div className="text-gray-400">Highest Score</div>
               </div>
               <div className="text-center">
-                <div className="text-[22px] mb-1 font-bold text-blue-300">
-                  {stats.topPlayer}
-                </div>
+                <div className="text-[22px] mb-1 font-bold text-blue-300">{stats.topPlayer}</div>
                 <div className="text-gray-400">Top Player</div>
               </div>
               <div className="text-center">
-                <div className="text-[22px] mb-1 font-bold text-green-300">
-                  {stats.topMachine}
-                </div>
+                <div className="text-[22px] mb-1 font-bold text-green-300">{stats.topMachine}</div>
                 <div className="text-gray-400">Most Popular</div>
               </div>
             </div>
@@ -244,9 +205,7 @@ export default function Home({ totalMachines, totalPlayers, setView }: Props) {
         {/* Weekly Highlights */}
         {stats.recentScores > 0 && (
           <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/30 rounded-lg p-4 pb-6 mb-4">
-            <h3 className="text-[22px] font-bold text-blue-400 mb-6">
-              ⚡ This Week's Highlights
-            </h3>
+            <h3 className="text-[22px] font-bold text-blue-400 mb-6">⚡ This Week's Highlights</h3>
             <div className="text-sm space-y-4 md:space-y-8">
               <div className="flex flex-col md:flex-row md:justify-around space-y-4 md:space-y-0">
                 <div className="text-center">
@@ -254,9 +213,7 @@ export default function Home({ totalMachines, totalPlayers, setView }: Props) {
                     {weeklyStats.weeklyHighScore.toLocaleString()}
                   </div>
                   <div className="text-gray-400">Weekly High</div>
-                  <div className="text-xs text-blue-200">
-                    {weeklyStats.weeklyTopPlayer}
-                  </div>
+                  <div className="text-xs text-blue-200">{weeklyStats.weeklyTopPlayer}</div>
                 </div>
                 <div className="text-center">
                   <div className="text-[22px] mb-1 font-bold text-green-300">
@@ -265,23 +222,17 @@ export default function Home({ totalMachines, totalPlayers, setView }: Props) {
                   <div className="text-gray-400">Avg Score</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-[22px] mb-1 font-bold text-purple-300">
-                    {weeklyStats.weeklyPlayerCount}
-                  </div>
+                  <div className="text-[22px] mb-1 font-bold text-purple-300">{weeklyStats.weeklyPlayerCount}</div>
                   <div className="text-gray-400">Active Players</div>
                 </div>
               </div>
               <div className="flex flex-col md:flex-row md:justify-around space-y-4 md:space-y-0">
                 <div className="text-center">
-                  <div className="text-[22px] mb-1 font-bold text-yellow-300">
-                    {weeklyStats.weeklyMachineCount}
-                  </div>
+                  <div className="text-[22px] mb-1 font-bold text-yellow-300">{weeklyStats.weeklyMachineCount}</div>
                   <div className="text-gray-400">Machines Played</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-[22px] mb-1 font-bold text-orange-300">
-                    {weeklyStats.weeklyTopMachine}
-                  </div>
+                  <div className="text-[22px] mb-1 font-bold text-orange-300">{weeklyStats.weeklyTopMachine}</div>
                   <div className="text-gray-400">Hottest Machine</div>
                 </div>
               </div>

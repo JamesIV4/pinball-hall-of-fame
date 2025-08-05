@@ -46,32 +46,24 @@ export default function HighScores({ initialViewMode = "allTime" }: HighScoresPr
   const [machine, setMachine] = useState(""); // selected machine
   const [bestOnly, setBestOnly] = useState(false); // toggle "best per player"
   const [viewMode, setViewMode] = useState<"allTime" | "weekly">(initialViewMode);
-  const [selectedWeek, setSelectedWeek] = useState(() =>
-    getWeekStart(new Date())
-  );
+  const [selectedWeek, setSelectedWeek] = useState(() => getWeekStart(new Date()));
 
   /* ────────────────────────────────────────────
    * Load machines & players
    * ────────────────────────────────────────── */
   useEffect(() => {
-    const unsubM = onSnapshot(
-      collection(db, "data/machines/machines"),
-      (snap) => {
-        const machineList = snap.docs.map((d) => ({
-          id: d.id,
-          ...(d.data() as any),
-        }));
-        // Sort machines alphabetically by name
-        machineList.sort((a, b) => a.name.localeCompare(b.name));
-        setMachines(machineList);
-      }
-    );
-    const unsubP = onSnapshot(
-      collection(db, "data/players/players"),
-      (snap) => {
-        setPlayers(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })));
-      }
-    );
+    const unsubM = onSnapshot(collection(db, "data/machines/machines"), (snap) => {
+      const machineList = snap.docs.map((d) => ({
+        id: d.id,
+        ...(d.data() as any),
+      }));
+      // Sort machines alphabetically by name
+      machineList.sort((a, b) => a.name.localeCompare(b.name));
+      setMachines(machineList);
+    });
+    const unsubP = onSnapshot(collection(db, "data/players/players"), (snap) => {
+      setPlayers(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })));
+    });
     return () => {
       unsubM();
       unsubP();
@@ -129,9 +121,7 @@ export default function HighScores({ initialViewMode = "allTime" }: HighScoresPr
    * ────────────────────────────────────────── */
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-4 text-amber-400">
-        High Scores by Machine
-      </h2>
+      <h2 className="text-2xl font-bold mb-4 text-amber-400">High Scores by Machine</h2>
 
       {/* machine selector */}
       <select
@@ -151,9 +141,7 @@ export default function HighScores({ initialViewMode = "allTime" }: HighScoresPr
       <div className="flex gap-2 mb-4">
         <button
           className={`px-4 py-2 rounded-lg font-medium ${
-            viewMode === "allTime"
-              ? "bg-amber-500 text-black"
-              : "bg-gray-700 text-gray-200 hover:bg-gray-600"
+            viewMode === "allTime" ? "bg-amber-500 text-black" : "bg-gray-700 text-gray-200 hover:bg-gray-600"
           }`}
           onClick={() => setViewMode("allTime")}
         >
@@ -161,9 +149,7 @@ export default function HighScores({ initialViewMode = "allTime" }: HighScoresPr
         </button>
         <button
           className={`px-4 py-2 rounded-lg font-medium ${
-            viewMode === "weekly"
-              ? "bg-amber-500 text-black"
-              : "bg-gray-700 text-gray-200 hover:bg-gray-600"
+            viewMode === "weekly" ? "bg-amber-500 text-black" : "bg-gray-700 text-gray-200 hover:bg-gray-600"
           }`}
           onClick={() => setViewMode("weekly")}
         >
@@ -175,9 +161,7 @@ export default function HighScores({ initialViewMode = "allTime" }: HighScoresPr
       {viewMode === "weekly" && (
         <div className="flex justify-center mb-4">
           <div className="bg-gray-700 rounded-lg p-4">
-            <div className="text-center text-gray-200 font-medium mb-3">
-              {formatWeekRange(selectedWeek)}
-            </div>
+            <div className="text-center text-gray-200 font-medium mb-3">{formatWeekRange(selectedWeek)}</div>
             <div className="flex gap-2">
               <button
                 className="w-[160px] px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded-lg text-gray-200 select-none transition-colors"
@@ -222,22 +206,14 @@ export default function HighScores({ initialViewMode = "allTime" }: HighScoresPr
 
       {machine &&
         (!scores.length ? (
-          <p className="text-gray-400">
-            No scores recorded for this machine yet.
-          </p>
+          <p className="text-gray-400">No scores recorded for this machine yet.</p>
         ) : (
           <>
             <div className="flex items-center mb-4">
               {mInfo?.image && (
-                <img
-                  src={mInfo.image}
-                  alt="machine"
-                  className="w-24 h-32 object-cover rounded-lg mr-4"
-                />
+                <img src={mInfo.image} alt="machine" className="w-24 h-32 object-cover rounded-lg mr-4" />
               )}
-              <h3 className="text-xl font-bold text-amber-300">
-                {machine} – High Scores
-              </h3>
+              <h3 className="text-xl font-bold text-amber-300">{machine} – High Scores</h3>
             </div>
             <table className="w-full text-left table-auto">
               <thead>
@@ -250,24 +226,18 @@ export default function HighScores({ initialViewMode = "allTime" }: HighScoresPr
               </thead>
               <tbody>
                 {scores.map((s, i) => (
-                  <tr
-                    key={i}
-                    className={i % 2 ? "bg-gray-700/50" : "bg-gray-800/50"}
-                  >
+                  <tr key={i} className={i % 2 ? "bg-gray-700/50" : "bg-gray-800/50"}>
                     <td className="pl-6 font-bold">{i + 1}</td>
                     <td className="p-3">{s.player}</td>
                     <td className="p-3 text-gray-400 hidden md:table-cell">
                       {s.score.timestamp
-                        ? new Date(s.score.timestamp).toLocaleString(
-                            undefined,
-                            {
-                              year: "numeric",
-                              month: "numeric",
-                              day: "numeric",
-                              hour: "numeric",
-                              minute: "2-digit",
-                            }
-                          )
+                        ? new Date(s.score.timestamp).toLocaleString(undefined, {
+                            year: "numeric",
+                            month: "numeric",
+                            day: "numeric",
+                            hour: "numeric",
+                            minute: "2-digit",
+                          })
                         : ""}
                     </td>
                     <td className="p-3 text-right">

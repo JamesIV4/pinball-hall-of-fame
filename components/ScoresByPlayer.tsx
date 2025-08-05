@@ -12,17 +12,13 @@ export default function ScoresByPlayer() {
 
   // Fetch machines and players in real time
   useEffect(() => {
-    const unsubM = onSnapshot(
-      collection(db, "data/machines/machines"),
-      (snap) =>
-        setMachines(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })))
+    const unsubM = onSnapshot(collection(db, "data/machines/machines"), (snap) =>
+      setMachines(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) }))),
     );
     const unsubP = onSnapshot(collection(db, "data/players/players"), (snap) =>
       setPlayers(
-        snap.docs
-          .map((d) => ({ id: d.id, ...(d.data() as any) }))
-          .sort((a, b) => a.name.localeCompare(b.name))
-      )
+        snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })).sort((a, b) => a.name.localeCompare(b.name)),
+      ),
     );
     return () => {
       unsubM();
@@ -43,9 +39,7 @@ export default function ScoresByPlayer() {
 
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-4 text-amber-400">
-        High Scores by Player
-      </h2>
+      <h2 className="text-2xl font-bold mb-4 text-amber-400">High Scores by Player</h2>
 
       <select
         className="w-full p-2 rounded-lg bg-gray-700 mb-6"
@@ -62,39 +56,25 @@ export default function ScoresByPlayer() {
 
       {playerId &&
         (!machineNames.length ? (
-          <p className="text-gray-400">
-            No scores recorded for {player?.name} yet.
-          </p>
+          <p className="text-gray-400">No scores recorded for {player?.name} yet.</p>
         ) : (
           <div className="space-y-6">
-            <h3 className="text-xl font-bold text-amber-300">
-              Scores for {player?.name}
-            </h3>
+            <h3 className="text-xl font-bold text-amber-300">Scores for {player?.name}</h3>
             {machineNames.map((mName) => {
               const mInfo = machines.find((m) => m.name === mName);
-              const scores = [...(player?.scores?.[mName] || [])].sort(
-                (a, b) => b.score - a.score
-              );
+              const scores = [...(player?.scores?.[mName] || [])].sort((a, b) => b.score - a.score);
               return (
                 <div key={mName} className="bg-gray-700 p-4 rounded-lg">
                   <div className="flex items-center mb-3">
                     {mInfo?.image && (
-                      <img
-                        src={mInfo.image}
-                        alt={mName}
-                        className="w-16 h-20 object-cover rounded-md mr-4"
-                      />
+                      <img src={mInfo.image} alt={mName} className="w-16 h-20 object-cover rounded-md mr-4" />
                     )}
-                    <h4 className="text-lg font-semibold text-amber-200">
-                      {mName}
-                    </h4>
+                    <h4 className="text-lg font-semibold text-amber-200">{mName}</h4>
                   </div>
                   <div className="space-y-1">
                     {scores.map((s, i) => (
                       <div key={i} className="flex items-center">
-                        <span className="md:text-[23px] font-bold mr-3 w-6 ml-2">
-                          {i + 1}.
-                        </span>
+                        <span className="md:text-[23px] font-bold mr-3 w-6 ml-2">{i + 1}.</span>
                         <ScoreWithTooltip score={s} />
                         {s.timestamp && (
                           <>

@@ -22,10 +22,23 @@ export default function IndexPage() {
   useEffect(() => {
     const handlePopState = () => {
       const hash = window.location.hash.slice(1) as View;
-      if (hash && ['home', 'addMachine', 'addPlayer', 'addScore', 'manageScores', 'highScores', 'highScoresWeekly', 'scoresByPlayer', 'allScores'].includes(hash)) {
+      if (
+        hash &&
+        [
+          "home",
+          "addMachine",
+          "addPlayer",
+          "addScore",
+          "manageScores",
+          "highScores",
+          "highScoresWeekly",
+          "scoresByPlayer",
+          "allScores",
+        ].includes(hash)
+      ) {
         setView(hash);
       } else {
-        setView('home');
+        setView("home");
       }
     };
 
@@ -33,28 +46,23 @@ export default function IndexPage() {
     handlePopState();
 
     // Listen for browser back/forward
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
   // Enhanced setView that updates browser history
   const navigateToView = (newView: View | ((prevState: View) => View)) => {
-    const resolvedView = typeof newView === 'function' ? newView(view) : newView;
+    const resolvedView = typeof newView === "function" ? newView(view) : newView;
     if (resolvedView !== view) {
-      window.history.pushState(null, '', `#${resolvedView}`);
+      window.history.pushState(null, "", `#${resolvedView}`);
       setView(resolvedView);
     }
   };
 
   // counts realtime
   useEffect(() => {
-    const unsubM = onSnapshot(
-      collection(db, "data/machines/machines"),
-      (snap) => setMachineCount(snap.size)
-    );
-    const unsubP = onSnapshot(collection(db, "data/players/players"), (snap) =>
-      setPlayerCount(snap.size)
-    );
+    const unsubM = onSnapshot(collection(db, "data/machines/machines"), (snap) => setMachineCount(snap.size));
+    const unsubP = onSnapshot(collection(db, "data/players/players"), (snap) => setPlayerCount(snap.size));
     return () => {
       unsubM();
       unsubP();
@@ -64,19 +72,13 @@ export default function IndexPage() {
   return (
     <div className="container mx-auto p-4 max-w-4xl">
       <header className="text-center mb-6">
-        <h1 className="text-4xl font-bold text-amber-400 tracking-wider">
-          Pinball Hall of Fame
-        </h1>
-        <p className="text-gray-400">
-          Track your high scores and dominate the silver ball!
-        </p>
+        <h1 className="text-4xl font-bold text-amber-400 tracking-wider">Pinball Hall of Fame</h1>
+        <p className="text-gray-400">Track your high scores and dominate the silver ball!</p>
       </header>
 
       <NavBar view={view} setView={navigateToView} />
 
-      {view === "home" && (
-        <Home totalMachines={machineCount} totalPlayers={playerCount} setView={navigateToView} />
-      )}
+      {view === "home" && <Home totalMachines={machineCount} totalPlayers={playerCount} setView={navigateToView} />}
       {view === "addMachine" && <AddMachine />}
       {view === "addPlayer" && <AddPlayer />}
       {view === "addScore" && <AddScore />}

@@ -1,13 +1,7 @@
 import { FormEvent, useState, useEffect } from "react";
 import Toast from "./Toast";
 import { getFirebase } from "@/lib/firebase";
-import {
-  addDoc,
-  collection,
-  onSnapshot,
-  doc,
-  updateDoc,
-} from "firebase/firestore";
+import { addDoc, collection, onSnapshot, doc, updateDoc } from "firebase/firestore";
 
 interface ScoreEntry {
   score: number;
@@ -32,16 +26,11 @@ export default function AddPlayer() {
   }>({ msg: "" });
 
   useEffect(() => {
-    const unsubP = onSnapshot(
-      collection(db, "data/players/players"),
-      (snap) => {
-        setPlayers(
-          snap.docs
-            .map((d) => ({ id: d.id, ...(d.data() as any) }))
-            .sort((a, b) => a.name.localeCompare(b.name))
-        );
-      }
-    );
+    const unsubP = onSnapshot(collection(db, "data/players/players"), (snap) => {
+      setPlayers(
+        snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })).sort((a, b) => a.name.localeCompare(b.name)),
+      );
+    });
     return () => unsubP();
   }, [db]);
 
@@ -73,15 +62,9 @@ export default function AddPlayer() {
 
   return (
     <>
-      <Toast
-        message={toast.msg}
-        type={toast.type}
-        clear={() => setToast({ msg: "" })}
-      />
+      <Toast message={toast.msg} type={toast.type} clear={() => setToast({ msg: "" })} />
       <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-lg mx-auto">
-        <h2 className="text-2xl font-bold mb-4 text-amber-400">
-          Add a New Player
-        </h2>
+        <h2 className="text-2xl font-bold mb-4 text-amber-400">Add a New Player</h2>
         <form onSubmit={onSubmit}>
           <div className="mb-4">
             <label className="block mb-2">Player Name</label>
@@ -102,10 +85,7 @@ export default function AddPlayer() {
         <h2 className="text-2xl font-bold mb-4 text-amber-400">Edit Players</h2>
         <div className="space-y-2">
           {players.map((p) => (
-            <div
-              key={p.id}
-              className="flex items-center gap-2 bg-gray-700 p-2 rounded"
-            >
+            <div key={p.id} className="flex items-center gap-2 bg-gray-700 p-2 rounded">
               {editingId === p.id ? (
                 <>
                   <input

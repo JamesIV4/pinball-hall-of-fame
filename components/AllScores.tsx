@@ -10,22 +10,14 @@ export default function AllScores() {
   const [players, setPlayers] = useState<Player[]>([]);
 
   useEffect(() => {
-    const unsubM = onSnapshot(
-      collection(db, "data/machines/machines"),
-      (snap) => {
-        setMachines(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })));
-      }
-    );
-    const unsubP = onSnapshot(
-      collection(db, "data/players/players"),
-      (snap) => {
-        setPlayers(
-          snap.docs
-            .map((d) => ({ id: d.id, ...(d.data() as any) }))
-            .sort((a, b) => a.name.localeCompare(b.name))
-        );
-      }
-    );
+    const unsubM = onSnapshot(collection(db, "data/machines/machines"), (snap) => {
+      setMachines(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })));
+    });
+    const unsubP = onSnapshot(collection(db, "data/players/players"), (snap) => {
+      setPlayers(
+        snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })).sort((a, b) => a.name.localeCompare(b.name)),
+      );
+    });
     return () => {
       unsubM();
       unsubP();
@@ -46,9 +38,7 @@ export default function AllScores() {
             if (machineNames.length === 0) {
               return (
                 <div key={player.id} className="bg-gray-700 p-4 rounded-lg">
-                  <h3 className="text-xl font-bold text-amber-300 mb-2">
-                    {player.name}
-                  </h3>
+                  <h3 className="text-xl font-bold text-amber-300 mb-2">{player.name}</h3>
                   <p className="text-gray-400">No scores recorded yet.</p>
                 </div>
               );
@@ -56,48 +46,37 @@ export default function AllScores() {
 
             return (
               <div key={player.id} className="bg-gray-700 p-4 rounded-lg">
-                <h3 className="text-xl font-bold text-amber-300 mb-4">
-                  {player.name}
-                </h3>
+                <h3 className="text-xl font-bold text-amber-300 mb-4">{player.name}</h3>
                 <div className="space-y-4">
                   {machineNames.map((mName) => {
                     const mInfo = machines.find((m) => m.name === mName);
-                    const scores = [...(player.scores?.[mName] || [])].sort(
-                      (a, b) => b.score - a.score
-                    );
+                    const scores = [...(player.scores?.[mName] || [])].sort((a, b) => b.score - a.score);
                     return (
                       <div key={mName} className="bg-gray-600 p-3 rounded-lg">
                         <div className="flex items-center mb-3">
                           {mInfo?.image && (
-                            <img
-                              src={mInfo.image}
-                              alt={mName}
-                              className="w-12 h-16 object-cover rounded-md mr-3"
-                            />
+                            <img src={mInfo.image} alt={mName} className="w-12 h-16 object-cover rounded-md mr-3" />
                           )}
-                          <h4 className="text-lg font-semibold text-amber-200">
-                            {mName}
-                          </h4>
+                          <h4 className="text-lg font-semibold text-amber-200">{mName}</h4>
                         </div>
                         <div className="space-y-1">
                           {scores.map((s, i) => (
                             <div key={i} className="flex items-center">
-                              <span className="md:text-[23px] font-bold mr-3 w-6 ml-2">
-                                {i + 1}.
-                              </span>
+                              <span className="md:text-[23px] font-bold mr-3 w-6 ml-2">{i + 1}.</span>
                               <ScoreWithTooltip score={s} />
                               {s.timestamp && (
                                 <>
                                   <div className="flex-1 h-px bg-gray-500 mx-3"></div>
-                                  <span className="text-gray-400 text-sm whitespace-nowrap">
-                                    {new Date(s.timestamp).toLocaleString(undefined, {
-                                      year: 'numeric',
-                                      month: 'numeric',
-                                      day: 'numeric',
-                                      hour: 'numeric',
-                                      minute: '2-digit'
-                                    })}
-                                  </span>
+                                  <div className="text-gray-400 text-sm flex flex-wrap justify-center leading-tight">
+                                    <span>{new Date(s.timestamp).toLocaleDateString()},</span>
+                                    <span>
+                                      {" "}
+                                      {new Date(s.timestamp).toLocaleTimeString(undefined, {
+                                        hour: "numeric",
+                                        minute: "2-digit",
+                                      })}
+                                    </span>
+                                  </div>
                                 </>
                               )}
                             </div>

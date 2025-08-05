@@ -1,12 +1,5 @@
 import { FormEvent, useState, useEffect } from "react";
-import {
-  collection,
-  addDoc,
-  onSnapshot,
-  doc,
-  updateDoc,
-  getDocs,
-} from "firebase/firestore";
+import { collection, addDoc, onSnapshot, doc, updateDoc, getDocs } from "firebase/firestore";
 import Toast from "./Toast";
 import { getFirebase } from "@/lib/firebase";
 
@@ -24,19 +17,20 @@ export default function AddMachine() {
   const [editingId, setEditingId] = useState("");
   const [editName, setEditName] = useState("");
   const [editImage, setEditImage] = useState("");
-  const [toast, setToast] = useState<{ msg: string; type?: "success" | "error" }>(
-    { msg: "" }
-  );
+  const [toast, setToast] = useState<{
+    msg: string;
+    type?: "success" | "error";
+  }>({ msg: "" });
 
   useEffect(() => {
-    const unsubM = onSnapshot(
-      collection(db, "data/machines/machines"),
-      (snap) => {
-        const machineList = snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) }));
-        machineList.sort((a, b) => a.name.localeCompare(b.name)); // Sorting alphabetically
-        setMachines(machineList);
-      }
-    );
+    const unsubM = onSnapshot(collection(db, "data/machines/machines"), (snap) => {
+      const machineList = snap.docs.map((d) => ({
+        id: d.id,
+        ...(d.data() as any),
+      }));
+      machineList.sort((a, b) => a.name.localeCompare(b.name)); // Sorting alphabetically
+      setMachines(machineList);
+    });
     return () => unsubM();
   }, [db]);
 
@@ -64,9 +58,7 @@ export default function AddMachine() {
       });
 
       if (oldName && oldName !== editName) {
-        const playersSnapshot = await getDocs(
-          collection(db, "data/players/players")
-        );
+        const playersSnapshot = await getDocs(collection(db, "data/players/players"));
         const updates: Promise<void>[] = [];
 
         playersSnapshot.docs.forEach((playerDoc) => {
@@ -78,7 +70,7 @@ export default function AddMachine() {
             updates.push(
               updateDoc(doc(db, "data/players/players", playerDoc.id), {
                 scores: newScores,
-              })
+              }),
             );
           }
         });
@@ -98,17 +90,11 @@ export default function AddMachine() {
 
   return (
     <>
-      <Toast
-        message={toast.msg}
-        type={toast.type}
-        clear={() => setToast({ msg: "" })}
-      />
+      <Toast message={toast.msg} type={toast.type} clear={() => setToast({ msg: "" })} />
 
       {/* Add Machine Form */}
       <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-lg mx-auto">
-        <h2 className="text-2xl font-bold mb-4 text-amber-400">
-          Add a New Pinball Machine
-        </h2>
+        <h2 className="text-2xl font-bold mb-4 text-amber-400">Add a New Pinball Machine</h2>
         <form onSubmit={onSubmit}>
           <div className="mb-4">
             <label className="block mb-2">Machine Name</label>
@@ -172,13 +158,7 @@ export default function AddMachine() {
               ) : (
                 /* View mode */
                 <div className="flex items-center gap-3">
-                  {m.image && (
-                    <img
-                      src={m.image}
-                      alt={m.name}
-                      className="w-12 h-16 object-cover rounded"
-                    />
-                  )}
+                  {m.image && <img src={m.image} alt={m.name} className="w-12 h-16 object-cover rounded" />}
 
                   {/* min-w-0 enables truncate to actually work */}
                   <div className="flex-1 min-w-0">
@@ -186,10 +166,7 @@ export default function AddMachine() {
                       {m.name}
                     </div>
                     {m.image && (
-                      <div
-                        className="text-xs text-gray-400 truncate"
-                        title={m.image}
-                      >
+                      <div className="text-xs text-gray-400 truncate" title={m.image}>
                         {m.image}
                       </div>
                     )}

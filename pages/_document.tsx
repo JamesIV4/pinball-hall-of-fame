@@ -7,17 +7,10 @@ export default function Document() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         {/* Full‑screen iOS PWA tags */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta
-          name="apple-mobile-web-app-status-bar-style"
-          content="black-translucent"
-        />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="icon" href="imgs/pinball-icon-192.png" />
         <link rel="icon" sizes="192x192" href="imgs/pinball-icon-192.png" />
-        <link
-          rel="apple-touch-icon"
-          sizes="512x512"
-          href="imgs/pinball-icon-512.png"
-        />
+        <link rel="apple-touch-icon" sizes="512x512" href="imgs/pinball-icon-512.png" />
         <title>Pinball Hall of Fame</title>
         <link
           rel="stylesheet"

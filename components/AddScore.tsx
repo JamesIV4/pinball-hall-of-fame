@@ -1,11 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
-import {
-  collection,
-  doc,
-  onSnapshot,
-  updateDoc,
-  arrayUnion,
-} from "firebase/firestore";
+import { collection, doc, onSnapshot, updateDoc, arrayUnion } from "firebase/firestore";
 import Toast from "./Toast";
 import { getFirebase } from "@/lib/firebase";
 import { Machine, Player } from "../types/types";
@@ -38,30 +32,20 @@ export default function AddScore() {
 
   // realtime listeners
   useEffect(() => {
-    const unsubMachines = onSnapshot(
-      collection(db, "data/machines/machines"),
-      (snap) => {
-        const machinesList = snap.docs.map((d) => ({
-          id: d.id,
-          ...(d.data() as any),
-        }));
-        // Sort machines alphabetically by name
-        const sortedMachines = machinesList.sort((a, b) =>
-          a.name.localeCompare(b.name)
-        );
-        setMachines(sortedMachines);
-      }
-    );
-    const unsubPlayers = onSnapshot(
-      collection(db, "data/players/players"),
-      (snap) => {
-        setPlayers(
-          snap.docs
-            .map((d) => ({ id: d.id, ...(d.data() as any) }))
-            .sort((a, b) => a.name.localeCompare(b.name))
-        );
-      }
-    );
+    const unsubMachines = onSnapshot(collection(db, "data/machines/machines"), (snap) => {
+      const machinesList = snap.docs.map((d) => ({
+        id: d.id,
+        ...(d.data() as any),
+      }));
+      // Sort machines alphabetically by name
+      const sortedMachines = machinesList.sort((a, b) => a.name.localeCompare(b.name));
+      setMachines(sortedMachines);
+    });
+    const unsubPlayers = onSnapshot(collection(db, "data/players/players"), (snap) => {
+      setPlayers(
+        snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })).sort((a, b) => a.name.localeCompare(b.name)),
+      );
+    });
     return () => {
       unsubMachines();
       unsubPlayers();
@@ -100,15 +84,9 @@ export default function AddScore() {
 
   return (
     <>
-      <Toast
-        message={toast.msg}
-        type={toast.type}
-        clear={() => setToast({ msg: "" })}
-      />
+      <Toast message={toast.msg} type={toast.type} clear={() => setToast({ msg: "" })} />
       <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-lg mx-auto">
-        <h2 className="text-2xl font-bold mb-4 text-amber-400">
-          Add a High Score
-        </h2>
+        <h2 className="text-2xl font-bold mb-4 text-amber-400">Add a High Score</h2>
         <form onSubmit={onSubmit}>
           <div className="mb-4">
             <label className="block mb-2">Machine</label>

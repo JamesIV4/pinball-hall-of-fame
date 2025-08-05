@@ -6,11 +6,7 @@ interface ToastProps {
   clear: () => void;
 }
 
-export default function Toast({
-  message,
-  type = "success",
-  clear,
-}: ToastProps) {
+export default function Toast({ message, type = "success", clear }: ToastProps) {
   useEffect(() => {
     if (!message) return;
     const t = setTimeout(clear, 3000);
