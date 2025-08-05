@@ -59,7 +59,7 @@ export default function NavBar({ view, setView }: Props) {
 
   // Shared overlay panel classes — note the new max-width
   const panelClasses =
-    "absolute z-20 top-full left-1/2 -translate-x-1/2 mt-1 min-w-[12rem] max-w-[90vw] w-max flex flex-col gap-2 bg-gray-700 p-2 rounded-lg shadow-lg";
+    "absolute z-20 top-full left-1/2 -translate-x-1/2 mt-1 min-w-[10rem] max-w-[90vw] w-max flex flex-col gap-2 bg-gray-700 p-2 rounded-lg shadow-lg";
 
   return (
     <nav className="mb-8">
