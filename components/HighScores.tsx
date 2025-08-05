@@ -163,7 +163,7 @@ export default function HighScores({ initialViewMode = "allTime" }: HighScoresPr
         ) : (
           <>
             <div className="flex items-center mb-4">
-              {mInfo && <MachineInfo machine={mInfo} imageSize="lg" />}
+              {mInfo && <MachineInfo machine={mInfo} imageSize="lg" hideName={true} />}
               <h3 className="text-xl font-bold text-amber-300 ml-4">{machine} – High Scores</h3>
             </div>
             <table className="w-full text-left table-auto">

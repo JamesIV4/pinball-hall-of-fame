@@ -4,6 +4,7 @@ interface MachineInfoProps {
   machine: Machine;
   imageSize?: "sm" | "md" | "lg";
   showUrl?: boolean;
+  hideName?: boolean;
 }
 
 const imageSizes = {
@@ -12,7 +13,7 @@ const imageSizes = {
   lg: "w-24 h-32",
 };
 
-export default function MachineInfo({ machine, imageSize = "sm", showUrl = false }: MachineInfoProps) {
+export default function MachineInfo({ machine, imageSize = "sm", showUrl = false, hideName = false }: MachineInfoProps) {
   return (
     <div className="flex items-center gap-3">
       {machine.image && (
@@ -22,16 +23,18 @@ export default function MachineInfo({ machine, imageSize = "sm", showUrl = false
           className={`${imageSizes[imageSize]} object-cover rounded-md`} 
         />
       )}
-      <div className="flex-1 min-w-0">
-        <div className="font-semibold truncate" title={machine.name}>
-          {machine.name}
-        </div>
-        {showUrl && machine.image && (
-          <div className="text-xs text-gray-400 truncate" title={machine.image}>
-            {machine.image}
+      {!hideName && (
+        <div className="flex-1 min-w-0">
+          <div className="font-semibold truncate" title={machine.name}>
+            {machine.name}
           </div>
-        )}
-      </div>
+          {showUrl && machine.image && (
+            <div className="text-xs text-gray-400 truncate" title={machine.image}>
+              {machine.image}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
