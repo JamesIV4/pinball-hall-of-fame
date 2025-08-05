@@ -235,11 +235,12 @@ export default function HighScores() {
                 {machine} – High Scores
               </h3>
             </div>
-            <table className="w-full text-left">
+            <table className="w-full text-left table-auto">
               <thead>
                 <tr className="bg-gray-700">
                   <th className="p-3">Rank</th>
                   <th className="p-3">Player</th>
+                  <th className="p-3 hidden md:table-cell">Date</th>
                   <th className="p-3 text-right">Score</th>
                 </tr>
               </thead>
@@ -251,6 +252,20 @@ export default function HighScores() {
                   >
                     <td className="pl-6 font-bold">{i + 1}</td>
                     <td className="p-3">{s.player}</td>
+                    <td className="p-3 text-gray-400 hidden md:table-cell">
+                      {s.score.timestamp
+                        ? new Date(s.score.timestamp).toLocaleString(
+                            undefined,
+                            {
+                              year: "numeric",
+                              month: "numeric",
+                              day: "numeric",
+                              hour: "numeric",
+                              minute: "2-digit",
+                            }
+                          )
+                        : ""}
+                    </td>
                     <td className="p-3 text-right">
                       <ScoreWithTooltip score={s.score} />
                     </td>

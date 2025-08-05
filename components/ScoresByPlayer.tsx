@@ -96,6 +96,20 @@ export default function ScoresByPlayer() {
                           {i + 1}.
                         </span>
                         <ScoreWithTooltip score={s} />
+                        {s.timestamp && (
+                          <>
+                            <div className="flex-1 h-px bg-gray-600 mx-3"></div>
+                            <span className="text-gray-400 text-sm whitespace-nowrap">
+                              {new Date(s.timestamp).toLocaleString(undefined, {
+                                year: "numeric",
+                                month: "numeric",
+                                day: "numeric",
+                                hour: "numeric",
+                                minute: "2-digit",
+                              })}
+                            </span>
+                          </>
+                        )}
                       </div>
                     ))}
                   </div>
