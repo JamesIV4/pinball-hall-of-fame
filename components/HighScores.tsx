@@ -4,6 +4,28 @@ import { getFirebase } from "@/lib/firebase";
 import { Machine, Player, ScoreEntry } from "./types";
 import ScoreWithTooltip from "./ScoreWithTooltip";
 
+function getWeekStart(date: Date): Date {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  d.setDate(diff);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function getWeekEnd(weekStart: Date): Date {
+  const d = new Date(weekStart);
+  d.setDate(d.getDate() + 6);
+  d.setHours(23, 59, 59, 999);
+  return d;
+}
+
+function formatWeekRange(weekStart: Date): string {
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 6);
+  return `${weekStart.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} -> ${weekEnd.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
+}
+
 export default function HighScores() {
   const { db } = getFirebase();
 
@@ -11,6 +33,8 @@ export default function HighScores() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [machine, setMachine] = useState(""); // selected machine
   const [bestOnly, setBestOnly] = useState(false); // toggle "best per player"
+  const [viewMode, setViewMode] = useState<'allTime' | 'weekly'>('allTime');
+  const [selectedWeek, setSelectedWeek] = useState(() => getWeekStart(new Date()));
 
   /* ────────────────────────────────────────────
    * Load machines & players
@@ -54,10 +78,19 @@ export default function HighScores() {
     return list.map((s) => ({ player: p.name, score: s }));
   });
 
-  let scores = allScores;
+  // Filter by week if in weekly mode
+  const filteredScores = viewMode === 'weekly' 
+    ? allScores.filter(({ score }) => {
+        const scoreDate = new Date(score.timestamp);
+        const weekEnd = getWeekEnd(selectedWeek);
+        return scoreDate >= selectedWeek && scoreDate <= weekEnd;
+      })
+    : allScores;
+
+  let scores = filteredScores;
   if (bestOnly) {
     const bestMap = new Map<string, ScoreEntry>();
-    for (const { player, score } of allScores) {
+    for (const { player, score } of filteredScores) {
       if (!bestMap.has(player) || score.score > bestMap.get(player)!.score) {
         bestMap.set(player, score);
       }
@@ -94,6 +127,64 @@ export default function HighScores() {
           </option>
         ))}
       </select>
+
+      {/* View mode toggle */}
+      <div className="flex gap-2 mb-4">
+        <button
+          className={`px-4 py-2 rounded-lg font-medium ${
+            viewMode === 'allTime'
+              ? 'bg-amber-500 text-black'
+              : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+          }`}
+          onClick={() => setViewMode('allTime')}
+        >
+          All Time
+        </button>
+        <button
+          className={`px-4 py-2 rounded-lg font-medium ${
+            viewMode === 'weekly'
+              ? 'bg-amber-500 text-black'
+              : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+          }`}
+          onClick={() => setViewMode('weekly')}
+        >
+          Weekly
+        </button>
+      </div>
+
+      {/* Week selector for weekly mode */}
+      {viewMode === 'weekly' && (
+        <div className="flex items-center justify-center gap-4 mb-4">
+          <button
+            className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-lg text-gray-200"
+            onClick={() => {
+              const prevWeek = new Date(selectedWeek);
+              prevWeek.setDate(prevWeek.getDate() - 7);
+              setSelectedWeek(prevWeek);
+            }}
+          >
+            ←
+          </button>
+          <span className="text-gray-200 font-medium">
+            {formatWeekRange(selectedWeek)}
+          </span>
+          <button
+            className={`px-3 py-1 rounded-lg ${
+              selectedWeek >= getWeekStart(new Date())
+                ? 'bg-gray-600 text-gray-500 cursor-not-allowed'
+                : 'bg-gray-700 hover:bg-gray-600 text-gray-200'
+            }`}
+            disabled={selectedWeek >= getWeekStart(new Date())}
+            onClick={() => {
+              const nextWeek = new Date(selectedWeek);
+              nextWeek.setDate(nextWeek.getDate() + 7);
+              setSelectedWeek(nextWeek);
+            }}
+          >
+            →
+          </button>
+        </div>
+      )}
 
       {/* best-only toggle */}
       <label className="flex items-center gap-2 text-gray-200 mb-6">
