@@ -5,16 +5,7 @@ import {
   useEffect,
   MutableRefObject,
 } from "react";
-
-type View =
-  | "home"
-  | "addMachine"
-  | "addPlayer"
-  | "addScore"
-  | "manageScores"
-  | "highScores"
-  | "scoresByPlayer"
-  | "allScores";
+import { View } from "../types/types";
 
 interface Props {
   view: View;

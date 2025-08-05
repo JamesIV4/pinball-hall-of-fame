@@ -8,7 +8,7 @@ import {
 } from "firebase/firestore";
 import Toast from "./Toast";
 import { getFirebase } from "@/lib/firebase";
-import { Machine, Player } from "./types";
+import { Machine, Player } from "../types/types";
 
 export default function AddScore() {
   const { db } = getFirebase();

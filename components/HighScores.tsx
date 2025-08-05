@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
 import { getFirebase } from "@/lib/firebase";
-import { Machine, Player, ScoreEntry } from "./types";
+import { Machine, Player, ScoreEntry } from "../types/types";
 import ScoreWithTooltip from "./ScoreWithTooltip";
 
 function getWeekStart(date: Date): Date {

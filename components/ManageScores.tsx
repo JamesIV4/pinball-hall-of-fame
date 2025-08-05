@@ -8,7 +8,7 @@ import {
 } from "firebase/firestore";
 import { getFirebase } from "@/lib/firebase";
 import Toast from "./Toast";
-import { Machine, Player, ScoreEntry } from "./types";
+import { Machine, Player, ScoreEntry } from "../types/types";
 import ScoreWithTooltip from "./ScoreWithTooltip";
 
 export default function ManageScores() {

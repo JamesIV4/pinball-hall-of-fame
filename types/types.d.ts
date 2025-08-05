@@ -1,3 +1,13 @@
+export type View =
+  | "home"
+  | "addMachine"
+  | "addPlayer"
+  | "addScore"
+  | "manageScores"
+  | "highScores"
+  | "scoresByPlayer"
+  | "allScores";
+
 export interface ScoreEntry {
   score: number;
   timestamp?: string;

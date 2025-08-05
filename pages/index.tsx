@@ -10,9 +10,9 @@ import HighScores from "../components/HighScores";
 import ScoresByPlayer from "../components/ScoresByPlayer";
 import AllScores from "../components/AllScores";
 import { getFirebase } from "@/lib/firebase";
+import { View } from "../types/types";
 
 export default function IndexPage() {
-  type View = Parameters<typeof NavBar>[0]["view"];
   const [view, setView] = useState<View>("home");
   const { db } = getFirebase();
   const [machineCount, setMachineCount] = useState(0);
@@ -47,7 +47,7 @@ export default function IndexPage() {
       <NavBar view={view} setView={setView} />
 
       {view === "home" && (
-        <Home totalMachines={machineCount} totalPlayers={playerCount} />
+        <Home totalMachines={machineCount} totalPlayers={playerCount} setView={setView} />
       )}
       {view === "addMachine" && <AddMachine />}
       {view === "addPlayer" && <AddPlayer />}
