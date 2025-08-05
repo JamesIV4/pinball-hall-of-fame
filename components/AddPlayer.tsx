@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import Toast from "./Toast";
+import Toast from "./ui/Toast";
 import FormContainer from "./ui/FormContainer";
 import Input from "./ui/Input";
 import Button from "./ui/Button";
@@ -49,12 +49,7 @@ export default function AddPlayer() {
       <Toast message={toast.msg} type={toast.type} clear={() => setToast({ msg: "" })} />
       <FormContainer title="Add a New Player" className="max-w-lg mx-auto">
         <form onSubmit={onSubmit}>
-          <Input
-            label="Player Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
+          <Input label="Player Name" value={name} onChange={(e) => setName(e.target.value)} required />
           <Button type="submit" size="lg">
             Add Player
           </Button>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { doc, updateDoc, arrayRemove, arrayUnion } from "firebase/firestore";
 import { getFirebase } from "@/lib/firebase";
-import Toast from "./Toast";
+import Toast from "./ui/Toast";
 import FormContainer from "./ui/FormContainer";
 import PlayerScoreSection from "./ui/PlayerScoreSection";
 import Button from "./ui/Button";

@@ -1,5 +1,5 @@
+import { View } from "@/types/types";
 import { Dispatch, SetStateAction, useRef, useEffect, MutableRefObject } from "react";
-import { View } from "../types/types";
 
 interface Props {
   view: View;

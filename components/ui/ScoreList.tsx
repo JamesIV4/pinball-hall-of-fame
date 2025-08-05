@@ -1,5 +1,5 @@
 import { ScoreEntry } from "../../types/types";
-import ScoreWithTooltip from "../ScoreWithTooltip";
+import ScoreWithTooltip from "./ScoreWithTooltip";
 
 interface ScoreListProps {
   scores: ScoreEntry[];
@@ -20,9 +20,7 @@ export default function ScoreList({ scores, showActions = false, onEdit, onDelet
               <>
                 <div className="flex-1 h-px bg-gray-500 mx-3" />
                 <div className="text-gray-400 text-sm flex flex-wrap justify-center leading-tight">
-                  <span className="whitespace-nowrap">
-                    {new Date(score.timestamp).toLocaleDateString()},
-                  </span>
+                  <span className="whitespace-nowrap">{new Date(score.timestamp).toLocaleDateString()},</span>
                   <span className="whitespace-nowrap">
                     {" "}
                     {new Date(score.timestamp).toLocaleTimeString(undefined, {

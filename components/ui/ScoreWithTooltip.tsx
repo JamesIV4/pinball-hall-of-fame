@@ -1,4 +1,4 @@
-import { ScoreEntry } from "../types/types";
+import { ScoreEntry } from "../../types/types";
 
 function formatTimestamp(timestamp?: string) {
   if (!timestamp) return "Date not recorded";

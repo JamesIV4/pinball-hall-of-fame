@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
-import NavBar from "../components/NavBar";
 import Home from "../components/Home";
 import AddMachine from "../components/AddMachine";
 import AddPlayer from "../components/AddPlayer";
@@ -11,6 +10,7 @@ import ScoresByPlayer from "../components/ScoresByPlayer";
 import AllScores from "../components/AllScores";
 import { getFirebase } from "@/lib/firebase";
 import { View } from "../types/types";
+import NavBar from "@/components/ui/NavBar";
 
 export default function IndexPage() {
   const [view, setView] = useState<View>("home");

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Machine, Player, ScoreEntry } from "../types/types";
-import ScoreWithTooltip from "./ScoreWithTooltip";
+import ScoreWithTooltip from "./ui/ScoreWithTooltip";
 import FormContainer from "./ui/FormContainer";
 import Select from "./ui/Select";
 import Button from "./ui/Button";
@@ -93,7 +93,6 @@ export default function HighScores({ initialViewMode = "allTime" }: HighScoresPr
 
   return (
     <FormContainer title="High Scores by Machine">
-
       <Select
         value={machine}
         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setMachine(e.target.value)}
@@ -103,16 +102,10 @@ export default function HighScores({ initialViewMode = "allTime" }: HighScoresPr
       />
 
       <div className="flex gap-2 mb-4">
-        <Button
-          variant={viewMode === "allTime" ? "primary" : "secondary"}
-          onClick={() => setViewMode("allTime")}
-        >
+        <Button variant={viewMode === "allTime" ? "primary" : "secondary"} onClick={() => setViewMode("allTime")}>
           All Time
         </Button>
-        <Button
-          variant={viewMode === "weekly" ? "primary" : "secondary"}
-          onClick={() => setViewMode("weekly")}
-        >
+        <Button variant={viewMode === "weekly" ? "primary" : "secondary"} onClick={() => setViewMode("weekly")}>
           Weekly
         </Button>
       </div>

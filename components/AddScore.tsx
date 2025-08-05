@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
-import Toast from "./Toast";
+import Toast from "./ui/Toast";
 import FormContainer from "./ui/FormContainer";
 import Input from "./ui/Input";
 import Select from "./ui/Select";
@@ -68,13 +68,7 @@ export default function AddScore() {
             placeholder="-- select --"
             required
           />
-          <Input
-            label="Score"
-            type="text"
-            value={score}
-            onChange={(e) => handleScoreChange(e, setScore)}
-            required
-          />
+          <Input label="Score" type="text" value={score} onChange={(e) => handleScoreChange(e, setScore)} required />
           <Button type="submit" size="lg">
             Add Score
           </Button>

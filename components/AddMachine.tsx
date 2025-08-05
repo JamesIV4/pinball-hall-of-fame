@@ -1,6 +1,6 @@
 import { FormEvent, useState } from "react";
 import { collection, addDoc, doc, updateDoc, getDocs } from "firebase/firestore";
-import Toast from "./Toast";
+import Toast from "./ui/Toast";
 import FormContainer from "./ui/FormContainer";
 import Input from "./ui/Input";
 import Button from "./ui/Button";
@@ -81,17 +81,8 @@ export default function AddMachine() {
 
       <FormContainer title="Add a New Pinball Machine" className="max-w-lg mx-auto">
         <form onSubmit={onSubmit}>
-          <Input
-            label="Machine Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-          <Input
-            label="Image URL (optional)"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
-          />
+          <Input label="Machine Name" value={name} onChange={(e) => setName(e.target.value)} required />
+          <Input label="Image URL (optional)" value={image} onChange={(e) => setImage(e.target.value)} />
           <Button type="submit" size="lg">
             Add Machine
           </Button>
