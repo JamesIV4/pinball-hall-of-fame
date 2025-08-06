@@ -12,15 +12,23 @@ export default function NavBar({ view, setView }: Props) {
 
   // Close panels when clicking outside
   useEffect(() => {
-    const closeIfOutside = (e: MouseEvent) => {
+    const closeIfOutside = (e: Event) => {
+      const target = e.target as Node;
       [manageRef, scoresRef].forEach((r) => {
-        if (r.current?.open && !r.current.contains(e.target as Node)) {
+        if (r.current?.open && !r.current.contains(target)) {
           r.current.open = false;
         }
       });
     };
-    document.addEventListener("click", closeIfOutside);
-    return () => document.removeEventListener("click", closeIfOutside);
+    
+    // Use both mousedown and touchstart for better iOS compatibility
+    document.addEventListener("mousedown", closeIfOutside);
+    document.addEventListener("touchstart", closeIfOutside);
+    
+    return () => {
+      document.removeEventListener("mousedown", closeIfOutside);
+      document.removeEventListener("touchstart", closeIfOutside);
+    };
   }, []);
 
   const btn = (
