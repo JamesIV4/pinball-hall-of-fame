@@ -1,8 +1,8 @@
 import Image from "next/image";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { collection, onSnapshot } from "firebase/firestore";
-import { getFirebase } from "@/lib/firebase";
-import { View, Player, Machine } from "../types/types";
+import { View } from "../types/types";
+import { isInCurrentWeek } from "../utils/weekUtils";
+import { useFirebaseData } from "../hooks/useFirebaseData";
 
 interface Props {
   totalMachines: number;
@@ -11,9 +11,7 @@ interface Props {
 }
 
 export default function Home({ totalMachines, totalPlayers, setView }: Props) {
-  const { db } = getFirebase();
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [machines, setMachines] = useState<Machine[]>([]);
+  const { players } = useFirebaseData();
   const [stats, setStats] = useState({
     totalScores: 0,
     highestScore: 0,
@@ -31,19 +29,6 @@ export default function Home({ totalMachines, totalPlayers, setView }: Props) {
   });
 
   useEffect(() => {
-    const unsubP = onSnapshot(collection(db, "data/players/players"), (snap) => {
-      setPlayers(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })));
-    });
-    const unsubM = onSnapshot(collection(db, "data/machines/machines"), (snap) => {
-      setMachines(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })));
-    });
-    return () => {
-      unsubP();
-      unsubM();
-    };
-  }, [db]);
-
-  useEffect(() => {
     if (!players.length) return;
 
     let totalScores = 0;
@@ -53,7 +38,6 @@ export default function Home({ totalMachines, totalPlayers, setView }: Props) {
     let recentScores = 0;
     const playerScoreCounts: Record<string, number> = {};
     const machineScoreCounts: Record<string, number> = {};
-    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
     players.forEach((player) => {
       if (!player.scores) return;
@@ -70,7 +54,7 @@ export default function Home({ totalMachines, totalPlayers, setView }: Props) {
             topMachine = machine;
           }
 
-          if (score.timestamp && new Date(score.timestamp) > weekAgo) {
+          if (score.timestamp && isInCurrentWeek(score.timestamp)) {
             recentScores++;
           }
         });
@@ -100,7 +84,7 @@ export default function Home({ totalMachines, totalPlayers, setView }: Props) {
 
       Object.entries(player.scores).forEach(([machine, scores]) => {
         scores.forEach((score) => {
-          if (score.timestamp && new Date(score.timestamp) > weekAgo) {
+          if (score.timestamp && isInCurrentWeek(score.timestamp)) {
             weeklyScores.push(score.score);
             weeklyPlayerCounts[player.name] = (weeklyPlayerCounts[player.name] || 0) + 1;
             weeklyMachineCounts[machine] = (weeklyMachineCounts[machine] || 0) + 1;

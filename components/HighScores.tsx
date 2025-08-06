@@ -6,42 +6,14 @@ import Select from "./ui/Select";
 import Button from "./ui/Button";
 import MachineInfo from "./ui/MachineInfo";
 import { useFirebaseData } from "../hooks/useFirebaseData";
-
-function getWeekStart(date: Date): Date {
-  const d = new Date(date);
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-  d.setDate(diff);
-  d.setHours(0, 0, 0, 0);
-  return d;
-}
-
-function getWeekEnd(weekStart: Date): Date {
-  const d = new Date(weekStart);
-  d.setDate(d.getDate() + 6);
-  d.setHours(23, 59, 59, 999);
-  return d;
-}
-
-function formatWeekRange(weekStart: Date): string {
-  const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekStart.getDate() + 6);
-  return `${weekStart.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  })} -> ${weekEnd.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  })}`;
-}
+import { getWeekStart, getWeekEnd, formatWeekRange } from "../utils/weekUtils";
 
 interface HighScoresProps {
   initialViewMode?: "allTime" | "weekly";
+  onNavigate?: (view: "highScores" | "highScoresWeekly") => void;
 }
 
-export default function HighScores({ initialViewMode = "allTime" }: HighScoresProps) {
+export default function HighScores({ initialViewMode = "allTime", onNavigate }: HighScoresProps) {
   const { machines, players } = useFirebaseData();
   const [machine, setMachine] = useState("");
   const [bestOnly, setBestOnly] = useState(false);
@@ -53,6 +25,8 @@ export default function HighScores({ initialViewMode = "allTime" }: HighScoresPr
       setMachine(machines[0].name);
     }
   }, [machines, machine]);
+
+
 
   /* ────────────────────────────────────────────
    * Assemble and (optionally) collapse scores
@@ -102,10 +76,16 @@ export default function HighScores({ initialViewMode = "allTime" }: HighScoresPr
       />
 
       <div className="flex gap-2 mb-4">
-        <Button variant={viewMode === "allTime" ? "primary" : "secondary"} onClick={() => setViewMode("allTime")}>
+        <Button
+          variant={viewMode === "allTime" ? "primary" : "secondary"}
+          onClick={() => onNavigate?.("highScores")}
+        >
           All Time
         </Button>
-        <Button variant={viewMode === "weekly" ? "primary" : "secondary"} onClick={() => setViewMode("weekly")}>
+        <Button
+          variant={viewMode === "weekly" ? "primary" : "secondary"}
+          onClick={() => onNavigate?.("highScoresWeekly")}
+        >
           Weekly
         </Button>
       </div>

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { collection, onSnapshot } from "firebase/firestore";
 import Home from "../components/Home";
 import AddScore from "../components/AddScore";
 import ManageScores from "../components/ManageScores";
@@ -7,17 +6,15 @@ import HighScores from "../components/HighScores";
 import ScoresByPlayer from "../components/ScoresByPlayer";
 import AllScores from "../components/AllScores";
 import ManageDatabase from "../components/ManageDatabase";
-import { getFirebase } from "@/lib/firebase";
 import { View } from "../types/types";
 import NavBar from "@/components/ui/NavBar";
 import ManagePlayers from "@/components/ManagePlayers";
 import ManageMachines from "../components/ManageMachines";
+import { useFirebaseData } from "../hooks/useFirebaseData";
 
 export default function IndexPage() {
   const [view, setView] = useState<View>("home");
-  const { db } = getFirebase();
-  const [machineCount, setMachineCount] = useState(0);
-  const [playerCount, setPlayerCount] = useState(0);
+  const { machines, players } = useFirebaseData();
 
   // Initialize view from URL on mount
   useEffect(() => {
@@ -61,16 +58,6 @@ export default function IndexPage() {
     }
   };
 
-  // counts realtime
-  useEffect(() => {
-    const unsubM = onSnapshot(collection(db, "data/machines/machines"), (snap) => setMachineCount(snap.size));
-    const unsubP = onSnapshot(collection(db, "data/players/players"), (snap) => setPlayerCount(snap.size));
-    return () => {
-      unsubM();
-      unsubP();
-    };
-  }, [db]);
-
   return (
     <div className="container mx-auto p-4 max-w-4xl">
       <header className="text-center mb-6">
@@ -80,13 +67,13 @@ export default function IndexPage() {
 
       <NavBar view={view} setView={navigateToView} />
 
-      {view === "home" && <Home totalMachines={machineCount} totalPlayers={playerCount} setView={navigateToView} />}
+      {view === "home" && <Home totalMachines={machines.length} totalPlayers={players.length} setView={navigateToView} />}
       {view === "manageMachines" && <ManageMachines />}
       {view === "managePlayers" && <ManagePlayers />}
       {view === "addScore" && <AddScore />}
       {view === "manageScores" && <ManageScores />}
-      {view === "highScores" && <HighScores />}
-      {view === "highScoresWeekly" && <HighScores initialViewMode="weekly" />}
+      {view === "highScores" && <HighScores onNavigate={navigateToView} />}
+      {view === "highScoresWeekly" && <HighScores initialViewMode="weekly" onNavigate={navigateToView} />}
       {view === "scoresByPlayer" && <ScoresByPlayer />}
       {view === "allScores" && <AllScores />}
       {view === "manageDatabase" && <ManageDatabase />}

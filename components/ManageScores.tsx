@@ -150,6 +150,7 @@ export default function ManageScores() {
                 <label className="block text-gray-200 text-sm font-medium mb-2">Score</label>
                 <input
                   type="text"
+                  inputMode="numeric"
                   value={editingScore.newScoreDisplay}
                   onChange={handleScoreChange}
                   className="w-full p-2 rounded-lg bg-gray-700 text-white"
