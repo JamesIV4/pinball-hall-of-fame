@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState, useRef } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 import Toast from "./ui/Toast";
 import FormContainer from "./ui/FormContainer";
@@ -68,21 +68,7 @@ export default function AddScore() {
             placeholder="-- select --"
             required
           />
-          <Input 
-            label="Score" 
-            type="text" 
-            inputMode="numeric" 
-            value={score} 
-            onChange={(e) => handleScoreChange(e, setScore)} 
-            onFocus={(e) => {
-              // iOS fix: prevent immediate close after dropdown interaction
-              if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-                e.target.blur();
-                setTimeout(() => e.target.focus(), 100);
-              }
-            }}
-            required 
-          />
+          <Input label="Score" type="text" inputMode="numeric" value={score} onChange={(e) => handleScoreChange(e, setScore)} required />
           <Button type="submit" size="lg">
             Add Score
           </Button>
