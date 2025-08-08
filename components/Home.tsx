@@ -162,28 +162,39 @@ export default function Home({ players, machines, setView }: Props) {
                 {totalScores.toLocaleString()} scores
               </span>
             </div>
-            <div className="mt-4 flex gap-3">
-              <button
-                onClick={() => setView("addScore")}
-                className="px-4 py-2 rounded-lg bg-amber-500 text-black font-semibold hover:bg-amber-400 transition-colors"
-              >
-                🎯 Add Score
-              </button>
-              <button
-                onClick={() => setView("highScoresWeekly")}
-                className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-500 transition-colors"
-              >
-                ⚡ Weekly
-              </button>
-              <button
-                onClick={() => setView("highScores")}
-                className="px-4 py-2 rounded-lg bg-gray-700 text-white font-semibold hover:bg-gray-600 transition-colors"
-              >
-                🏆 All-Time
-              </button>
+            <div className="mt-4 flex flex-row gap-3">
+              <div className="w-1/2 md:w-auto flex flex-col gap-3 md:flex-row md:gap-3 md:flex-1">
+                <button
+                  onClick={() => setView("addScore")}
+                  className="px-4 py-2 rounded-lg bg-amber-500 text-black font-semibold hover:bg-amber-400 transition-colors pl-3 md:pl-4"
+                >
+                  🎯 Add Score
+                </button>
+                <button
+                  onClick={() => setView("highScoresWeekly")}
+                  className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-500 transition-colors pl-3 md:pl-4"
+                >
+                  ⚡ Weekly
+                </button>
+                <button
+                  onClick={() => setView("highScores")}
+                  className="px-4 py-2 rounded-lg bg-gray-700 text-white font-semibold hover:bg-gray-600 transition-colors pl-3 md:pl-4"
+                >
+                  🏆 All-Time
+                </button>
+              </div>
+              <div className="w-1/2 md:hidden flex justify-end flex-shrink-0">
+                <Image
+                  src="imgs/pinball-icon-512.png"
+                  alt="Pinball Icon"
+                  width={145}
+                  height={145}
+                  className="md:w-40 md:h-40 rounded-lg shadow-lg shadow-amber-500/10"
+                />
+              </div>
             </div>
           </div>
-          <div className="self-center">
+          <div className="hidden md:block self-center">
             <Image
               src="imgs/pinball-icon-512.png"
               alt="Pinball Icon"
@@ -292,7 +303,7 @@ export default function Home({ players, machines, setView }: Props) {
             <div className="text-gray-400">Machines Played</div>
             <div className="text-xl font-bold text-yellow-200">{weeklyMachineCount}</div>
           </div>
-          <div className="text-center rounded bg-gray-800/60 p-3 border border-gray-700">
+          <div className="text-center rounded bg-gray-800/60 p-3 border border-gray-700 col-span-2 md:col-span-1">
             <div className="text-gray-400">Hottest Machine</div>
             <div className="text-xl font-bold text-orange-200">{weeklyTopMachine || "—"}</div>
           </div>
