@@ -61,7 +61,7 @@ export default function IndexPage() {
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-4xl">
+    <div className="container mx-auto p-4 max-w-6xl">
       {view !== "home" && (
         <header className="text-center mb-6">
           <h1 className="text-4xl font-bold text-amber-400 tracking-wider">Pinball Hall of Fame</h1>

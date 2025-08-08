@@ -199,46 +199,46 @@ export default function Home({ players, machines, setView }: Props) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div
           onClick={() => setView("highScores")}
-          className="cursor-pointer rounded-lg border border-gray-700 bg-gray-800 p-4 hover:border-amber-500/50 transition-colors"
+          className="cursor-pointer rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 hover:border-amber-500/50 transition-colors"
         >
           <div className="text-xs text-gray-400">Machines</div>
           <div className="text-2xl font-bold text-amber-400">{totalMachines}</div>
         </div>
         <div
           onClick={() => setView("scoresByPlayer")}
-          className="cursor-pointer rounded-lg border border-gray-700 bg-gray-800 p-4 hover:border-blue-500/50 transition-colors"
+          className="cursor-pointer rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 hover:border-blue-500/50 transition-colors"
         >
           <div className="text-xs text-gray-400">Players</div>
           <div className="text-2xl font-bold text-blue-400">{totalPlayers}</div>
         </div>
         <div
           onClick={() => setView("highScores")}
-          className="cursor-pointer rounded-lg border border-gray-700 bg-gray-800 p-4 hover:border-green-500/50 transition-colors"
+          className="cursor-pointer rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 hover:border-green-500/50 transition-colors"
         >
           <div className="text-xs text-gray-400">Total Scores</div>
           <div className="text-2xl font-bold text-green-400">{totalScores.toLocaleString()}</div>
         </div>
         <div
           onClick={() => setView("highScoresWeekly")}
-          className="cursor-pointer rounded-lg border border-gray-700 bg-gray-800 p-4 hover:border-purple-500/50 transition-colors"
+          className="cursor-pointer rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 hover:border-purple-500/50 transition-colors"
         >
           <div className="text-xs text-gray-400">This Week</div>
           <div className="text-2xl font-bold text-purple-400">{weeklyCount}</div>
         </div>
       </div>
 
-      {/* Hall of Fame: Top Tables (cards with images) */}
+      {/* Hall of Fame: single row of 4 tiles (no scrolling) */}
       {topMachinesOverall.length > 0 && (
         <div>
           <h3 className="text-lg font-bold text-amber-300 mb-2">🏆 Hall of Fame</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {topMachinesOverall.map((m, idx) => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {topMachinesOverall.slice(0, 4).map((m, idx) => {
               const machine = machineByName.get(m.machineName.toLowerCase());
               const imgSrc = machine?.image || "imgs/pinball-icon-512.png";
               return (
                 <div
                   key={m.machineName}
-                  className="overflow-hidden rounded-xl border border-amber-500/30 bg-amber-500/5"
+                  className="overflow-hidden rounded-xl border border-amber-500/30 bg-gradient-to-br from-gray-800/80 to-gray-900/80"
                 >
                   <div className="relative h-32 w-full bg-gray-900">
                     <Image src={imgSrc} alt={m.machineName} fill className="object-cover" />
@@ -253,14 +253,14 @@ export default function Home({ players, machines, setView }: Props) {
                       </span>
                     </div>
                   </div>
-                  <div className="p-4 flex items-baseline justify-between gap-3">
-                    <div className="text-xs text-amber-200/70">Top score</div>
-                    <div className="flex items-baseline gap-2">
-                      <span className="font-dotmatrix text-[22px] md:text-[26px] leading-none text-amber-300">
-                        {m.highScore.toLocaleString()}
-                      </span>
-                      {m.highPlayer && <span className="text-xs text-amber-100/60 truncate">by {m.highPlayer}</span>}
+                  <div className="p-3 md:p-4">
+                    <div className="text-[11px] md:text-xs text-amber-200/70">Top score</div>
+                    <div className="mt-1 font-dotmatrix text-[22px] md:text-[26px] leading-none text-amber-300">
+                      {m.highScore.toLocaleString()}
                     </div>
+                    {m.highPlayer && (
+                      <div className="mt-1 text-[10px] md:text-xs text-amber-100/60 truncate">by {m.highPlayer}</div>
+                    )}
                   </div>
                 </div>
               );
