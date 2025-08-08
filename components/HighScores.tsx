@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
-import { Machine, Player, ScoreEntry } from "../types/types";
-import ScoreWithTooltip from "./ui/ScoreWithTooltip";
-import FormContainer from "./ui/FormContainer";
-import Select from "./ui/Select";
-import Button from "./ui/Button";
-import MachineInfo from "./ui/MachineInfo";
+import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
+
 import { useFirebaseData } from "../hooks/useFirebaseData";
+import { Machine, ScoreEntry } from "../types/types";
 import { getWeekStart, getWeekEnd, formatWeekRange } from "../utils/weekUtils";
+import Select from "./ui/Select";
 
 interface HighScoresProps {
   initialViewMode?: "allTime" | "weekly";
@@ -26,15 +24,15 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
     }
   }, [machines, machine]);
 
-
-
   /* ────────────────────────────────────────────
    * Assemble and (optionally) collapse scores
    * ────────────────────────────────────────── */
-  const allScores = players.flatMap((p) => {
-    const list = p.scores?.[machine] || [];
-    return list.map((s) => ({ player: p.name, score: s }));
-  });
+  const allScores = useMemo(() => {
+    return players.flatMap((p) => {
+      const list = p.scores?.[machine] || [];
+      return list.map((s) => ({ player: p.name, score: s }));
+    });
+  }, [players, machine]);
 
   // Filter by week if in weekly mode
   const filteredScores =
@@ -64,122 +62,140 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
   scores.sort((a, b) => b.score.score - a.score.score);
 
   const mInfo = machines.find((m) => m.name === machine);
+  const machineByName = useMemo(() => {
+    const map = new Map<string, Machine>();
+    for (const m of machines) map.set(m.name.toLowerCase(), m);
+    return map;
+  }, [machines]);
+
+  function formatStamp(ts?: string) {
+    if (!ts) return "";
+    try {
+      return new Date(ts).toLocaleString();
+    } catch {
+      return "";
+    }
+  }
 
   return (
-    <FormContainer title="High Scores by Machine">
-      <Select
-        value={machine}
-        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setMachine(e.target.value)}
-        options={machines.map((m) => ({ value: m.name, label: m.name }))}
-        placeholder="-- select --"
-        className="mb-4"
-      />
-
-      <div className="flex gap-2 mb-4">
-        <Button
-          variant={viewMode === "allTime" ? "primary" : "secondary"}
-          onClick={() => onNavigate?.("highScores")}
-        >
-          All Time
-        </Button>
-        <Button
-          variant={viewMode === "weekly" ? "primary" : "secondary"}
-          onClick={() => onNavigate?.("highScoresWeekly")}
-        >
-          Weekly
-        </Button>
-      </div>
-
-      {/* Week selector for weekly mode */}
-      {viewMode === "weekly" && (
-        <div className="flex justify-center mb-4">
-          <div className="bg-gray-700 rounded-lg p-4">
-            <div className="text-center text-gray-200 font-medium mb-3">{formatWeekRange(selectedWeek)}</div>
-            <div className="flex gap-2">
+    <div className="space-y-4 max-w-4xl mx-auto">
+      {/* Header and controls with optional hero image */}
+      <div className="overflow-hidden rounded-xl border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900">
+        {mInfo?.image ? (
+          <div className="relative h-36 md:h-48 w-full">
+            <Image src={mInfo.image} alt={mInfo.name} fill className="object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+            <div className="absolute bottom-2 left-2 right-2 flex items-end justify-between">
+              <div>
+                <div className="text-sm text-gray-300">High Scores</div>
+                <h2 className="text-2xl md:text-3xl font-bold text-amber-300">{mInfo.name}</h2>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="p-4">
+            <h2 className="text-2xl font-bold text-amber-300">High Scores</h2>
+          </div>
+        )}
+        <div className="p-4 pb-0 pt-0 grid md:grid-cols-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <Select
+              value={machine}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setMachine(e.target.value)}
+              options={machines.map((m) => ({ value: m.name, label: m.name }))}
+              placeholder="-- select --"
+              className="h-[40px] mt-4"
+            />
+            <div className="flex items-center rounded-lg border border-gray-600 overflow-hidden">
               <button
-                className="w-[160px] px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded-lg text-gray-200 select-none transition-colors"
-                onClick={() => {
-                  const prevWeek = new Date(selectedWeek);
-                  prevWeek.setDate(prevWeek.getDate() - 7);
-                  setSelectedWeek(prevWeek);
-                }}
+                className={`px-3 py-[10px] text-sm ${viewMode === "allTime" ? "bg-amber-500 text-black" : "bg-gray-800 text-gray-300"}`}
+                onClick={() => onNavigate?.("highScores")}
               >
-                ← Previous Week
+                All Time
               </button>
               <button
-                className={`w-[160px] px-4 py-2 rounded-lg select-none transition-colors ${
-                  selectedWeek >= getWeekStart(new Date())
-                    ? "bg-gray-800 text-gray-500 cursor-not-allowed"
-                    : "bg-gray-600 hover:bg-gray-500 text-gray-200"
-                }`}
-                disabled={selectedWeek >= getWeekStart(new Date())}
-                onClick={() => {
-                  const nextWeek = new Date(selectedWeek);
-                  nextWeek.setDate(nextWeek.getDate() + 7);
-                  setSelectedWeek(nextWeek);
-                }}
+                className={`px-3 py-[10px] text-sm ${viewMode === "weekly" ? "bg-amber-500 text-black" : "bg-gray-800 text-gray-300"}`}
+                onClick={() => onNavigate?.("highScoresWeekly")}
               >
-                Next Week →
+                Weekly
               </button>
             </div>
           </div>
-        </div>
-      )}
+          <label className="flex items-center gap-2 justify-start md:justify-end text-gray-200">
+            <input
+              type="checkbox"
+              className="h-4 w-4 accent-amber-500"
+              checked={bestOnly}
+              onChange={(e) => setBestOnly(e.target.checked)}
+            />
+            Show best score per player only
+          </label>
 
-      {/* best-only toggle */}
-      <label className="flex items-center gap-2 text-gray-200 mb-6">
-        <input
-          type="checkbox"
-          className="h-4 w-4 accent-amber-500"
-          checked={bestOnly}
-          onChange={(e) => setBestOnly(e.target.checked)}
-        />
-        Show best score per player only
-      </label>
-
-      {machine &&
-        (!scores.length ? (
-          <p className="text-gray-400">No scores recorded for this machine yet.</p>
-        ) : (
-          <>
-            <div className="flex items-center mb-4">
-              {mInfo && <MachineInfo machine={mInfo} imageSize="lg" hideName={true} />}
-              <h3 className="text-xl font-bold text-amber-300 ml-4">{machine} – High Scores</h3>
+          {viewMode === "weekly" && (
+            <div className="md:col-span-2">
+              <div className="mb-4 bg-gray-800 border border-gray-700 rounded-lg p-3 flex flex-wrap items-center justify-between gap-2">
+                <div className="text-sm text-gray-200">{formatWeekRange(selectedWeek)}</div>
+                <div className="flex gap-2">
+                  <button
+                    className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 rounded text-gray-200 text-sm"
+                    onClick={() => {
+                      const prevWeek = new Date(selectedWeek);
+                      prevWeek.setDate(prevWeek.getDate() - 7);
+                      setSelectedWeek(prevWeek);
+                    }}
+                  >
+                    ← Previous
+                  </button>
+                  <button
+                    className={`px-3 py-1.5 rounded text-sm ${
+                      selectedWeek >= getWeekStart(new Date())
+                        ? "bg-gray-900 text-gray-500 cursor-not-allowed border border-gray-700"
+                        : "bg-gray-700 hover:bg-gray-600 text-gray-200"
+                    }`}
+                    disabled={selectedWeek >= getWeekStart(new Date())}
+                    onClick={() => {
+                      const nextWeek = new Date(selectedWeek);
+                      nextWeek.setDate(nextWeek.getDate() + 7);
+                      setSelectedWeek(nextWeek);
+                    }}
+                  >
+                    Next →
+                  </button>
+                </div>
+              </div>
             </div>
-            <table className="w-full text-left table-auto">
-              <thead>
-                <tr className="bg-gray-700">
-                  <th className="p-3">Rank</th>
-                  <th className="p-3">Player</th>
-                  <th className="p-3 hidden md:table-cell">Date</th>
-                  <th className="p-3 text-right">Score</th>
-                </tr>
-              </thead>
-              <tbody>
-                {scores.map((s, i) => (
-                  <tr key={i} className={i % 2 ? "bg-gray-700/50" : "bg-gray-800/50"}>
-                    <td className="pl-6 font-bold">{i + 1}</td>
-                    <td className="p-3">{s.player}</td>
-                    <td className="p-3 text-gray-400 hidden md:table-cell">
-                      {s.score.timestamp
-                        ? new Date(s.score.timestamp).toLocaleString(undefined, {
-                            year: "numeric",
-                            month: "numeric",
-                            day: "numeric",
-                            hour: "numeric",
-                            minute: "2-digit",
-                          })
-                        : ""}
-                    </td>
-                    <td className="p-3 text-right">
-                      <ScoreWithTooltip score={s.score} />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </>
-        ))}
-    </FormContainer>
+          )}
+        </div>
+      </div>
+
+      {/* Scores list */}
+      {!machine || scores.length === 0 ? (
+        <p className="text-gray-400">
+          {!machine ? "Select a machine to view scores." : "No scores recorded for this machine yet."}
+        </p>
+      ) : (
+        <ul className="rounded-xl border border-gray-700 bg-gray-800/60 divide-y divide-gray-700/60">
+          {scores.map((s, i) => (
+            <li
+              key={`${s.player}-${s.score.timestamp}-${s.score.score}-${i}`}
+              className="p-3 md:p-4 flex items-center gap-4"
+            >
+              <span className="inline-flex h-8 w-8 items-center justify-center rounded bg-gray-700 text-gray-300 border border-gray-600 font-semibold">
+                {i + 1}
+              </span>
+              <div className="min-w-0">
+                <div className="text-sm text-gray-200 truncate">
+                  <span className="font-semibold text-blue-200">{s.player}</span>
+                </div>
+                {s.score.timestamp && <div className="text-xs text-gray-400">{formatStamp(s.score.timestamp)}</div>}
+              </div>
+              <div className="ml-auto font-dotmatrix text-[28px] md:text-[40px] leading-none text-amber-300 drop-shadow-[0_0_6px_rgba(251,191,36,0.25)]">
+                {s.score.score.toLocaleString()}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
