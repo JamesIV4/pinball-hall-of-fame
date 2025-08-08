@@ -5,6 +5,7 @@ import ManageScores from "../components/ManageScores";
 import HighScores from "../components/HighScores";
 import ScoresByPlayer from "../components/ScoresByPlayer";
 import AllScores from "../components/AllScores";
+import AllRecentScores from "../components/AllRecentScores";
 import ManageDatabase from "../components/ManageDatabase";
 import { View } from "../types/types";
 import NavBar from "@/components/ui/NavBar";
@@ -30,6 +31,7 @@ export default function IndexPage() {
           "manageScores",
           "highScores",
           "highScoresWeekly",
+          "allRecentScores",
           "scoresByPlayer",
           "allScores",
           "manageDatabase",
@@ -60,20 +62,23 @@ export default function IndexPage() {
 
   return (
     <div className="container mx-auto p-4 max-w-4xl">
-      <header className="text-center mb-6">
-        <h1 className="text-4xl font-bold text-amber-400 tracking-wider">Pinball Hall of Fame</h1>
-        <p className="text-gray-400">Track your high scores and dominate the silver ball!</p>
-      </header>
+      {view !== "home" && (
+        <header className="text-center mb-6">
+          <h1 className="text-4xl font-bold text-amber-400 tracking-wider">Pinball Hall of Fame</h1>
+          <p className="text-gray-400">Track your high scores and dominate the silver ball!</p>
+        </header>
+      )}
 
       <NavBar view={view} setView={navigateToView} />
 
-      {view === "home" && <Home totalMachines={machines.length} totalPlayers={players.length} setView={navigateToView} />}
+      {view === "home" && <Home players={players} machines={machines} setView={navigateToView} />}
       {view === "manageMachines" && <ManageMachines />}
       {view === "managePlayers" && <ManagePlayers />}
       {view === "addScore" && <AddScore />}
       {view === "manageScores" && <ManageScores />}
       {view === "highScores" && <HighScores onNavigate={navigateToView} />}
       {view === "highScoresWeekly" && <HighScores initialViewMode="weekly" onNavigate={navigateToView} />}
+      {view === "allRecentScores" && <AllRecentScores />}
       {view === "scoresByPlayer" && <ScoresByPlayer />}
       {view === "allScores" && <AllScores />}
       {view === "manageDatabase" && <ManageDatabase />}
