@@ -20,11 +20,11 @@ export default function NavBar({ view, setView }: Props) {
         }
       });
     };
-    
+
     // Use both mousedown and touchstart for better iOS compatibility
     document.addEventListener("mousedown", closeIfOutside);
     document.addEventListener("touchstart", closeIfOutside);
-    
+
     return () => {
       document.removeEventListener("mousedown", closeIfOutside);
       document.removeEventListener("touchstart", closeIfOutside);
@@ -52,7 +52,14 @@ export default function NavBar({ view, setView }: Props) {
   );
 
   const manageViews: View[] = ["manageScores", "managePlayers", "manageMachines", "manageDatabase"];
-  const scoresViews: View[] = ["addScore", "highScores", "scoresByPlayer", "allScores"];
+  const scoresViews: View[] = [
+    "addScore",
+    "highScores",
+    "highScoresWeekly",
+    "allRecentScores",
+    "scoresByPlayer",
+    "allScores",
+  ];
 
   // Shared overlay panel classes — note the new max-width
   const panelClasses =
@@ -106,6 +113,7 @@ export default function NavBar({ view, setView }: Props) {
             <div className={panelClasses}>
               {btn("addScore", "star", "Add Score", scoresRef, "text-left")}
               {btn("highScores", "trophy", "High Scores", scoresRef, "text-left")}
+              {btn("highScoresWeekly", "bolt", "Weekly", scoresRef, "text-left")}
               {btn("scoresByPlayer", "user-astronaut", "By Player", scoresRef, "text-left")}
               {btn("allScores", "list", "All Scores", scoresRef, "text-left")}
             </div>
