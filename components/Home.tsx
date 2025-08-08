@@ -244,7 +244,7 @@ export default function Home({ players, machines, setView }: Props) {
                     <Image src={imgSrc} alt={m.machineName} fill className="object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                     <div className="absolute top-2 left-2 right-2 flex items-center justify-between gap-2">
-                      <span className="inline-flex items-center gap-2 text-xs px-2 py-1 rounded bg-black/40 border border-amber-500/40 text-amber-100">
+                      <span className="inline-flex items-center gap-2 text-xs px-2 py-1 rounded bg-black/40 border max-w-[130px] border-amber-500/40 text-amber-100">
                         <span className="opacity-80">#{idx + 1}</span>
                         <span className="truncate">{m.machineName}</span>
                       </span>

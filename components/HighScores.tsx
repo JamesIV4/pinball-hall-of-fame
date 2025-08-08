@@ -78,7 +78,7 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
   }
 
   return (
-    <div className="space-y-4 max-w-4xl mx-auto">
+    <div className="space-y-4 mx-auto">
       {/* Header and controls with optional hero image */}
       <div className="overflow-hidden rounded-xl border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900">
         {mInfo?.image ? (
@@ -121,7 +121,7 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
               </button>
             </div>
           </div>
-          <label className="flex items-center gap-2 justify-start md:justify-end text-gray-200">
+          <label className="my-4 md:my-0 flex items-center gap-2 justify-start md:justify-end text-gray-200">
             <input
               type="checkbox"
               className="h-4 w-4 accent-amber-500"
@@ -178,7 +178,7 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
           {scores.map((s, i) => (
             <li
               key={`${s.player}-${s.score.timestamp}-${s.score.score}-${i}`}
-              className="p-3 md:p-4 flex items-center gap-4"
+              className="p-3 md:p-4 flex items-center gap-4 hover:bg-gray-800/80 transition-colors"
             >
               <span className="inline-flex h-8 w-8 items-center justify-center rounded bg-gray-700 text-gray-300 border border-gray-600 font-semibold">
                 {i + 1}
