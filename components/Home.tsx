@@ -149,19 +149,8 @@ export default function Home({ players, machines, setView }: Props) {
       <div className="relative overflow-hidden rounded-xl border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-wide text-amber-400">Pinball Hall of Fame</h2>
-            <p className="text-gray-300 md:text-base text-sm mt-1">Track your high scores and dominate the silver ball!</p>
-            <div className="mt-4 flex flex-wrap gap-2 text-xs">
-              <span className="px-2 py-1 rounded bg-gray-700 border border-gray-600 text-gray-200">
-                {totalMachines} machines
-              </span>
-              <span className="px-2 py-1 rounded bg-gray-700 border border-gray-600 text-gray-200">
-                {totalPlayers} players
-              </span>
-              <span className="px-2 py-1 rounded bg-gray-700 border border-gray-600 text-gray-200">
-                {totalScores.toLocaleString()} scores
-              </span>
-            </div>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-wide text-amber-400 md:text-left text-center">Pinball Hall of Fame</h2>
+            <p className="text-gray-300 md:text-base text-sm mt-1 md:text-left text-center">Track your high scores and dominate the silver ball!</p>
             <div className="mt-4 flex flex-row gap-3">
               <div className="w-1/2 md:w-auto flex flex-col gap-3 md:flex-row md:gap-3 md:flex-1">
                 <button
@@ -198,8 +187,8 @@ export default function Home({ players, machines, setView }: Props) {
             <Image
               src="imgs/pinball-icon-512.png"
               alt="Pinball Icon"
-              width={160}
-              height={160}
+              width={120}
+              height={120}
               className="rounded-lg shadow-lg shadow-amber-500/10"
             />
           </div>
