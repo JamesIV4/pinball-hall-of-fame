@@ -266,7 +266,7 @@ export default function Home({ players, machines, setView }: Props) {
                   </div>
                   <div className="p-3 md:p-4">
                     <div className="text-[11px] md:text-xs text-amber-200/70">Top score</div>
-                    <div className="mt-1 font-dotmatrix text-[22px] md:text-[26px] leading-none text-amber-300">
+                    <div className="mt-1 font-dotmatrix text-[26px] md:text-[26px] leading-none text-amber-300">
                       {m.highScore.toLocaleString()}
                     </div>
                     {m.highPlayer && (

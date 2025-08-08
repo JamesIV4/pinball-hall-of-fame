@@ -112,6 +112,7 @@ export default function NavBar({ view, setView }: Props) {
 
             <div className={panelClasses}>
               {btn("addScore", "star", "Add Score", scoresRef, "text-left")}
+              {btn("allRecentScores", "clock", "Recent Scores", scoresRef, "text-left")}
               {btn("highScores", "trophy", "High Scores", scoresRef, "text-left")}
               {btn("highScoresWeekly", "bolt", "Weekly", scoresRef, "text-left")}
               {btn("scoresByPlayer", "user-astronaut", "By Player", scoresRef, "text-left")}
