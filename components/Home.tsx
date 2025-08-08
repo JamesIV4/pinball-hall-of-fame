@@ -150,7 +150,7 @@ export default function Home({ players, machines, setView }: Props) {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-wide text-amber-400">Pinball Hall of Fame</h2>
-            <p className="text-gray-300 mt-1">Track epic highs, weekly rivalries, and glorious tilts.</p>
+            <p className="text-gray-300 md:text-base text-sm mt-1">Track your high scores and dominate the silver ball!</p>
             <div className="mt-4 flex flex-wrap gap-2 text-xs">
               <span className="px-2 py-1 rounded bg-gray-700 border border-gray-600 text-gray-200">
                 {totalMachines} machines
