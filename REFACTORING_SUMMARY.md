@@ -56,7 +56,7 @@
 ### Before vs After Code Reduction
 
 1. **AddMachine.tsx**: ~150 lines → ~80 lines (47% reduction)
-2. **AddPlayer.tsx**: ~100 lines → ~60 lines (40% reduction)  
+2. **AddPlayer.tsx**: ~100 lines → ~60 lines (40% reduction)
 3. **AddScore.tsx**: ~120 lines → ~70 lines (42% reduction)
 4. **AllScores.tsx**: ~80 lines → ~25 lines (69% reduction)
 5. **ManageScores.tsx**: ~200 lines → ~120 lines (40% reduction)
@@ -66,11 +66,13 @@
 ## Benefits Achieved
 
 ### Code Reduction
+
 - **Total lines reduced**: ~400+ lines of duplicated code eliminated
 - **Maintainability**: Single source of truth for UI patterns
 - **Consistency**: Uniform styling and behavior across components
 
 ### Reusability
+
 - Button styles centralized with variants
 - Form containers standardized
 - Input/Select components with consistent behavior
@@ -78,6 +80,7 @@
 - Score display patterns consolidated
 
 ### Developer Experience
+
 - Easier to add new forms/components
 - Consistent prop interfaces
 - Better TypeScript support
@@ -109,7 +112,7 @@
 ## Next Steps for Further Optimization
 
 1. Create Modal component for edit dialogs
-2. Add Loading/Error state components  
+2. Add Loading/Error state components
 3. Create Table component for score displays
 4. Add Toast hook for better state management
 5. Consider form validation utilities

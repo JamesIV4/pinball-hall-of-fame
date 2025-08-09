@@ -149,8 +149,12 @@ export default function Home({ players, machines, setView }: Props) {
       <div className="relative overflow-hidden rounded-xl border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-wide text-amber-400 md:text-left text-center">Pinball Hall of Fame</h2>
-            <p className="text-gray-300 md:text-base text-sm mt-1 md:text-left text-center">Track your high scores and dominate the silver ball!</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-wide text-amber-400 md:text-left text-center">
+              Pinball Hall of Fame
+            </h2>
+            <p className="text-gray-300 md:text-base text-sm mt-1 md:text-left text-center">
+              Track your high scores and dominate the silver ball!
+            </p>
             <div className="mt-4 flex flex-row gap-3">
               <div className="w-1/2 md:w-auto flex flex-col gap-3 md:flex-row md:gap-3 md:flex-1">
                 <button

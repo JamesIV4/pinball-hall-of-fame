@@ -7,10 +7,7 @@ export const formatScore = (value: string) => {
 };
 
 // Handle score input change with formatting
-export const handleScoreChange = (
-  e: React.ChangeEvent<HTMLInputElement>,
-  setScore: (score: string) => void
-) => {
+export const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>, setScore: (score: string) => void) => {
   const formatted = formatScore(e.target.value);
   setScore(formatted);
 };

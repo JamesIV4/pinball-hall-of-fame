@@ -10,7 +10,6 @@ import { ScoreEntry } from "../types/types";
 import { useFirebaseData } from "../hooks/useFirebaseData";
 import { formatScore } from "../utils/scoreUtils";
 
-
 export default function ManageScores() {
   const { db } = getFirebase();
   const { machines, players } = useFirebaseData();
@@ -51,9 +50,9 @@ export default function ManageScores() {
     if (!deleteModal) return;
 
     try {
-      const player = players.find(p => p.id === deleteModal.playerId);
+      const player = players.find((p) => p.id === deleteModal.playerId);
       const machineScores = player?.scores?.[deleteModal.machineName] || [];
-      
+
       if (machineScores.length === 1) {
         // Last score for this machine - remove the entire machine field
         await updateDoc(doc(db, "data/players/players", deleteModal.playerId), {

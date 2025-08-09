@@ -8,10 +8,7 @@ export default function Select({ label, options, placeholder, className = "", ..
   return (
     <div className="mb-4">
       {label && <label className="block mb-2">{label}</label>}
-      <select
-        className={`w-full p-2 rounded-lg bg-gray-700 ${className}`}
-        {...props}
-      >
+      <select className={`w-full p-2 rounded-lg bg-gray-700 ${className}`} {...props}>
         {placeholder && <option value="">{placeholder}</option>}
         {options.map((option) => (
           <option key={option.value} value={option.value}>

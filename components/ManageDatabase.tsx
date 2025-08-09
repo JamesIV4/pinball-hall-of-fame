@@ -32,7 +32,7 @@ export default function ManageDatabase() {
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    
+
     if (newPassword !== confirmPassword) {
       setToast({ msg: "Passwords don't match", type: "error" });
       return;

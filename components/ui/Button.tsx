@@ -18,13 +18,7 @@ const sizes = {
   lg: "w-full py-2",
 };
 
-export default function Button({ 
-  variant = "primary", 
-  size = "md", 
-  className = "", 
-  children, 
-  ...props 
-}: ButtonProps) {
+export default function Button({ variant = "primary", size = "md", className = "", children, ...props }: ButtonProps) {
   return (
     <button
       className={`rounded-lg font-semibold transition-colors ${variants[variant]} ${sizes[size]} ${className}`}

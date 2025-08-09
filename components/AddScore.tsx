@@ -68,7 +68,14 @@ export default function AddScore() {
             placeholder="-- select --"
             required
           />
-          <Input label="Score" type="text" inputMode="numeric" value={score} onChange={(e) => handleScoreChange(e, setScore)} required />
+          <Input
+            label="Score"
+            type="text"
+            inputMode="numeric"
+            value={score}
+            onChange={(e) => handleScoreChange(e, setScore)}
+            required
+          />
           <Button type="submit" size="lg">
             Add Score
           </Button>

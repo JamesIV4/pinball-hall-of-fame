@@ -12,11 +12,7 @@ export default function AllScores() {
       ) : (
         <div className="space-y-8">
           {players.map((player) => (
-            <PlayerScoreSection
-              key={player.id}
-              player={player}
-              machines={machines}
-            />
+            <PlayerScoreSection key={player.id} player={player} machines={machines} />
           ))}
         </div>
       )}

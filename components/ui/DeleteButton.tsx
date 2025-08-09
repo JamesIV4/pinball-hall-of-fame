@@ -29,7 +29,7 @@ export default function DeleteButton({ onDelete, itemName, itemType, size = "sm"
       <Button variant="danger" size={size} className={className} onClick={handleDelete}>
         Delete
       </Button>
-      
+
       <PasswordModal
         isOpen={showPasswordModal}
         title="Enter Password"

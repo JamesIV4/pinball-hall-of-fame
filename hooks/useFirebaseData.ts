@@ -20,7 +20,7 @@ export function useFirebaseData() {
 
     const unsubP = onSnapshot(collection(db, "data/players/players"), (snap) => {
       setPlayers(
-        snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })).sort((a, b) => a.name.localeCompare(b.name))
+        snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })).sort((a, b) => a.name.localeCompare(b.name)),
       );
     });
 

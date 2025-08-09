@@ -10,12 +10,12 @@ interface PlayerScoreSectionProps {
   onDeleteScore?: (playerId: string, machineName: string, score: ScoreEntry, index: number) => void;
 }
 
-export default function PlayerScoreSection({ 
-  player, 
-  machines, 
-  showActions = false, 
-  onEditScore, 
-  onDeleteScore 
+export default function PlayerScoreSection({
+  player,
+  machines,
+  showActions = false,
+  onEditScore,
+  onDeleteScore,
 }: PlayerScoreSectionProps) {
   const machineNames = Object.keys(player.scores || {}).sort();
 
@@ -35,7 +35,7 @@ export default function PlayerScoreSection({
         {machineNames.map((machineName) => {
           const machine = machines.find((m) => m.name === machineName);
           const scores = [...(player.scores?.[machineName] || [])].sort((a, b) => b.score - a.score);
-          
+
           return (
             <div key={machineName} className="bg-gray-600 p-3 rounded-lg">
               <div className="mb-3">
@@ -49,7 +49,9 @@ export default function PlayerScoreSection({
                 scores={scores}
                 showActions={showActions}
                 onEdit={showActions ? (score, index) => onEditScore?.(player.id, machineName, score, index) : undefined}
-                onDelete={showActions ? (score, index) => onDeleteScore?.(player.id, machineName, score, index) : undefined}
+                onDelete={
+                  showActions ? (score, index) => onDeleteScore?.(player.id, machineName, score, index) : undefined
+                }
               />
             </div>
           );
