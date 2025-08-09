@@ -7,7 +7,7 @@ export type View =
   | "highScores"
   | "highScoresWeekly"
   | "allRecentScores"
-  | "scoresByPlayer"
+  | "playerStats"
   | "allScores"
   | "manageDatabase";
 

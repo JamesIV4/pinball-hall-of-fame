@@ -57,7 +57,7 @@ export default function NavBar({ view, setView }: Props) {
     "highScores",
     "highScoresWeekly",
     "allRecentScores",
-    "scoresByPlayer",
+    "playerStats",
     "allScores",
   ];
 
@@ -115,7 +115,7 @@ export default function NavBar({ view, setView }: Props) {
               {btn("allRecentScores", "clock", "Recent Scores", scoresRef, "text-left")}
               {btn("highScores", "trophy", "High Scores", scoresRef, "text-left")}
               {btn("highScoresWeekly", "bolt", "Weekly", scoresRef, "text-left")}
-              {btn("scoresByPlayer", "user-astronaut", "By Player", scoresRef, "text-left")}
+              {btn("playerStats", "user-astronaut", "Player Stats", scoresRef, "text-left")}
               {btn("allScores", "list", "All Scores", scoresRef, "text-left")}
             </div>
           </details>

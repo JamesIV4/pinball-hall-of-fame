@@ -6,15 +6,16 @@ interface ScoreListProps {
   showActions?: boolean;
   onEdit?: (score: ScoreEntry, index: number) => void;
   onDelete?: (score: ScoreEntry, index: number) => void;
+  startRank?: number;
 }
 
-export default function ScoreList({ scores, showActions = false, onEdit, onDelete }: ScoreListProps) {
+export default function ScoreList({ scores, showActions = false, onEdit, onDelete, startRank = 1 }: ScoreListProps) {
   return (
     <div className="space-y-1">
       {scores.map((score, i) => (
         <div key={i}>
           <div className="flex items-center">
-            <span className="md:text-[23px] font-bold mr-3 w-6 ml-2">{i + 1}.</span>
+            <span className="md:text-[23px] font-bold mr-3 w-6 ml-2">{startRank + i}.</span>
             <ScoreWithTooltip score={score} />
             {score.timestamp && (
               <>
