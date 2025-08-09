@@ -3,7 +3,7 @@ import Home from "../components/Home";
 import AddScore from "../components/AddScore";
 import ManageScores from "../components/ManageScores";
 import HighScores from "../components/HighScores";
-import ScoresByPlayer from "../components/ScoresByPlayer";
+import PlayerStats from "../components/PlayerStats";
 import AllScores from "../components/AllScores";
 import AllRecentScores from "../components/AllRecentScores";
 import ManageDatabase from "../components/ManageDatabase";
@@ -32,7 +32,7 @@ export default function IndexPage() {
           "highScores",
           "highScoresWeekly",
           "allRecentScores",
-          "scoresByPlayer",
+          "playerStats",
           "allScores",
           "manageDatabase",
         ].includes(hash)
@@ -79,7 +79,7 @@ export default function IndexPage() {
       {view === "highScores" && <HighScores onNavigate={navigateToView} />}
       {view === "highScoresWeekly" && <HighScores initialViewMode="weekly" onNavigate={navigateToView} />}
       {view === "allRecentScores" && <AllRecentScores />}
-      {view === "scoresByPlayer" && <ScoresByPlayer />}
+      {view === "playerStats" && <PlayerStats />}
       {view === "allScores" && <AllScores />}
       {view === "manageDatabase" && <ManageDatabase />}
     </div>

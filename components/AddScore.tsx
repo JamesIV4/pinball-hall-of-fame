@@ -20,11 +20,27 @@ export default function AddScore() {
     type?: "success" | "error";
   }>({ msg: "" });
 
+  // Default machine to first available
   useEffect(() => {
     if (!machine && machines.length > 0) {
       setMachine(machines[0].name);
     }
   }, [machines, machine]);
+
+  // Prefill player from localStorage (set by other pages), then clear the key
+  useEffect(() => {
+    if (!player && typeof window !== "undefined") {
+      try {
+        const prefill = localStorage.getItem("phof_prefill_player");
+        if (prefill && players.some((p) => p.id === prefill)) {
+          setPlayer(prefill);
+          localStorage.removeItem("phof_prefill_player");
+        }
+      } catch {
+        // ignore localStorage errors
+      }
+    }
+  }, [players, player]);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -38,9 +54,13 @@ export default function AddScore() {
         }),
       });
       setToast({ msg: "Score added!" });
+      // Clear form and any prefill keys
       setMachine("");
       setPlayer("");
       setScore("");
+      try {
+        if (typeof window !== "undefined") localStorage.removeItem("phof_prefill_player");
+      } catch {}
     } catch (err) {
       console.error(err);
       setToast({ msg: "Error adding score", type: "error" });

@@ -8,9 +8,9 @@ interface MachineInfoProps {
 }
 
 const imageSizes = {
-  sm: "w-12 h-16",
-  md: "w-16 h-20",
-  lg: "w-24 h-32",
+  sm: "w-12 h-[5.5rem]",
+  md: "w-16 h-28",
+  lg: "w-24 h-44",
 };
 
 export default function MachineInfo({
