@@ -209,7 +209,7 @@ export default function Home({ players, machines, setView }: Props) {
           <div className="text-2xl font-bold text-amber-400">{totalMachines}</div>
         </div>
         <div
-          onClick={() => setView("scoresByPlayer")}
+          onClick={() => setView("playerStats")}
           className="cursor-pointer rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 hover:border-blue-500/50 transition-colors"
         >
           <div className="text-xs text-gray-400">Players</div>
