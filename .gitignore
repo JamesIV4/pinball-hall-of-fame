@@ -4,7 +4,7 @@ node_modules
 
 out
 docs
-tsconfig.tsbuildinfo
+*.tsbuildinfo
 
 # Local env vars
 .env.local

@@ -4,7 +4,8 @@ import Select from "./ui/Select";
 import MachineInfo from "./ui/MachineInfo";
 import ScoreList from "./ui/ScoreList";
 import { useFirebaseData } from "../hooks/useFirebaseData";
-import { Player, ScoreEntry } from "../types/types";
+import { safeSetItem } from "../utils/storage";
+import { ScoreEntry } from "../types/types";
 import { getWeekStart, isInCurrentWeek } from "../utils/weekUtils";
 
 export default function PlayerStats() {
@@ -81,12 +82,19 @@ export default function PlayerStats() {
         <div className="flex flex-col md:flex-row gap-6">
           {/* Left: main content */}
           <div className="flex-1 order-2 md:order-1">
+<<<<<<< HEAD
+            <div className="mb-3 hidden md:block">
+=======
             <div className="mb-6 hidden md:block">
+>>>>>>> 036188eccdcf61d46e8e61d6ea509559aeea16e3
               <Select
                 value={playerId}
                 onChange={(e) => setPlayerId(e.target.value)}
                 options={players.map((p) => ({ value: p.id, label: p.name }))}
                 placeholder="-- select player --"
+<<<<<<< HEAD
+              />
+=======
                 className="mb-2"
               />
               <div className="text-sm text-gray-400">
@@ -94,6 +102,7 @@ export default function PlayerStats() {
                   ? `${player.name} — ${Object.keys(player.scores || {}).length} machines`
                   : "Select a player to view stats."}
               </div>
+>>>>>>> 036188eccdcf61d46e8e61d6ea509559aeea16e3
             </div>
 
             {!playerId ? (
@@ -219,19 +228,13 @@ export default function PlayerStats() {
             )}
           </div>
 
-          <div className="mb-6 block md:hidden">
+          <div className="-mb-5 block md:hidden">
             <Select
               value={playerId}
               onChange={(e) => setPlayerId(e.target.value)}
               options={players.map((p) => ({ value: p.id, label: p.name }))}
               placeholder="-- select player --"
-              className="mb-2"
             />
-            <div className="text-sm text-gray-400">
-              {player
-                ? `${player.name} — ${Object.keys(player.scores || {}).length} machines`
-                : "Select a player to view stats."}
-            </div>
           </div>
 
           {/* Right: stats panel */}
@@ -248,6 +251,11 @@ export default function PlayerStats() {
                     <div className="bg-gray-800/60 rounded p-3 border border-gray-700">
                       <div className="text-xs text-gray-400">Total Plays</div>
                       <div className="text-xl font-bold text-amber-300">{stats?.totalPlays ?? 0}</div>
+                    </div>
+
+                    <div className="bg-gray-800/60 rounded p-3 border border-gray-700">
+                      <div className="text-xs text-gray-400">Machines</div>
+                      <div className="text-xl font-bold text-amber-300">{Object.keys(player?.scores || {}).length}</div>
                     </div>
 
                     <div className="bg-gray-800/60 rounded p-3 border border-gray-700">
@@ -316,9 +324,13 @@ export default function PlayerStats() {
                     className="px-3 py-2 rounded bg-amber-500 text-black font-semibold hover:bg-amber-400"
                     onClick={() => {
                       if (player) {
+<<<<<<< HEAD
+                        safeSetItem("phof_prefill_player", player.id);
+=======
                         try {
                           localStorage.setItem("phof_prefill_player", player.id);
                         } catch {}
+>>>>>>> 036188eccdcf61d46e8e61d6ea509559aeea16e3
                         window.location.hash = "addScore";
                       }
                     }}
@@ -328,9 +340,13 @@ export default function PlayerStats() {
                   <button
                     className="px-3 py-2 rounded bg-gray-700 text-white font-semibold hover:bg-gray-600"
                     onClick={() => {
+<<<<<<< HEAD
+                      safeSetItem("phof_filter_player", player?.id || "");
+=======
                       try {
                         localStorage.setItem("phof_filter_player", player?.id || "");
                       } catch {}
+>>>>>>> 036188eccdcf61d46e8e61d6ea509559aeea16e3
                       window.location.hash = "allScores";
                     }}
                   >
