@@ -33,7 +33,6 @@ export default function IndexPage() {
           "highScoresWeekly",
           "allRecentScores",
           "playerStats",
-          "allScores",
           "manageDatabase",
         ].includes(hash)
       ) {
@@ -80,7 +79,6 @@ export default function IndexPage() {
       {view === "highScoresWeekly" && <HighScores initialViewMode="weekly" onNavigate={navigateToView} />}
       {view === "allRecentScores" && <AllRecentScores />}
       {view === "playerStats" && <PlayerStats />}
-      {view === "allScores" && <AllScores />}
       {view === "manageDatabase" && <ManageDatabase />}
     </div>
   );

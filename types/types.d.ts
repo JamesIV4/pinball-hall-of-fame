@@ -8,7 +8,6 @@ export type View =
   | "highScoresWeekly"
   | "allRecentScores"
   | "playerStats"
-  | "allScores"
   | "manageDatabase";
 
 export interface ScoreEntry {
