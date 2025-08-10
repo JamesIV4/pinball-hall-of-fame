@@ -4,6 +4,10 @@ import AddScore from "../components/AddScore";
 import ManageScores from "../components/ManageScores";
 import HighScores from "../components/HighScores";
 import PlayerStats from "../components/PlayerStats";
+<<<<<<< HEAD
+=======
+import AllScores from "../components/AllScores";
+>>>>>>> 036188eccdcf61d46e8e61d6ea509559aeea16e3
 import AllRecentScores from "../components/AllRecentScores";
 import ManageDatabase from "../components/ManageDatabase";
 import { View } from "../types/types";
@@ -32,6 +36,10 @@ export default function IndexPage() {
           "highScoresWeekly",
           "allRecentScores",
           "playerStats",
+<<<<<<< HEAD
+=======
+          "allScores",
+>>>>>>> 036188eccdcf61d46e8e61d6ea509559aeea16e3
           "manageDatabase",
         ].includes(hash)
       ) {
@@ -78,6 +86,10 @@ export default function IndexPage() {
       {view === "highScoresWeekly" && <HighScores initialViewMode="weekly" onNavigate={navigateToView} />}
       {view === "allRecentScores" && <AllRecentScores />}
       {view === "playerStats" && <PlayerStats />}
+<<<<<<< HEAD
+=======
+      {view === "allScores" && <AllScores />}
+>>>>>>> 036188eccdcf61d46e8e61d6ea509559aeea16e3
       {view === "manageDatabase" && <ManageDatabase />}
     </div>
   );

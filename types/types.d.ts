@@ -8,6 +8,10 @@ export type View =
   | "highScoresWeekly"
   | "allRecentScores"
   | "playerStats"
+<<<<<<< HEAD
+=======
+  | "allScores"
+>>>>>>> 036188eccdcf61d46e8e61d6ea509559aeea16e3
   | "manageDatabase";
 
 export interface ScoreEntry {
