@@ -4,7 +4,6 @@ import AddScore from "../components/AddScore";
 import ManageScores from "../components/ManageScores";
 import HighScores from "../components/HighScores";
 import PlayerStats from "../components/PlayerStats";
-import AllScores from "../components/AllScores";
 import AllRecentScores from "../components/AllRecentScores";
 import ManageDatabase from "../components/ManageDatabase";
 import { View } from "../types/types";
