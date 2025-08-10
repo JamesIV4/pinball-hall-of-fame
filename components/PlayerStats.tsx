@@ -82,19 +82,13 @@ export default function PlayerStats() {
         <div className="flex flex-col md:flex-row gap-6">
           {/* Left: main content */}
           <div className="flex-1 order-2 md:order-1">
-            <div className="mb-6 hidden md:block">
+            <div className="mb-3 hidden md:block">
               <Select
                 value={playerId}
                 onChange={(e) => setPlayerId(e.target.value)}
                 options={players.map((p) => ({ value: p.id, label: p.name }))}
                 placeholder="-- select player --"
-                className="mb-2"
               />
-              <div className="text-sm text-gray-400">
-                {player
-                  ? `${player.name} — ${Object.keys(player.scores || {}).length} machines`
-                  : "Select a player to view stats."}
-              </div>
             </div>
 
             {!playerId ? (
@@ -220,19 +214,13 @@ export default function PlayerStats() {
             )}
           </div>
 
-          <div className="mb-6 block md:hidden">
+          <div className="-mb-5 block md:hidden">
             <Select
               value={playerId}
               onChange={(e) => setPlayerId(e.target.value)}
               options={players.map((p) => ({ value: p.id, label: p.name }))}
               placeholder="-- select player --"
-              className="mb-2"
             />
-            <div className="text-sm text-gray-400">
-              {player
-                ? `${player.name} — ${Object.keys(player.scores || {}).length} machines`
-                : "Select a player to view stats."}
-            </div>
           </div>
 
           {/* Right: stats panel */}
@@ -249,6 +237,11 @@ export default function PlayerStats() {
                     <div className="bg-gray-800/60 rounded p-3 border border-gray-700">
                       <div className="text-xs text-gray-400">Total Plays</div>
                       <div className="text-xl font-bold text-amber-300">{stats?.totalPlays ?? 0}</div>
+                    </div>
+
+                    <div className="bg-gray-800/60 rounded p-3 border border-gray-700">
+                      <div className="text-xs text-gray-400">Machines</div>
+                      <div className="text-xl font-bold text-amber-300">{Object.keys(player?.scores || {}).length}</div>
                     </div>
 
                     <div className="bg-gray-800/60 rounded p-3 border border-gray-700">
