@@ -82,27 +82,13 @@ export default function PlayerStats() {
         <div className="flex flex-col md:flex-row gap-6">
           {/* Left: main content */}
           <div className="flex-1 order-2 md:order-1">
-<<<<<<< HEAD
             <div className="mb-3 hidden md:block">
-=======
-            <div className="mb-6 hidden md:block">
->>>>>>> 036188eccdcf61d46e8e61d6ea509559aeea16e3
               <Select
                 value={playerId}
                 onChange={(e) => setPlayerId(e.target.value)}
                 options={players.map((p) => ({ value: p.id, label: p.name }))}
                 placeholder="-- select player --"
-<<<<<<< HEAD
               />
-=======
-                className="mb-2"
-              />
-              <div className="text-sm text-gray-400">
-                {player
-                  ? `${player.name} — ${Object.keys(player.scores || {}).length} machines`
-                  : "Select a player to view stats."}
-              </div>
->>>>>>> 036188eccdcf61d46e8e61d6ea509559aeea16e3
             </div>
 
             {!playerId ? (
@@ -324,13 +310,7 @@ export default function PlayerStats() {
                     className="px-3 py-2 rounded bg-amber-500 text-black font-semibold hover:bg-amber-400"
                     onClick={() => {
                       if (player) {
-<<<<<<< HEAD
                         safeSetItem("phof_prefill_player", player.id);
-=======
-                        try {
-                          localStorage.setItem("phof_prefill_player", player.id);
-                        } catch {}
->>>>>>> 036188eccdcf61d46e8e61d6ea509559aeea16e3
                         window.location.hash = "addScore";
                       }
                     }}
@@ -340,13 +320,7 @@ export default function PlayerStats() {
                   <button
                     className="px-3 py-2 rounded bg-gray-700 text-white font-semibold hover:bg-gray-600"
                     onClick={() => {
-<<<<<<< HEAD
                       safeSetItem("phof_filter_player", player?.id || "");
-=======
-                      try {
-                        localStorage.setItem("phof_filter_player", player?.id || "");
-                      } catch {}
->>>>>>> 036188eccdcf61d46e8e61d6ea509559aeea16e3
                       window.location.hash = "allScores";
                     }}
                   >
