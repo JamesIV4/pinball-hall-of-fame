@@ -4,6 +4,7 @@ import Select from "./ui/Select";
 import MachineInfo from "./ui/MachineInfo";
 import ScoreList from "./ui/ScoreList";
 import { useFirebaseData } from "../hooks/useFirebaseData";
+import { safeSetItem } from "../utils/storage";
 import { Player, ScoreEntry } from "../types/types";
 import { getWeekStart, isInCurrentWeek } from "../utils/weekUtils";
 
@@ -316,9 +317,7 @@ export default function PlayerStats() {
                     className="px-3 py-2 rounded bg-amber-500 text-black font-semibold hover:bg-amber-400"
                     onClick={() => {
                       if (player) {
-                        try {
-                          localStorage.setItem("phof_prefill_player", player.id);
-                        } catch {}
+                        safeSetItem("phof_prefill_player", player.id);
                         window.location.hash = "addScore";
                       }
                     }}
@@ -328,9 +327,7 @@ export default function PlayerStats() {
                   <button
                     className="px-3 py-2 rounded bg-gray-700 text-white font-semibold hover:bg-gray-600"
                     onClick={() => {
-                      try {
-                        localStorage.setItem("phof_filter_player", player?.id || "");
-                      } catch {}
+                      safeSetItem("phof_filter_player", player?.id || "");
                       window.location.hash = "allScores";
                     }}
                   >

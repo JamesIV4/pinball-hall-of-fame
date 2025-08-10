@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 import Toast from "./ui/Toast";
 import FormContainer from "./ui/FormContainer";
@@ -7,6 +7,7 @@ import Select from "./ui/Select";
 import Button from "./ui/Button";
 import { useFirebaseData } from "../hooks/useFirebaseData";
 import { handleScoreChange } from "../utils/scoreUtils";
+import { safeGetItem, safeSetItem, safeRemoveItem } from "../utils/storage";
 import { getFirebase } from "@/lib/firebase";
 
 export default function AddScore() {
@@ -15,32 +16,50 @@ export default function AddScore() {
   const [machine, setMachine] = useState("");
   const [player, setPlayer] = useState("");
   const [score, setScore] = useState("");
+  const scoreRef = useRef<HTMLInputElement | null>(null);
   const [toast, setToast] = useState<{
     msg: string;
     type?: "success" | "error";
   }>({ msg: "" });
 
-  // Default machine to first available
+  // Default machine to last used (if available), otherwise first available.
   useEffect(() => {
     if (!machine && machines.length > 0) {
+      const last = safeGetItem("phof_last_machine");
+      if (last && machines.some((m) => m.name === last)) {
+        setMachine(last);
+        return;
+      }
       setMachine(machines[0].name);
     }
   }, [machines, machine]);
 
-  // Prefill player from localStorage (set by other pages), then clear the key
+  // Prefill player from localStorage (set by other pages via phof_prefill_player), or from last-used.
   useEffect(() => {
-    if (!player && typeof window !== "undefined") {
-      try {
-        const prefill = localStorage.getItem("phof_prefill_player");
-        if (prefill && players.some((p) => p.id === prefill)) {
-          setPlayer(prefill);
-          localStorage.removeItem("phof_prefill_player");
-        }
-      } catch {
-        // ignore localStorage errors
+    if (!player) {
+      const prefill = safeGetItem("phof_prefill_player");
+      if (prefill && players.some((p) => p.id === prefill)) {
+        setPlayer(prefill);
+        safeRemoveItem("phof_prefill_player");
+        return;
+      }
+
+      const last = safeGetItem("phof_last_player");
+      if (last && players.some((p) => p.id === last)) {
+        setPlayer(last);
+        return;
       }
     }
   }, [players, player]);
+
+  // Focus the score input once machine & player are available
+  useEffect(() => {
+    if (typeof window !== "undefined" && scoreRef.current) {
+      if (machine && player) {
+        scoreRef.current.focus();
+      }
+    }
+  }, [machine, player]);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -54,13 +73,12 @@ export default function AddScore() {
         }),
       });
       setToast({ msg: "Score added!" });
-      // Clear form and any prefill keys
-      setMachine("");
-      setPlayer("");
+      // Remember last machine/player and only clear the score input
+      safeSetItem("phof_last_machine", machine);
+      safeSetItem("phof_last_player", player);
       setScore("");
-      try {
-        if (typeof window !== "undefined") localStorage.removeItem("phof_prefill_player");
-      } catch {}
+      // refocus the score input
+      scoreRef.current?.focus();
     } catch (err) {
       console.error(err);
       setToast({ msg: "Error adding score", type: "error" });
@@ -89,6 +107,8 @@ export default function AddScore() {
             required
           />
           <Input
+            ref={scoreRef}
+            id="score-input"
             label="Score"
             type="text"
             inputMode="numeric"
