@@ -317,15 +317,6 @@ export default function PlayerStats() {
                   >
                     Add Score for Player
                   </button>
-                  <button
-                    className="px-3 py-2 rounded bg-gray-700 text-white font-semibold hover:bg-gray-600"
-                    onClick={() => {
-                      safeSetItem("phof_filter_player", player?.id || "");
-                      window.location.hash = "allScores";
-                    }}
-                  >
-                    View All Scores
-                  </button>
                 </div>
               </div>
             </div>
