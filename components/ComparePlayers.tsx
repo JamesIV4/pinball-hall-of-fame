@@ -64,8 +64,12 @@ export default function ComparePlayers() {
             <Select
               label="Player 1"
               value={player1Id}
-              onChange={(e) => setPlayer1Id(e.target.value)}
-              options={players.map((p) => ({ value: p.id, label: p.name }))}
+              onChange={(e) => {
+                const id = e.target.value;
+                setPlayer1Id(id);
+                if (id === player2Id) setPlayer2Id("");
+              }}
+              options={players.filter((p) => p.id !== player2Id).map((p) => ({ value: p.id, label: p.name }))}
               placeholder="-- select player --"
             />
           </div>
@@ -73,8 +77,12 @@ export default function ComparePlayers() {
             <Select
               label="Player 2"
               value={player2Id}
-              onChange={(e) => setPlayer2Id(e.target.value)}
-              options={players.map((p) => ({ value: p.id, label: p.name }))}
+              onChange={(e) => {
+                const id = e.target.value;
+                setPlayer2Id(id);
+                if (id === player1Id) setPlayer1Id("");
+              }}
+              options={players.filter((p) => p.id !== player1Id).map((p) => ({ value: p.id, label: p.name }))}
               placeholder="-- select player --"
             />
           </div>
