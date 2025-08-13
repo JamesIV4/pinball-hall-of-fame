@@ -56,6 +56,18 @@ export default function ComparePlayers() {
     return Array.from(set).sort();
   }, [player1, player2]);
 
+  const { lead1, lead2 } = useMemo(() => {
+    let lead1 = 0;
+    let lead2 = 0;
+    machineNames.forEach((mName) => {
+      const best1 = Math.max(...(player1?.scores?.[mName] || []).map((s) => s.score), 0);
+      const best2 = Math.max(...(player2?.scores?.[mName] || []).map((s) => s.score), 0);
+      if (best1 > best2) lead1++;
+      else if (best2 > best1) lead2++;
+    });
+    return { lead1, lead2 };
+  }, [machineNames, player1, player2]);
+
   return (
     <div className="space-y-4">
       <FormContainer title="Compare Players">
@@ -95,29 +107,29 @@ export default function ComparePlayers() {
                 <span className="text-amber-400">{player1.name}</span> vs{" "}
                 <span className="text-amber-400">{player2.name}</span>
               </h3>
-              <p className="text-gray-300">Let the showdown begin! 🎉</p>
+              <p className="text-gray-300">Who is the pinball wizard?</p>
             </div>
 
             {/* overview stats */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
-                { p: player1, s: stats1 },
-                { p: player2, s: stats2 },
-              ].map(({ p, s }, idx) => (
+                { p: player1, s: stats1, led: lead1 },
+                { p: player2, s: stats2, led: lead2 },
+              ].map(({ p, s, led }, idx) => (
                 <div key={idx} className="rounded-lg border border-gray-700 p-4 bg-gray-900/40">
                   <h4 className="font-semibold text-amber-300 mb-2 text-center">{p?.name}</h4>
                   <ul className="space-y-1 text-sm text-gray-200">
-                    <li>
-                      <strong>Total plays:</strong> {s.totalPlays}
+                    <li className="text-center">
+                      <strong>{s.totalPlays}</strong> Total plays
                     </li>
-                    <li>
-                      <strong>Best score:</strong> {s.bestScore ? s.bestScore.toLocaleString() : "—"}
+                    <li className="text-center">
+                      <strong>{led}</strong> Machines Led
                     </li>
-                    <li>
-                      <strong>Last played:</strong> {s.lastPlayed ? new Date(s.lastPlayed).toLocaleDateString() : "—"}
+                    <li className="text-center">
+                      <strong>{s.lastPlayed ? new Date(s.lastPlayed).toLocaleDateString() : "—"}</strong> Last played
                     </li>
-                    <li>
-                      <strong>Favorite machine:</strong> {s.topMachine || "—"}
+                    <li className="text-center">
+                      <strong>{s.topMachine || "—"}</strong> Favorite machine
                     </li>
                   </ul>
                 </div>
