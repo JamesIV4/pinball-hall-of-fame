@@ -307,6 +307,17 @@ export default function PlayerStats() {
                 <h4 className="text-sm font-semibold text-gray-200">Quick Actions</h4>
                 <div className="mt-3 flex flex-col gap-2">
                   <button
+                    className="px-3 py-2 rounded bg-blue-500 text-black font-semibold hover:bg-blue-400"
+                    onClick={() => {
+                      if (player) {
+                        safeSetItem("phof_compare_player1", player.id);
+                        window.location.hash = "comparePlayers";
+                      }
+                    }}
+                  >
+                    Compare Players
+                  </button>
+                  <button
                     className="px-3 py-2 rounded bg-amber-500 text-black font-semibold hover:bg-amber-400"
                     onClick={() => {
                       if (player) {
