@@ -88,8 +88,21 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
     }
   }
 
+  // Compute top-3 unique players (for medal styling only once per player)
+  const medalOrder = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const s of scores) {
+      const key = s.playerId || s.player;
+      if (!map.has(key)) {
+        map.set(key, map.size);
+        if (map.size >= 3) break;
+      }
+    }
+    return map; // playerKey -> 0 (gold), 1 (silver), 2 (bronze)
+  }, [scores]);
+
   if (!mInfo) {
-    return;
+    return null;
   }
 
   return (
@@ -183,21 +196,52 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
         </div>
       </div>
 
+      {/* Meta: results count */}
+      <div className="flex items-center justify-between text-xs text-gray-400">
+        <span className="inline-flex items-center gap-2">
+          <span className="px-2 py-1 rounded bg-gray-800 border border-gray-700 text-gray-200">
+            {scores.length}
+          </span>
+          results
+        </span>
+        <span className="hidden md:inline">
+          {bestOnly ? "best per player" : "all plays"}
+          {viewMode === "weekly" ? " • weekly" : " • all-time"}
+        </span>
+      </div>
+
       {/* Scores list */}
       {!machine || scores.length === 0 ? (
         <p className="text-gray-400">
           {!machine ? "Select a machine to view scores." : "No scores recorded for this machine yet."}
         </p>
       ) : (
-        <ul className="rounded-xl border border-gray-700 bg-gray-800/60 divide-y divide-gray-700/60">
-          {scores.map((s, i) => (
-            <li
-              key={`${s.player}-${s.score.timestamp}-${s.score.score}-${i}`}
-              className="p-3 md:p-4 flex items-center gap-4 hover:bg-gray-800/80 transition-colors"
-            >
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded bg-gray-700 text-gray-300 border border-gray-600 font-semibold">
-                {i + 1}
-              </span>
+        <ul className="rounded-xl border border-gray-700 bg-gray-800/60 divide-y divide-gray-700/60 overflow-hidden">
+          {(() => {
+            const firstRenderedRowForPlayer = new Set<string>();
+            return scores.map((s, i) => {
+              const key = s.playerId || s.player;
+              const isFirstRowForPlayer = !firstRenderedRowForPlayer.has(key);
+              if (isFirstRowForPlayer) firstRenderedRowForPlayer.add(key);
+              const rank = medalOrder.get(key);
+              const isMedaled = isFirstRowForPlayer && rank !== undefined && rank <= 2;
+
+              const chipBase =
+                "inline-flex h-8 w-8 items-center justify-center rounded-full border font-semibold text-sm";
+              const chipClass = isMedaled
+                ? rank === 0
+                  ? "bg-gradient-to-br from-amber-400 to-amber-500 text-black border-amber-500 shadow-sm"
+                  : rank === 1
+                    ? "bg-gradient-to-br from-gray-300 to-gray-400 text-black border-gray-400 shadow-sm"
+                    : "bg-gradient-to-br from-amber-800 to-amber-600 text-white border-amber-700 shadow-sm"
+                : "bg-gray-700 text-gray-300 border-gray-600";
+
+              return (
+                <li
+                  key={`${s.player}-${s.score.timestamp}-${s.score.score}-${i}`}
+                  className="p-3 md:p-4 flex items-center gap-4 hover:bg-gray-800/80 transition-colors"
+                >
+                  <span className={`${chipBase} ${chipClass}`}>{i + 1}</span>
               <div className="min-w-0">
                 <div className="text-sm text-gray-200 truncate">
                   <button
@@ -210,11 +254,17 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
                 </div>
                 {s.score.timestamp && <div className="text-xs text-gray-400">{formatStamp(s.score.timestamp)}</div>}
               </div>
-              <div className="ml-auto font-dotmatrix text-[36px] md:text-[40px] leading-none text-amber-300 drop-shadow-[0_0_6px_rgba(251,191,36,0.25)]">
-                {s.score.score.toLocaleString()}
-              </div>
-            </li>
-          ))}
+                  <div
+                    className={
+                      "ml-auto font-dotmatrix whitespace-nowrap leading-none drop-shadow-[0_0_6px_rgba(251,191,36,0.25)] text-[32px] md:text-[40px] text-amber-300"
+                    }
+                  >
+                    {s.score.score.toLocaleString()}
+                  </div>
+                </li>
+              );
+            });
+          })()}
         </ul>
       )}
     </div>
