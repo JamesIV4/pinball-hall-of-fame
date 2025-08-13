@@ -4,7 +4,8 @@ import Select from "./ui/Select";
 import MachineInfo from "./ui/MachineInfo";
 import ScoreList from "./ui/ScoreList";
 import { useFirebaseData } from "../hooks/useFirebaseData";
-import { safeSetItem } from "../utils/storage";
+import { safeGetItem, safeRemoveItem, safeSetItem } from "../utils/storage";
+import { goToHighScoresForMachine, goToPlayerStatsForPlayer, PREFILL_PLAYER_KEY } from "../utils/navigation";
 import { ScoreEntry } from "../types/types";
 import { getWeekStart, isInCurrentWeek } from "../utils/weekUtils";
 
@@ -14,6 +15,13 @@ export default function PlayerStats() {
 
   useEffect(() => {
     if (!playerId && players.length) {
+      // Prefill from localStorage if present, otherwise default to first player
+      const prefill = safeGetItem(PREFILL_PLAYER_KEY);
+      if (prefill && players.some((p) => p.id === prefill)) {
+        setPlayerId(prefill);
+        safeRemoveItem(PREFILL_PLAYER_KEY);
+        return;
+      }
       setPlayerId(players[0].id);
     }
   }, [players, playerId]);
@@ -158,7 +166,15 @@ export default function PlayerStats() {
                             </div>
 
                             <div className="flex-1 min-w-0">
-                              <h4 className="text-lg font-bold text-amber-300 truncate">{mName}</h4>
+                              <h4 className="text-lg font-bold text-amber-300 truncate">
+                                <button
+                                  className="hover:underline"
+                                  onClick={() => goToHighScoresForMachine(mName)}
+                                  title="View machine high scores"
+                                >
+                                  {mName}
+                                </button>
+                              </h4>
                               <div className="text-sm text-gray-400 mt-1 flex flex-wrap items-center gap-2">
                                 <span className="block">
                                   Plays: <span className="font-semibold text-gray-200">{scores.length}</span>
@@ -290,7 +306,13 @@ export default function PlayerStats() {
                         {stats?.topMachines.length ? (
                           stats.topMachines.map((m) => (
                             <div key={m.name} className="flex items-center justify-between text-sm text-green-200">
-                              <span className="truncate">{m.name}</span>
+                              <button
+                                className="truncate text-left hover:underline"
+                                onClick={() => goToHighScoresForMachine(m.name)}
+                                title="View machine high scores"
+                              >
+                                {m.name}
+                              </button>
                               <span className="text-gray-300">{m.count}</span>
                             </div>
                           ))

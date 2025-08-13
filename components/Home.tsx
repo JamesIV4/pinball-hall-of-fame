@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Dispatch, SetStateAction, useMemo } from "react";
 import { Machine, Player, View } from "../types/types";
+import { goToHighScoresForMachine, goToPlayerStatsForPlayer } from "../utils/navigation";
 import { formatWeekRange, getCurrentWeek, isInCurrentWeek } from "../utils/weekUtils";
 
 interface Props {
@@ -203,28 +204,28 @@ export default function Home({ players, machines, setView }: Props) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div
           onClick={() => setView("highScores")}
-          className="cursor-pointer rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 hover:border-amber-500/50 transition-colors"
+          className="cursor-pointer rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 transition-colors hover:border-amber-500/60 hover:from-gray-700 hover:to-gray-800"
         >
           <div className="text-xs text-gray-400">Machines</div>
           <div className="text-2xl font-bold text-amber-400">{totalMachines}</div>
         </div>
         <div
           onClick={() => setView("playerStats")}
-          className="cursor-pointer rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 hover:border-blue-500/50 transition-colors"
+          className="cursor-pointer rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 transition-colors hover:border-blue-500/60 hover:from-gray-700 hover:to-gray-800"
         >
           <div className="text-xs text-gray-400">Players</div>
           <div className="text-2xl font-bold text-blue-400">{totalPlayers}</div>
         </div>
         <div
           onClick={() => setView("highScores")}
-          className="cursor-pointer rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 hover:border-green-500/50 transition-colors"
+          className="cursor-pointer rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 transition-colors hover:border-green-500/60 hover:from-gray-700 hover:to-gray-800"
         >
           <div className="text-xs text-gray-400">Total Scores</div>
           <div className="text-2xl font-bold text-green-400">{totalScores.toLocaleString()}</div>
         </div>
         <div
           onClick={() => setView("highScoresWeekly")}
-          className="cursor-pointer rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 hover:border-purple-500/50 transition-colors"
+          className="cursor-pointer rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 transition-colors hover:border-purple-500/60 hover:from-gray-700 hover:to-gray-800"
         >
           <div className="text-xs text-gray-400">This Week</div>
           <div className="text-2xl font-bold text-purple-400">{weeklyCount}</div>
@@ -242,7 +243,8 @@ export default function Home({ players, machines, setView }: Props) {
               return (
                 <div
                   key={m.machineName}
-                  className="overflow-hidden rounded-xl border border-amber-500/30 bg-gradient-to-br from-gray-800/80 to-gray-900/80"
+                  onClick={() => goToHighScoresForMachine(m.machineName)}
+                  className="overflow-hidden rounded-xl border border-amber-500/30 bg-gradient-to-br from-gray-800/80 to-gray-900/80 cursor-pointer transition-colors hover:border-amber-400/60 hover:from-gray-700/80 hover:to-gray-800/80"
                 >
                   <div className="relative h-32 w-full bg-gray-900">
                     <Image src={imgSrc} alt={m.machineName} fill className="object-cover" />
@@ -263,7 +265,20 @@ export default function Home({ players, machines, setView }: Props) {
                       {m.highScore.toLocaleString()}
                     </div>
                     {m.highPlayer && (
-                      <div className="mt-1 text-[10px] md:text-xs text-amber-100/60 truncate">by {m.highPlayer}</div>
+                      <div className="mt-1 text-[10px] md:text-xs text-amber-100/60 truncate">
+                        by
+                        <button
+                          className="ml-1 hover:underline"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const player = players.find((p) => p.name === m.highPlayer);
+                            if (player) goToPlayerStatsForPlayer(player.id);
+                          }}
+                          title="View player stats"
+                        >
+                          {m.highPlayer}
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -296,9 +311,18 @@ export default function Home({ players, machines, setView }: Props) {
             <div className="text-gray-400">Machines Played</div>
             <div className="text-xl font-bold text-yellow-200">{weeklyMachineCount}</div>
           </div>
-          <div className="text-center rounded bg-gray-800/60 p-3 border border-gray-700 col-span-2 md:col-span-1">
+          <div
+            onClick={() => weeklyTopMachine && goToHighScoresForMachine(weeklyTopMachine)}
+            className={`text-center rounded p-3 border col-span-2 md:col-span-1 transition-colors ${
+              weeklyTopMachine
+                ? "cursor-pointer bg-gray-800/60 border-gray-700 hover:border-orange-400/60 hover:bg-gray-800"
+                : "bg-gray-800/60 border-gray-700"
+            }`}
+          >
             <div className="text-gray-400">Hottest Machine</div>
-            <div className="text-xl font-bold text-orange-200">{weeklyTopMachine || "—"}</div>
+            <div className="text-xl font-bold text-orange-200">
+              {weeklyTopMachine ? weeklyTopMachine : "—"}
+            </div>
           </div>
         </div>
       </div>
@@ -325,11 +349,26 @@ export default function Home({ players, machines, setView }: Props) {
                     </span>
                     <div className="min-w-0">
                       <div className="text-sm text-gray-200 truncate">
-                        <span className="font-semibold text-blue-200">{ev.playerName}</span>
+                        <button
+                          className="font-semibold text-blue-200 hover:underline"
+                          onClick={() => {
+                            const player = players.find((p) => p.name === ev.playerName);
+                            if (player) goToPlayerStatsForPlayer(player.id);
+                          }}
+                          title="View player stats"
+                        >
+                          {ev.playerName}
+                        </button>
                         <span className="mx-1 text-gray-400">scored</span>
                         <span className="font-semibold text-amber-200">{ev.value.toLocaleString()}</span>
                         <span className="mx-1 text-gray-400">on</span>
-                        <span className="text-green-200">{ev.machineName}</span>
+                        <button
+                          className="text-green-200 hover:underline"
+                          onClick={() => goToHighScoresForMachine(ev.machineName)}
+                          title="View machine high scores"
+                        >
+                          {ev.machineName}
+                        </button>
                       </div>
                       {ev.timestamp && <div className="text-xs text-gray-400">{formatTimeAgo(ev.timestamp)}</div>}
                     </div>
@@ -355,7 +394,17 @@ export default function Home({ players, machines, setView }: Props) {
                     <li key={name} className="text-sm">
                       <div className="flex justify-between">
                         <span className="text-blue-200">
-                          {idx + 1}. {name}
+                          {idx + 1}.{' '}
+                          <button
+                            className="hover:underline"
+                            onClick={() => {
+                              const player = players.find((p) => p.name === name);
+                              if (player) goToPlayerStatsForPlayer(player.id);
+                            }}
+                            title="View player stats"
+                          >
+                            {name}
+                          </button>
                         </span>
                         <span className="text-gray-400">{count}</span>
                       </div>
@@ -382,7 +431,14 @@ export default function Home({ players, machines, setView }: Props) {
                     <li key={name} className="text-sm">
                       <div className="flex justify-between">
                         <span className="text-green-200">
-                          {idx + 1}. {name}
+                          {idx + 1}.{' '}
+                          <button
+                            className="hover:underline"
+                            onClick={() => goToHighScoresForMachine(name)}
+                            title="View machine high scores"
+                          >
+                            {name}
+                          </button>
                         </span>
                         <span className="text-gray-400">{count}</span>
                       </div>

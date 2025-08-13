@@ -5,6 +5,8 @@ import { useFirebaseData } from "../hooks/useFirebaseData";
 import { Machine, ScoreEntry } from "../types/types";
 import { getWeekStart, getWeekEnd, formatWeekRange } from "../utils/weekUtils";
 import Select from "./ui/Select";
+import { safeGetItem, safeRemoveItem } from "../utils/storage";
+import { goToPlayerStatsForPlayer, PREFILL_MACHINE_KEY } from "../utils/navigation";
 
 interface HighScoresProps {
   initialViewMode?: "allTime" | "weekly";
@@ -20,6 +22,13 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
 
   useEffect(() => {
     if (!machine && machines.length) {
+      // Prefill from localStorage if present, otherwise default to first machine
+      const prefill = safeGetItem(PREFILL_MACHINE_KEY);
+      if (prefill && machines.some((m) => m.name === prefill)) {
+        setMachine(prefill);
+        safeRemoveItem(PREFILL_MACHINE_KEY);
+        return;
+      }
       setMachine(machines[0].name);
     }
   }, [machines, machine]);
@@ -30,7 +39,7 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
   const allScores = useMemo(() => {
     return players.flatMap((p) => {
       const list = p.scores?.[machine] || [];
-      return list.map((s) => ({ player: p.name, score: s }));
+      return list.map((s) => ({ player: p.name, playerId: p.id, score: s }));
     });
   }, [players, machine]);
 
@@ -47,15 +56,17 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
 
   let scores = filteredScores;
   if (bestOnly) {
-    const bestMap = new Map<string, ScoreEntry>();
-    for (const { player, score } of filteredScores) {
-      if (!bestMap.has(player) || score.score > bestMap.get(player)!.score) {
-        bestMap.set(player, score);
+    const bestMap = new Map<string, { playerId: string; score: ScoreEntry }>();
+    for (const { player, playerId, score } of filteredScores) {
+      const existing = bestMap.get(player);
+      if (!existing || score.score > existing.score.score) {
+        bestMap.set(player, { playerId, score });
       }
     }
-    scores = Array.from(bestMap.entries()).map(([player, score]) => ({
+    scores = Array.from(bestMap.entries()).map(([player, data]) => ({
       player,
-      score,
+      playerId: data.playerId,
+      score: data.score,
     }));
   }
 
@@ -189,7 +200,13 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
               </span>
               <div className="min-w-0">
                 <div className="text-sm text-gray-200 truncate">
-                  <span className="font-semibold text-blue-200">{s.player}</span>
+                  <button
+                    className="font-semibold text-blue-200 hover:underline"
+                    onClick={() => s.playerId && goToPlayerStatsForPlayer(s.playerId)}
+                    title="View player stats"
+                  >
+                    {s.player}
+                  </button>
                 </div>
                 {s.score.timestamp && <div className="text-xs text-gray-400">{formatStamp(s.score.timestamp)}</div>}
               </div>

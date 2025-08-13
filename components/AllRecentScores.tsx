@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useFirebaseData } from "../hooks/useFirebaseData";
 import { Player } from "../types/types";
+import { goToHighScoresForMachine, goToPlayerStatsForPlayer } from "../utils/navigation";
 
 type RecentEvent = {
   playerId: string;
@@ -131,9 +132,21 @@ export default function AllRecentScores() {
               </span>
               <div className="min-w-0">
                 <div className="text-sm text-gray-200 truncate">
-                  <span className="font-semibold text-blue-200">{e.playerName}</span>
+                  <button
+                    className="font-semibold text-blue-200 hover:underline"
+                    onClick={() => goToPlayerStatsForPlayer(e.playerId)}
+                    title="View player stats"
+                  >
+                    {e.playerName}
+                  </button>
                   <span className="mx-1 text-gray-500">on</span>
-                  <span className="text-green-300">{e.machineName}</span>
+                  <button
+                    className="text-green-300 hover:underline"
+                    onClick={() => goToHighScoresForMachine(e.machineName)}
+                    title="View machine high scores"
+                  >
+                    {e.machineName}
+                  </button>
                 </div>
                 {e.timestamp && (
                   <div className="text-xs text-gray-400">

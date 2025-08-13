@@ -7,6 +7,7 @@ import DeleteButton from "./ui/DeleteButton";
 import { useFirebaseData } from "../hooks/useFirebaseData";
 import { getFirebase } from "@/lib/firebase";
 import { addDoc, collection, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { goToPlayerStatsForPlayer } from "../utils/navigation";
 
 export default function ManagePlayers() {
   const { db } = getFirebase();
@@ -87,7 +88,13 @@ export default function ManagePlayers() {
                 </>
               ) : (
                 <>
-                  <span className="flex-1">{p.name}</span>
+                  <button
+                    className="flex-1 text-left hover:underline"
+                    title="View player stats"
+                    onClick={() => goToPlayerStatsForPlayer(p.id)}
+                  >
+                    {p.name}
+                  </button>
                   <Button
                     variant="edit"
                     size="sm"
