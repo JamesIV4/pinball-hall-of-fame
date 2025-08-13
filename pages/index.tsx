@@ -11,6 +11,7 @@ import NavBar from "@/components/ui/NavBar";
 import ManagePlayers from "@/components/ManagePlayers";
 import ManageMachines from "../components/ManageMachines";
 import { useFirebaseData } from "../hooks/useFirebaseData";
+import ComparePlayers from "../components/ComparePlayers";
 
 export default function IndexPage() {
   const [view, setView] = useState<View>("home");
@@ -32,6 +33,7 @@ export default function IndexPage() {
           "highScoresWeekly",
           "allRecentScores",
           "playerStats",
+          "comparePlayers",
           "manageDatabase",
         ].includes(hash)
       ) {
@@ -78,6 +80,7 @@ export default function IndexPage() {
       {view === "highScoresWeekly" && <HighScores initialViewMode="weekly" onNavigate={navigateToView} />}
       {view === "allRecentScores" && <AllRecentScores />}
       {view === "playerStats" && <PlayerStats />}
+      {view === "comparePlayers" && <ComparePlayers />}
       {view === "manageDatabase" && <ManageDatabase />}
     </div>
   );
