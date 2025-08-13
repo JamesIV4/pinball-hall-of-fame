@@ -120,16 +120,16 @@ export default function ComparePlayers() {
                   <h4 className="font-semibold text-amber-300 mb-2 text-center">{p?.name}</h4>
                   <ul className="space-y-1 text-sm text-gray-200">
                     <li className="text-center">
-                      <strong>{s.totalPlays}</strong> Total plays
+                      Total plays: <strong>{s.totalPlays}</strong>
                     </li>
                     <li className="text-center">
-                      <strong>{led}</strong> Machines Led
+                      Machines Led: <strong>{led}</strong>
                     </li>
                     <li className="text-center">
-                      <strong>{s.lastPlayed ? new Date(s.lastPlayed).toLocaleDateString() : "—"}</strong> Last played
+                      Last played: <strong>{s.lastPlayed ? new Date(s.lastPlayed).toLocaleDateString() : "—"}</strong>
                     </li>
                     <li className="text-center">
-                      <strong>{s.topMachine || "—"}</strong> Favorite machine
+                      Favorite machine: <strong>{s.topMachine || "—"}</strong>
                     </li>
                   </ul>
                 </div>
