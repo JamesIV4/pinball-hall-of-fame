@@ -317,6 +317,17 @@ export default function PlayerStats() {
                   >
                     Add Score for Player
                   </button>
+                  <button
+                    className="px-3 py-2 rounded bg-blue-500 text-black font-semibold hover:bg-blue-400"
+                    onClick={() => {
+                      if (player) {
+                        safeSetItem("phof_compare_player1", player.id);
+                        window.location.hash = "comparePlayers";
+                      }
+                    }}
+                  >
+                    Compare Players
+                  </button>
                 </div>
               </div>
             </div>
