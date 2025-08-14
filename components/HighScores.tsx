@@ -120,10 +120,27 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
           <div className="relative h-36 md:h-48 w-full">
             <Image src={mInfo.image} alt={mInfo.name} fill className="object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+            <div className="absolute inset-0 hero-overlay" />
+            <div className="absolute inset-0 scanlines" />
             <div className="absolute bottom-2 left-2 right-2 flex items-end justify-between">
               <div>
                 <div className="text-sm text-gray-300">High Scores</div>
                 <h2 className="text-2xl md:text-3xl font-bold text-amber-300">{mInfo.name}</h2>
+              </div>
+              <div className="hidden md:flex items-center gap-2">
+                {(() => {
+                  const totalPlays = allScores.length;
+                  const uniquePlayers = new Set(allScores.map((s) => s.playerId)).size;
+                  return (
+                    <div className="backdrop-blur-sm bg-black/30 border border-white/10 rounded-lg px-2 py-1.5 flex items-center gap-2">
+                      <span className="text-xs text-gray-300">Plays</span>
+                      <span className="text-sm font-semibold text-amber-200">{totalPlays}</span>
+                      <span className="text-gray-500">•</span>
+                      <span className="text-xs text-gray-300">Players</span>
+                      <span className="text-sm font-semibold text-blue-200">{uniquePlayers}</span>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           </div>
