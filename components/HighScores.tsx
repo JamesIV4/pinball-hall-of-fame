@@ -88,6 +88,13 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
     }
   }
 
+  function getInitials(name: string) {
+    const parts = name.split(/\s+/).filter(Boolean);
+    if (parts.length === 0) return "?";
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+
   // Compute top-3 unique players (for medal styling only once per player)
   const medalOrder = useMemo(() => {
     const map = new Map<string, number>();
@@ -219,15 +226,17 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
         <ul className="rounded-xl border border-gray-700 bg-gray-800/60 divide-y divide-gray-700/60 overflow-hidden">
           {(() => {
             const firstRenderedRowForPlayer = new Set<string>();
+            const topScore = scores.length ? scores[0].score.score : 1;
             return scores.map((s, i) => {
               const key = s.playerId || s.player;
               const isFirstRowForPlayer = !firstRenderedRowForPlayer.has(key);
               if (isFirstRowForPlayer) firstRenderedRowForPlayer.add(key);
               const rank = medalOrder.get(key);
               const isMedaled = isFirstRowForPlayer && rank !== undefined && rank <= 2;
+              const pct = Math.max(0.05, Math.min(1, s.score.score / topScore));
 
               const chipBase =
-                "inline-flex h-8 w-8 items-center justify-center rounded-full border font-semibold text-sm";
+                "inline-flex h-8 w-8 items-center justify-center rounded border font-semibold text-sm";
               const chipClass = isMedaled
                 ? rank === 0
                   ? "bg-gradient-to-br from-amber-400 to-amber-500 text-black border-amber-500 shadow-sm"
@@ -236,29 +245,68 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
                     : "bg-gradient-to-br from-amber-800 to-amber-600 text-white border-amber-700 shadow-sm"
                 : "bg-gray-700 text-gray-300 border-gray-600";
 
+              const accentClass = isMedaled
+                ? rank === 0
+                  ? "bg-amber-400"
+                  : rank === 1
+                    ? "bg-gray-400"
+                    : "bg-amber-700"
+                : "bg-gray-700";
+
+              // Combined vertical (purple) + horizontal (blue) gradients (subtle), with rank-based emphasis
+              const barClass = "";
+              const emphasis = isMedaled ? (rank === 0 ? 1.6 : rank === 1 ? 1.35 : 1.15) : 1.0;
+              const pTop = Math.min(1, 0.16 * emphasis);
+              const pMid = Math.min(1, 0.06 * emphasis);
+              const bTop = Math.min(1, 0.22 * emphasis);
+              const bMid = Math.min(1, 0.11 * emphasis);
+
+              const medalClass = isMedaled
+                ? rank === 0
+                  ? "medal-gold"
+                  : rank === 1
+                    ? "medal-silver"
+                    : "medal-bronze"
+                : "";
+              const barStyle: React.CSSProperties = {
+                width: `${pct * 100}%`,
+                backgroundImage: isMedaled
+                  ? `linear-gradient(to left, rgba(var(--bar-h-from),${bTop}), rgba(var(--bar-h-via),${bMid}), rgba(var(--bar-h-from),0))`
+                  : `linear-gradient(rgba(115, 14, 106, 0.11), rgba(72, 57, 151, 0.14), rgba(168, 85, 247, 0)), ` +
+                    `linear-gradient(to left, rgb(0 92 129 / 28%), rgba(0, 89, 129, 0.18), rgba(0, 89, 129, 0))`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "100% 100%",
+              };
+
               return (
                 <li
                   key={`${s.player}-${s.score.timestamp}-${s.score.score}-${i}`}
-                  className="p-3 md:p-4 flex items-center gap-4 hover:bg-gray-800/80 transition-colors"
+                  className="relative p-3 md:p-4 flex items-center gap-4 row-underlay-diag hover:bg-gray-800/80 transition-colors transition-transform duration-150 hover:translate-x-[2px] overflow-hidden group"
                 >
+                  {/* score strength background bar */}
+                  <div className={`absolute inset-y-0 left-0 strength-bar ${medalClass} ${barClass}`} style={barStyle} />
+                  {/* left accent strip */}
+                  <div className={`absolute left-0 top-0 bottom-0 w-1 ${accentClass}`} />
                   <span className={`${chipBase} ${chipClass}`}>{i + 1}</span>
-              <div className="min-w-0">
-                <div className="text-sm text-gray-200 truncate">
-                  <button
-                    className="font-semibold text-blue-200 hover:underline"
-                    onClick={() => s.playerId && goToPlayerStatsForPlayer(s.playerId)}
-                    title="View player stats"
-                  >
-                    {s.player}
-                  </button>
-                </div>
-                {s.score.timestamp && <div className="text-xs text-gray-400">{formatStamp(s.score.timestamp)}</div>}
-              </div>
-                  <div
-                    className={
-                      "ml-auto font-dotmatrix whitespace-nowrap leading-none drop-shadow-[0_0_6px_rgba(251,191,36,0.25)] text-[32px] md:text-[40px] text-amber-300"
-                    }
-                  >
+                  <div className="min-w-0">
+                    <div className="text-sm text-gray-200 truncate">
+                      <button
+                        className="font-semibold text-blue-200 hover:underline"
+                        onClick={() => s.playerId && goToPlayerStatsForPlayer(s.playerId)}
+                        title="View player stats"
+                      >
+                        {s.player}
+                      </button>
+                    </div>
+                    {s.score.timestamp && (
+                      <div className="mt-0.5 text-xs text-gray-400">
+                        <span className="px-2 py-0.5 rounded-full bg-black/30 border border-gray-700">
+                          {formatStamp(s.score.timestamp)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="ml-auto font-dotmatrix whitespace-nowrap leading-none text-[32px] md:text-[40px] dmd-score">
                     {s.score.score.toLocaleString()}
                   </div>
                 </li>

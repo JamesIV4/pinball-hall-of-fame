@@ -22,3 +22,47 @@ body {
 html {
   scrollbar-gutter: stable;
 }
+
+/* Reusable visual utility classes */
+
+/* DMD score gradient + drop shadow */
+.dmd-score {
+  @apply text-transparent bg-clip-text;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 1) 8%,
+    #FDE68A 28%,
+    #F59E0B 100%
+  );
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.68))
+    drop-shadow(0 2px 3px rgba(0, 0, 0, 0.55))
+    drop-shadow(0 0 4px rgba(251, 191, 36, 0.18));
+}
+
+/* Row underlay darkening bottom-left to center */
+.row-underlay-diag {
+  background-image: linear-gradient(to top right, rgba(0, 0, 0, 0.2), transparent);
+}
+
+/* Strength bar color variables and base */
+:root {
+  --bar-h-from: 56, 189, 248; /* sky-400 */
+  --bar-h-via: 125, 211, 252; /* sky-300 */
+}
+.medal-gold {
+  --bar-h-from: 251, 191, 36; /* amber-400 */
+  --bar-h-via: 245, 158, 11; /* amber-500 */
+}
+.medal-silver {
+  --bar-h-from: 209, 213, 219; /* gray-300 */
+  --bar-h-via: 156, 163, 175; /* gray-400 */
+}
+.medal-bronze {
+  --bar-h-from: 217, 119, 6; /* amber-600 */
+  --bar-h-via: 180, 83, 9; /* amber-700 */
+}
+.strength-bar {
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
