@@ -349,9 +349,6 @@ export default function PlayerStats() {
                                     {weeklyRank ? `/${weeklyPlayersCount}` : ""}
                                   </div>
                                 </div>
-
-                                <div className="text-xs text-gray-400">•</div>
-
                                 <div className="inline-flex items-center gap-2 px-2 py-1 rounded bg-gray-900/50 border border-gray-700 text-xs text-gray-200">
                                   <div className="text-xs text-gray-400">Rank (all)</div>
                                   <div className="inline-flex items-center px-2 py-0.5 bg-blue-500 text-white rounded text-xs font-semibold">
@@ -428,6 +425,13 @@ export default function PlayerStats() {
                     <div className="bg-gray-800/60 rounded p-3 border border-gray-700">
                       <div className="text-xs text-gray-400">Machines</div>
                       <div className="text-xl font-bold text-amber-300">{Object.keys(player?.scores || {}).length}</div>
+                    </div>
+
+                    <div className="bg-gray-800/60 rounded p-3 border border-gray-700">
+                      <div className="text-xs text-gray-400">Medals</div>
+                      <div className="text-xl font-bold text-amber-300">
+                        {medals.allTime.length + medals.weekly.length}
+                      </div>
                     </div>
 
                     <div className="bg-gray-800/60 rounded p-3 border border-gray-700">
