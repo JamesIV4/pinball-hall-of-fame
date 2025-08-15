@@ -12,6 +12,7 @@ import { getWeekStart, isInCurrentWeek, formatWeekRange } from "../utils/weekUti
 export default function PlayerStats() {
   const { machines, players } = useFirebaseData();
   const [playerId, setPlayerId] = useState("");
+  const [expandedMachines, setExpandedMachines] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (!playerId && players.length) {
@@ -162,7 +163,7 @@ export default function PlayerStats() {
   }
 
   function formatWeekOf(d: Date) {
-    return `Week of ${d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}`;
+    return `${d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}`;
   }
 
   function placeLabel(color: "gold" | "silver" | "bronze") {
@@ -363,13 +364,34 @@ export default function PlayerStats() {
                           </div>
                         </div>
 
-                        <div className="mt-4">
-                          {scores.length ? (
-                            <ScoreList scores={scores} />
-                          ) : (
-                            <div className="text-sm text-gray-400">No scores for this machine.</div>
-                          )}
+                        {/* Collapse/expand control */}
+                        <div className="mt-3">
+                          <button
+                            type="button"
+                            className="w-full flex items-center gap-3 text-center"
+                            onClick={() => setExpandedMachines((prev) => ({ ...prev, [mName]: !prev[mName] }))}
+                          >
+                            <span className="flex-1 h-px bg-gray-700" />
+                            <span className="shrink-0 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-900/40 border border-gray-700 text-gray-200 text-sm font-semibold">
+                              <span className={`transition-transform ${expandedMachines[mName] ? "rotate-180" : ""}`}>
+                                ▾
+                              </span>
+                              {expandedMachines[mName] ? "Collapse Scores" : "Show Scores"}
+                            </span>
+                            <span className="flex-1 h-px bg-gray-700" />
+                          </button>
                         </div>
+
+                        {/* Scores list (collapsed by default) */}
+                        {expandedMachines[mName] && (
+                          <div className="mt-4">
+                            {scores.length ? (
+                              <ScoreList scores={scores} />
+                            ) : (
+                              <div className="text-sm text-gray-400">No scores for this machine.</div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
