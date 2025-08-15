@@ -156,11 +156,9 @@ export default function PlayerStats() {
   }, [players, machines, playerId]);
 
   function medalClasses(color: "gold" | "silver" | "bronze") {
-    if (color === "gold")
-      return "bg-gradient-to-br from-amber-400 to-amber-500 text-black border-amber-500";
-    if (color === "silver")
-      return "bg-gradient-to-br from-gray-300 to-gray-400 text-black border-gray-400";
-    return "bg-gradient-to-br from-amber-800 to-amber-600 text-white border-amber-700";
+    if (color === "gold") return "badge-gold";
+    if (color === "silver") return "badge-silver";
+    return "badge-bronze";
   }
 
   function formatWeekOf(d: Date) {
@@ -205,14 +203,14 @@ export default function PlayerStats() {
                           medals.allTime.map((m, i) => (
                             <div
                               key={`${m.machine}-${i}`}
-                              className={`rounded-lg border px-3 py-2 text-center ${medalClasses(m.color)}`}
+                              className={`rounded-lg border px-3 py-2 text-center badge-embossed ${medalClasses(m.color)}`}
                               title={`${m.color[0].toUpperCase() + m.color.slice(1)} (all-time)`}
                             >
-                              <div className="text-xs font-semibold opacity-90">{placeLabel(m.color)}</div>
-                              <button className="block w-full font-semibold truncate hover:underline" onClick={() => goToHighScoresForMachine(m.machine)}>
+                              <div className="text-xs font-semibold opacity-90 badge-text-engraved">{placeLabel(m.color)}</div>
+                              <button className="block w-full font-semibold truncate hover:underline badge-text-engraved" onClick={() => goToHighScoresForMachine(m.machine)}>
                                 {m.machine}
                               </button>
-                              <div className="text-xs opacity-90">All-Time</div>
+                              <div className="text-xs opacity-90 badge-text-engraved">All-Time</div>
                             </div>
                           ))
                         ) : (
@@ -228,14 +226,14 @@ export default function PlayerStats() {
                           medals.weekly.map((w, i) => (
                             <div
                               key={`${w.machine}-${w.weekStart.getTime()}-${i}`}
-                              className={`rounded-lg border px-3 py-2 text-center ${medalClasses(w.color)}`}
+                              className={`rounded-lg border px-3 py-2 text-center badge-embossed ${medalClasses(w.color)}`}
                               title={`${w.color[0].toUpperCase() + w.color.slice(1)} (weekly)`}
                             >
-                              <div className="text-xs font-semibold opacity-90">{placeLabel(w.color)}</div>
-                              <button className="block w-full font-semibold truncate hover:underline" onClick={() => goToHighScoresForMachine(w.machine)}>
+                              <div className="text-xs font-semibold opacity-90 badge-text-engraved">{placeLabel(w.color)}</div>
+                              <button className="block w-full font-semibold truncate hover:underline badge-text-engraved" onClick={() => goToHighScoresForMachine(w.machine)}>
                                 {w.machine}
                               </button>
-                              <div className="text-xs opacity-90">{formatWeekOf(w.weekStart)}</div>
+                              <div className="text-xs opacity-90 badge-text-engraved">{formatWeekOf(w.weekStart)}</div>
                             </div>
                           ))
                         ) : (
