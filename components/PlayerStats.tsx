@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import FormContainer from "./ui/FormContainer";
 import Select from "./ui/Select";
 import MachineInfo from "./ui/MachineInfo";
@@ -170,6 +170,60 @@ export default function PlayerStats() {
     return color === "gold" ? "1st Place" : color === "silver" ? "2nd Place" : "3rd Place";
   }
 
+  // Small helper to add a bottom fade for scrollable medal lists
+  function ScrollableWithBottomFade({
+    className = "",
+    fromColor = "rgba(26, 35, 47, 1)",
+    toColor = "rgba(26, 35, 47, 0)",
+    children,
+  }: {
+    className?: string;
+    fromColor?: string;
+    toColor?: string;
+    children: React.ReactNode;
+  }) {
+    const ref = useRef<HTMLDivElement | null>(null);
+    const [showFade, setShowFade] = useState(false);
+
+    useEffect(() => {
+      const el = ref.current;
+      if (!el) return;
+
+      const update = () => {
+        const overflow = el.scrollHeight > el.clientHeight + 1;
+        const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+        setShowFade(overflow && !atBottom);
+      };
+
+      update();
+      const onScroll = () => update();
+      const onResize = () => update();
+      el.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onResize);
+
+      return () => {
+        el.removeEventListener("scroll", onScroll);
+        window.removeEventListener("resize", onResize);
+      };
+    }, []);
+
+    return (
+      <div className="relative">
+        <div ref={ref} className={className}>
+          {children}
+        </div>
+        <div
+          className="pointer-events-none absolute bottom-0 left-0 right-0 h-6"
+          style={{
+            backgroundImage: `linear-gradient(to top, ${fromColor} 0%, ${toColor} 100%)`,
+            opacity: showFade ? 1 : 0,
+            transition: "opacity 200ms ease",
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <FormContainer title="Player Stats">
@@ -199,7 +253,7 @@ export default function PlayerStats() {
                   <div className="p-3 grid md:grid-cols-2 gap-3">
                     <div>
                       <div className="text-xs text-gray-400 mb-2">All-Time Podiums</div>
-                      <div className="max-h-56 overflow-auto pr-1 space-y-2">
+                      <ScrollableWithBottomFade className="max-h-56 overflow-auto pr-1 space-y-2">
                         {medals.allTime.length ? (
                           medals.allTime.map((m, i) => (
                             <div
@@ -222,12 +276,12 @@ export default function PlayerStats() {
                         ) : (
                           <div className="text-xs text-gray-500">No podiums yet.</div>
                         )}
-                      </div>
+                      </ScrollableWithBottomFade>
                     </div>
 
                     <div>
                       <div className="text-xs text-gray-400 mb-2">Weekly Podiums</div>
-                      <div className="max-h-56 overflow-auto pr-1 space-y-2">
+                      <ScrollableWithBottomFade className="max-h-56 overflow-auto pr-1 space-y-2">
                         {medals.weekly.length ? (
                           medals.weekly.map((w, i) => (
                             <div
@@ -250,7 +304,7 @@ export default function PlayerStats() {
                         ) : (
                           <div className="text-xs text-gray-500">No weekly podiums yet.</div>
                         )}
-                      </div>
+                      </ScrollableWithBottomFade>
                     </div>
                   </div>
                 </div>
