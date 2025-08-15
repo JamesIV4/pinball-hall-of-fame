@@ -213,7 +213,7 @@ export default function PlayerStats() {
           {children}
         </div>
         <div
-          className="pointer-events-none absolute bottom-0 left-0 right-0 h-6"
+          className="pointer-events-none absolute bottom-0 left-0 right-0 h-14"
           style={{
             backgroundImage: `linear-gradient(to top, ${fromColor} 0%, ${toColor} 100%)`,
             opacity: showFade ? 1 : 0,
