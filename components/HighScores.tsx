@@ -223,9 +223,7 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
       {/* Meta: results count */}
       <div className="flex items-center justify-between text-xs text-gray-400">
         <span className="inline-flex items-center gap-2">
-          <span className="px-2 py-1 rounded bg-gray-800 border border-gray-700 text-gray-200">
-            {scores.length}
-          </span>
+          <span className="px-2 py-1 rounded bg-gray-800 border border-gray-700 text-gray-200">{scores.length}</span>
           results
         </span>
         <span className="hidden md:inline">
@@ -252,8 +250,7 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
               const isMedaled = isFirstRowForPlayer && rank !== undefined && rank <= 2;
               const pct = Math.max(0.05, Math.min(1, s.score.score / topScore));
 
-              const chipBase =
-                "inline-flex h-8 w-8 items-center justify-center rounded border font-semibold text-sm";
+              const chipBase = "inline-flex h-8 w-8 items-center justify-center rounded border font-semibold text-sm";
               const chipClass = isMedaled
                 ? rank === 0
                   ? "bg-gradient-to-br from-amber-400 to-amber-500 text-black border-amber-500 shadow-sm"
@@ -301,7 +298,10 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
                   className="relative p-3 md:p-4 flex items-center gap-4 row-underlay-diag hover:bg-gray-800/80 transition-colors transition-transform duration-150 hover:translate-x-[2px] overflow-hidden group"
                 >
                   {/* score strength background bar */}
-                  <div className={`absolute inset-y-0 left-0 strength-bar ${medalClass} ${barClass}`} style={barStyle} />
+                  <div
+                    className={`absolute inset-y-0 left-0 strength-bar ${medalClass} ${barClass}`}
+                    style={barStyle}
+                  />
                   {/* left accent strip */}
                   <div className={`absolute left-0 top-0 bottom-0 w-1 ${accentClass}`} />
                   <span className={`${chipBase} ${chipClass}`}>{i + 1}</span>

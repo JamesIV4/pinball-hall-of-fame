@@ -38,4 +38,3 @@ export function goToHighScoresForMachine(machineName: string, view: "highScores"
     window.location.hash = view;
   }
 }
-

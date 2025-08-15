@@ -320,9 +320,7 @@ export default function Home({ players, machines, setView }: Props) {
             }`}
           >
             <div className="text-gray-400">Hottest Machine</div>
-            <div className="text-xl font-bold text-orange-200">
-              {weeklyTopMachine ? weeklyTopMachine : "—"}
-            </div>
+            <div className="text-xl font-bold text-orange-200">{weeklyTopMachine ? weeklyTopMachine : "—"}</div>
           </div>
         </div>
       </div>
@@ -394,7 +392,7 @@ export default function Home({ players, machines, setView }: Props) {
                     <li key={name} className="text-sm">
                       <div className="flex justify-between">
                         <span className="text-blue-200">
-                          {idx + 1}.{' '}
+                          {idx + 1}.{" "}
                           <button
                             className="hover:underline"
                             onClick={() => {
@@ -431,7 +429,7 @@ export default function Home({ players, machines, setView }: Props) {
                     <li key={name} className="text-sm">
                       <div className="flex justify-between">
                         <span className="text-green-200">
-                          {idx + 1}.{' '}
+                          {idx + 1}.{" "}
                           <button
                             className="hover:underline"
                             onClick={() => goToHighScoresForMachine(name)}
