@@ -190,10 +190,10 @@ export default function PlayerStats() {
               <p className="text-gray-400">No scores recorded for {player?.name} yet.</p>
             ) : (
               <div className="space-y-4">
-                {/* Badges section */}
+                {/* Medals section */}
                 <div className="overflow-hidden rounded-xl border border-gray-700 bg-gradient-to-br from-gray-800/60 to-gray-900/60">
                   <div className="p-3 border-b border-gray-700/60">
-                    <h3 className="text-sm font-bold text-amber-300">Badges</h3>
+                    <h3 className="text-sm font-bold text-amber-300">Medals</h3>
                   </div>
                   <div className="p-3 grid md:grid-cols-2 gap-3">
                     <div>
@@ -206,8 +206,13 @@ export default function PlayerStats() {
                               className={`rounded-lg border px-3 py-2 text-center badge-embossed ${medalClasses(m.color)}`}
                               title={`${m.color[0].toUpperCase() + m.color.slice(1)} (all-time)`}
                             >
-                              <div className="text-xs font-semibold opacity-90 badge-text-engraved">{placeLabel(m.color)}</div>
-                              <button className="block w-full font-semibold truncate hover:underline badge-text-engraved" onClick={() => goToHighScoresForMachine(m.machine)}>
+                              <div className="text-xs font-semibold opacity-90 badge-text-engraved">
+                                {placeLabel(m.color)}
+                              </div>
+                              <button
+                                className="block w-full font-semibold truncate hover:underline badge-text-engraved"
+                                onClick={() => goToHighScoresForMachine(m.machine)}
+                              >
                                 {m.machine}
                               </button>
                               <div className="text-xs opacity-90 badge-text-engraved">All-Time</div>
@@ -229,8 +234,13 @@ export default function PlayerStats() {
                               className={`rounded-lg border px-3 py-2 text-center badge-embossed ${medalClasses(w.color)}`}
                               title={`${w.color[0].toUpperCase() + w.color.slice(1)} (weekly)`}
                             >
-                              <div className="text-xs font-semibold opacity-90 badge-text-engraved">{placeLabel(w.color)}</div>
-                              <button className="block w-full font-semibold truncate hover:underline badge-text-engraved" onClick={() => goToHighScoresForMachine(w.machine)}>
+                              <div className="text-xs font-semibold opacity-90 badge-text-engraved">
+                                {placeLabel(w.color)}
+                              </div>
+                              <button
+                                className="block w-full font-semibold truncate hover:underline badge-text-engraved"
+                                onClick={() => goToHighScoresForMachine(w.machine)}
+                              >
                                 {w.machine}
                               </button>
                               <div className="text-xs opacity-90 badge-text-engraved">{formatWeekOf(w.weekStart)}</div>
