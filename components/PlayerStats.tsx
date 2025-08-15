@@ -7,7 +7,7 @@ import { useFirebaseData } from "../hooks/useFirebaseData";
 import { safeGetItem, safeRemoveItem, safeSetItem } from "../utils/storage";
 import { goToHighScoresForMachine, goToPlayerStatsForPlayer, PREFILL_PLAYER_KEY } from "../utils/navigation";
 import { ScoreEntry } from "../types/types";
-import { getWeekStart, isInCurrentWeek } from "../utils/weekUtils";
+import { getWeekStart, isInCurrentWeek, formatWeekRange } from "../utils/weekUtils";
 
 export default function PlayerStats() {
   const { machines, players } = useFirebaseData();
@@ -84,6 +84,93 @@ export default function PlayerStats() {
     return { totalPlays, bestScore, lastPlayed, topMachines, weeklyCounts, playsPerWeek, weekStarts };
   }, [player]);
 
+  // ─────────────────────────────────────────────────────────────
+  // Medal calculations: all-time (per machine) and weekly (per machine per week)
+  // ─────────────────────────────────────────────────────────────
+  const medals = useMemo(() => {
+    if (!playerId)
+      return {
+        allTime: [] as { color: "gold" | "silver" | "bronze"; machine: string }[],
+        weekly: [] as { color: "gold" | "silver" | "bronze"; machine: string; weekStart: Date }[],
+      };
+
+    const allMachineNames = new Set<string>();
+    // Prefer canonical set from machines list; also include any ad-hoc keys from player docs
+    for (const m of machines) allMachineNames.add(m.name);
+    for (const p of players) for (const key of Object.keys(p.scores || {})) allMachineNames.add(key);
+
+    const allTime: { color: "gold" | "silver" | "bronze"; machine: string }[] = [];
+    const weekly: { color: "gold" | "silver" | "bronze"; machine: string; weekStart: Date }[] = [];
+
+    for (const mName of Array.from(allMachineNames)) {
+      // All-time best per player on this machine
+      const bestByPlayer = players
+        .map((p) => {
+          const list = p.scores?.[mName] || [];
+          const best = list.reduce((mx, s) => (s.score > mx ? s.score : mx), 0);
+          return { playerId: p.id, best };
+        })
+        .filter((x) => x.best > 0)
+        .sort((a, b) => b.best - a.best);
+      const idx = bestByPlayer.findIndex((x) => x.playerId === playerId);
+      if (idx >= 0 && idx <= 2) {
+        const color = idx === 0 ? "gold" : idx === 1 ? "silver" : "bronze";
+        allTime.push({ color, machine: mName });
+      }
+
+      // Weekly: bucket scores by ISO week start (using project weekUtils)
+      const weekBuckets = new Map<number, { playerId: string; score: number }[]>();
+      for (const p of players) {
+        const list = p.scores?.[mName] || [];
+        for (const s of list) {
+          if (!s.timestamp) continue;
+          const ws = getWeekStart(new Date(s.timestamp)).getTime();
+          if (!weekBuckets.has(ws)) weekBuckets.set(ws, []);
+          weekBuckets.get(ws)!.push({ playerId: p.id, score: s.score });
+        }
+      }
+
+      for (const [ws, entries] of weekBuckets.entries()) {
+        // best per player for the week
+        const map = new Map<string, number>();
+        for (const e of entries) {
+          map.set(e.playerId, Math.max(map.get(e.playerId) || 0, e.score));
+        }
+        const ranked = Array.from(map.entries())
+          .map(([pid, best]) => ({ playerId: pid, best }))
+          .filter((x) => x.best > 0)
+          .sort((a, b) => b.best - a.best);
+        const wIdx = ranked.findIndex((x) => x.playerId === playerId);
+        if (wIdx >= 0 && wIdx <= 2) {
+          const color = wIdx === 0 ? "gold" : wIdx === 1 ? "silver" : "bronze";
+          weekly.push({ color, machine: mName, weekStart: new Date(ws) });
+        }
+      }
+    }
+
+    // Sort for stable display: all-time by machine name; weekly by week then machine
+    allTime.sort((a, b) => a.machine.localeCompare(b.machine));
+    weekly.sort((a, b) => a.weekStart.getTime() - b.weekStart.getTime() || a.machine.localeCompare(b.machine));
+
+    return { allTime, weekly };
+  }, [players, machines, playerId]);
+
+  function medalClasses(color: "gold" | "silver" | "bronze") {
+    if (color === "gold")
+      return "bg-gradient-to-br from-amber-400 to-amber-500 text-black border-amber-500";
+    if (color === "silver")
+      return "bg-gradient-to-br from-gray-300 to-gray-400 text-black border-gray-400";
+    return "bg-gradient-to-br from-amber-800 to-amber-600 text-white border-amber-700";
+  }
+
+  function formatWeekOf(d: Date) {
+    return `Week of ${d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}`;
+  }
+
+  function placeLabel(color: "gold" | "silver" | "bronze") {
+    return color === "gold" ? "1st Place" : color === "silver" ? "2nd Place" : "3rd Place";
+  }
+
   return (
     <div className="space-y-4">
       <FormContainer title="Player Stats">
@@ -105,6 +192,59 @@ export default function PlayerStats() {
               <p className="text-gray-400">No scores recorded for {player?.name} yet.</p>
             ) : (
               <div className="space-y-4">
+                {/* Badges section */}
+                <div className="overflow-hidden rounded-xl border border-gray-700 bg-gradient-to-br from-gray-800/60 to-gray-900/60">
+                  <div className="p-3 border-b border-gray-700/60">
+                    <h3 className="text-sm font-bold text-amber-300">Badges</h3>
+                  </div>
+                  <div className="p-3 grid md:grid-cols-2 gap-3">
+                    <div>
+                      <div className="text-xs text-gray-400 mb-2">All-Time Podiums</div>
+                      <div className="max-h-56 overflow-auto pr-1 space-y-2">
+                        {medals.allTime.length ? (
+                          medals.allTime.map((m, i) => (
+                            <div
+                              key={`${m.machine}-${i}`}
+                              className={`rounded-lg border px-3 py-2 text-center ${medalClasses(m.color)}`}
+                              title={`${m.color[0].toUpperCase() + m.color.slice(1)} (all-time)`}
+                            >
+                              <div className="text-xs font-semibold opacity-90">{placeLabel(m.color)}</div>
+                              <button className="block w-full font-semibold truncate hover:underline" onClick={() => goToHighScoresForMachine(m.machine)}>
+                                {m.machine}
+                              </button>
+                              <div className="text-xs opacity-90">All-Time</div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-xs text-gray-500">No podiums yet.</div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="text-xs text-gray-400 mb-2">Weekly Podiums</div>
+                      <div className="max-h-56 overflow-auto pr-1 space-y-2">
+                        {medals.weekly.length ? (
+                          medals.weekly.map((w, i) => (
+                            <div
+                              key={`${w.machine}-${w.weekStart.getTime()}-${i}`}
+                              className={`rounded-lg border px-3 py-2 text-center ${medalClasses(w.color)}`}
+                              title={`${w.color[0].toUpperCase() + w.color.slice(1)} (weekly)`}
+                            >
+                              <div className="text-xs font-semibold opacity-90">{placeLabel(w.color)}</div>
+                              <button className="block w-full font-semibold truncate hover:underline" onClick={() => goToHighScoresForMachine(w.machine)}>
+                                {w.machine}
+                              </button>
+                              <div className="text-xs opacity-90">{formatWeekOf(w.weekStart)}</div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-xs text-gray-500">No weekly podiums yet.</div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 {machineNames.map((mName) => {
                   const machine = machines.find((m) => m.name === mName);
                   const scores = [...(player?.scores?.[mName] || [])].sort((a, b) => b.score - a.score);
