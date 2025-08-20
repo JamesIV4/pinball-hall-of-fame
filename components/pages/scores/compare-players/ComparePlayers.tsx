@@ -1,9 +1,9 @@
+import FormContainer from "@/components/ui/FormContainer";
+import MachineInfo from "@/components/ui/MachineInfo";
+import Select from "@/components/ui/Select";
+import { useFirebaseData } from "@/hooks/useFirebaseData";
+import { safeGetItem, safeRemoveItem } from "@/utils/storage";
 import { useEffect, useMemo, useState } from "react";
-import FormContainer from "./ui/FormContainer";
-import Select from "./ui/Select";
-import MachineInfo from "./ui/MachineInfo";
-import { useFirebaseData } from "../hooks/useFirebaseData";
-import { safeGetItem, safeRemoveItem } from "../utils/storage";
 
 export default function ComparePlayers() {
   const { machines, players } = useFirebaseData();

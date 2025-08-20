@@ -1,14 +1,14 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
-import Toast from "./ui/Toast";
-import FormContainer from "./ui/FormContainer";
-import Input from "./ui/Input";
-import Select from "./ui/Select";
-import Button from "./ui/Button";
-import { useFirebaseData } from "../hooks/useFirebaseData";
-import { handleScoreChange } from "../utils/scoreUtils";
-import { safeGetItem, safeSetItem, safeRemoveItem } from "../utils/storage";
 import { getFirebase } from "@/lib/firebase";
+import { useFirebaseData } from "@/hooks/useFirebaseData";
+import Button from "@/components/ui/Button";
+import FormContainer from "@/components/ui/FormContainer";
+import Input from "@/components/ui/Input";
+import Select from "@/components/ui/Select";
+import Toast from "@/components/ui/Toast";
+import { handleScoreChange } from "@/utils/scoreUtils";
+import { safeGetItem, safeRemoveItem, safeSetItem } from "@/utils/storage";
 
 export default function AddScore() {
   const { db } = getFirebase();

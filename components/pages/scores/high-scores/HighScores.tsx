@@ -1,14 +1,14 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
-import { useFirebaseData } from "../hooks/useFirebaseData";
-import { Machine, ScoreEntry } from "../types/types";
-import { getWeekStart, getWeekEnd, formatWeekRange } from "../utils/weekUtils";
-import Select from "./ui/Select";
-import { safeGetItem, safeRemoveItem } from "../utils/storage";
-import { goToPlayerStatsForPlayer, PREFILL_MACHINE_KEY } from "../utils/navigation";
-import Timestamp from "./ui/Timestamp";
-import WeekNavigator from "./ui/WeekNavigator";
+import { useFirebaseData } from "@/hooks/useFirebaseData";
+import { Machine, ScoreEntry } from "@/types/types";
+import { getWeekStart, getWeekEnd, formatWeekRange } from "@/utils/weekUtils";
+import Select from "@/components/ui/Select";
+import { safeGetItem, safeRemoveItem } from "@/utils/storage";
+import { goToPlayerStatsForPlayer, PREFILL_MACHINE_KEY } from "@/utils/navigation";
+import Timestamp from "@/components/ui/Timestamp";
+import WeekNavigator from "@/components/ui/WeekNavigator";
 
 interface HighScoresProps {
   initialViewMode?: "allTime" | "weekly";
@@ -24,7 +24,6 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
 
   useEffect(() => {
     if (!machine && machines.length) {
-      // Prefill from localStorage if present, otherwise default to first machine
       const prefill = safeGetItem(PREFILL_MACHINE_KEY);
       if (prefill && machines.some((m) => m.name === prefill)) {
         setMachine(prefill);
@@ -35,9 +34,6 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
     }
   }, [machines, machine]);
 
-  /* ────────────────────────────────────────────
-   * Assemble and (optionally) collapse scores
-   * ────────────────────────────────────────── */
   const allScores = useMemo(() => {
     return players.flatMap((p) => {
       const list = p.scores?.[machine] || [];
@@ -45,7 +41,6 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
     });
   }, [players, machine]);
 
-  // Filter by week if in weekly mode
   const filteredScores =
     viewMode === "weekly"
       ? allScores.filter(({ score }) => {
@@ -88,7 +83,6 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
     return (parts[0][0] + parts[1][0]).toUpperCase();
   }
 
-  // Compute top-3 unique players (for medal styling only once per player)
   const medalOrder = useMemo(() => {
     const map = new Map<string, number>();
     for (const s of scores) {
@@ -98,7 +92,7 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
         if (map.size >= 3) break;
       }
     }
-    return map; // playerKey -> 0 (gold), 1 (silver), 2 (bronze)
+    return map;
   }, [scores]);
 
   if (!mInfo) {
@@ -107,7 +101,6 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
 
   return (
     <div className="space-y-4 mx-auto">
-      {/* Header and controls with optional hero image */}
       <div className="overflow-hidden rounded-xl border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900">
         {mInfo.image ? (
           <div className="relative h-36 md:h-48 w-full">
@@ -197,7 +190,6 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
         </div>
       </div>
 
-      {/* Meta: results count */}
       <div className="flex items-center justify-between text-xs text-gray-400">
         <span className="inline-flex items-center gap-2">
           <span className="px-2 py-1 rounded bg-gray-800 border border-gray-700 text-gray-200">{scores.length}</span>
@@ -209,7 +201,6 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
         </span>
       </div>
 
-      {/* Scores list */}
       {!machine || scores.length === 0 ? (
         <p className="text-gray-400">
           {!machine ? "Select a machine to view scores." : "No scores recorded for this machine yet."}
@@ -244,7 +235,6 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
                     : "bg-amber-700"
                 : "bg-gray-700";
 
-              // Combined vertical (purple) + horizontal (blue) gradients (subtle), with rank-based emphasis
               const barClass = "";
               const emphasis = isMedaled ? (rank === 0 ? 1.6 : rank === 1 ? 1.35 : 1.15) : 1.0;
               const pTop = Math.min(1, 0.16 * emphasis);
@@ -274,12 +264,10 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
                   key={`${s.player}-${s.score.timestamp}-${s.score.score}-${i}`}
                   className="relative p-3 md:p-4 flex items-center gap-4 row-underlay-diag hover:bg-gray-800/80 transition-colors transition-transform duration-150 hover:translate-x-[2px] overflow-hidden group"
                 >
-                  {/* score strength background bar */}
                   <div
                     className={`absolute inset-y-0 left-0 strength-bar ${medalClass} ${barClass}`}
                     style={barStyle}
                   />
-                  {/* left accent strip */}
                   <div className={`absolute left-0 top-0 bottom-0 w-1 ${accentClass}`} />
                   <span className={`${chipBase} ${chipClass}`}>{i + 1}</span>
                   <div className="min-w-0">

@@ -1,11 +1,11 @@
 import Image from "next/image";
 import { Dispatch, SetStateAction, useMemo } from "react";
-import { Machine, Player, View } from "../types/types";
-import { goToHighScoresForMachine, goToPlayerStatsForPlayer } from "../utils/navigation";
-import { formatWeekRange, getCurrentWeek, isInCurrentWeek } from "../utils/weekUtils";
-import Timestamp from "./ui/Timestamp";
-import Leaderboard from "./ui/Leaderboard";
-import StatTile from "./ui/StatTile";
+import { Machine, Player, View } from "@/types/types";
+import { goToHighScoresForMachine, goToPlayerStatsForPlayer } from "@/utils/navigation";
+import { formatWeekRange, getCurrentWeek, isInCurrentWeek } from "@/utils/weekUtils";
+import Timestamp from "@/components/ui/Timestamp";
+import Leaderboard from "@/components/ui/Leaderboard";
+import StatTile from "@/components/ui/StatTile";
 
 interface Props {
   players: Player[];

@@ -1,13 +1,13 @@
 import { FormEvent, useState } from "react";
 import { collection, addDoc, doc, updateDoc, getDocs, deleteDoc } from "firebase/firestore";
-import Toast from "./ui/Toast";
-import FormContainer from "./ui/FormContainer";
-import Input from "./ui/Input";
-import Button from "./ui/Button";
-import MachineInfo from "./ui/MachineInfo";
-import DeleteButton from "./ui/DeleteButton";
-import { useFirebaseData } from "../hooks/useFirebaseData";
 import { getFirebase } from "@/lib/firebase";
+import Button from "@/components/ui/Button";
+import DeleteButton from "@/components/ui/DeleteButton";
+import FormContainer from "@/components/ui/FormContainer";
+import Input from "@/components/ui/Input";
+import MachineInfo from "@/components/ui/MachineInfo";
+import Toast from "@/components/ui/Toast";
+import { useFirebaseData } from "@/hooks/useFirebaseData";
 
 export default function ManageMachines() {
   const { db } = getFirebase();

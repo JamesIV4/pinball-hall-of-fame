@@ -1,13 +1,13 @@
 import { useMemo, useState } from "react";
 import { doc, updateDoc, arrayRemove, arrayUnion, deleteField } from "firebase/firestore";
 import { getFirebase } from "@/lib/firebase";
-import Toast from "./ui/Toast";
-import PasswordModal from "./ui/PasswordModal";
-import { ScoreEntry } from "../types/types";
-import { useFirebaseData } from "../hooks/useFirebaseData";
-import { formatScore } from "../utils/scoreUtils";
-import ListHeader, { TimeFilter } from "./ui/ListHeader";
-import RecentEventList, { RecentEventItem } from "./ui/RecentEventList";
+import ListHeader, { TimeFilter } from "@/components/ui/ListHeader";
+import PasswordModal from "@/components/ui/PasswordModal";
+import RecentEventList, { RecentEventItem } from "@/components/ui/RecentEventList";
+import Toast from "@/components/ui/Toast";
+import { useFirebaseData } from "@/hooks/useFirebaseData";
+import { ScoreEntry } from "@/types/types";
+import { formatScore } from "@/utils/scoreUtils";
 
 type RecentEvent = RecentEventItem;
 

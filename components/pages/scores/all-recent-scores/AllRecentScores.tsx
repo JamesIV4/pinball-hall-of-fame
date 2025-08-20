@@ -1,8 +1,8 @@
+import ListHeader, { TimeFilter } from "@/components/ui/ListHeader";
+import RecentEventList, { RecentEventItem } from "@/components/ui/RecentEventList";
+import { useFirebaseData } from "@/hooks/useFirebaseData";
+import { Player, ScoreEntry } from "@/types/types";
 import { useMemo, useState } from "react";
-import { useFirebaseData } from "../hooks/useFirebaseData";
-import { Player, ScoreEntry } from "../types/types";
-import ListHeader, { TimeFilter } from "./ui/ListHeader";
-import RecentEventList, { RecentEventItem } from "./ui/RecentEventList";
 
 export default function AllRecentScores() {
   const { players } = useFirebaseData();

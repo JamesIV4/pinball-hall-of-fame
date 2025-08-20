@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import FormContainer from "./ui/FormContainer";
-import Select from "./ui/Select";
-import MachineInfo from "./ui/MachineInfo";
-import ScoreList from "./ui/ScoreList";
-import Timestamp from "./ui/Timestamp";
-import { useFirebaseData } from "../hooks/useFirebaseData";
-import { safeGetItem, safeRemoveItem, safeSetItem } from "../utils/storage";
-import { goToHighScoresForMachine, goToPlayerStatsForPlayer, PREFILL_PLAYER_KEY } from "../utils/navigation";
-import { ScoreEntry } from "../types/types";
-import { getWeekStart, isInCurrentWeek, formatWeekRange } from "../utils/weekUtils";
+import FormContainer from "@/components/ui/FormContainer";
+import Select from "@/components/ui/Select";
+import MachineInfo from "@/components/ui/MachineInfo";
+import ScoreList from "@/components/ui/ScoreList";
+import Timestamp from "@/components/ui/Timestamp";
+import { useFirebaseData } from "@/hooks/useFirebaseData";
+import { safeGetItem, safeRemoveItem, safeSetItem } from "@/utils/storage";
+import { goToHighScoresForMachine, goToPlayerStatsForPlayer, PREFILL_PLAYER_KEY } from "@/utils/navigation";
+import { ScoreEntry } from "@/types/types";
+import { getWeekStart, isInCurrentWeek } from "@/utils/weekUtils";
 
 export default function PlayerStats() {
   const { machines, players } = useFirebaseData();
@@ -17,7 +17,6 @@ export default function PlayerStats() {
 
   useEffect(() => {
     if (!playerId && players.length) {
-      // Prefill from localStorage if present, otherwise default to first player
       const prefill = safeGetItem(PREFILL_PLAYER_KEY);
       if (prefill && players.some((p) => p.id === prefill)) {
         setPlayerId(prefill);
@@ -62,7 +61,6 @@ export default function PlayerStats() {
       .slice(0, 5)
       .map(([name, count]) => ({ name, count }));
 
-    // Weekly activity for the last 12 weeks (oldest -> newest)
     const weeks = 12;
     const now = new Date();
     const currentWeekStart = getWeekStart(now);
@@ -79,16 +77,12 @@ export default function PlayerStats() {
       if (idx >= 0) weeklyCounts[idx] += 1;
     }
 
-    // plays per week = average of last 4 weeks
     const last4 = weeklyCounts.slice(-4);
     const playsPerWeek = last4.length ? Math.round((last4.reduce((a, b) => a + b, 0) / last4.length) * 10) / 10 : 0;
 
     return { totalPlays, bestScore, lastPlayed, topMachines, weeklyCounts, playsPerWeek, weekStarts };
   }, [player]);
 
-  // ─────────────────────────────────────────────────────────────
-  // Medal calculations: all-time (per machine) and weekly (per machine per week)
-  // ─────────────────────────────────────────────────────────────
   const medals = useMemo(() => {
     if (!playerId)
       return {
@@ -97,7 +91,6 @@ export default function PlayerStats() {
       };
 
     const allMachineNames = new Set<string>();
-    // Prefer canonical set from machines list; also include any ad-hoc keys from player docs
     for (const m of machines) allMachineNames.add(m.name);
     for (const p of players) for (const key of Object.keys(p.scores || {})) allMachineNames.add(key);
 
@@ -105,7 +98,6 @@ export default function PlayerStats() {
     const weekly: { color: "gold" | "silver" | "bronze"; machine: string; weekStart: Date }[] = [];
 
     for (const mName of Array.from(allMachineNames)) {
-      // All-time best per player on this machine
       const bestByPlayer = players
         .map((p) => {
           const list = p.scores?.[mName] || [];
@@ -120,7 +112,6 @@ export default function PlayerStats() {
         allTime.push({ color, machine: mName });
       }
 
-      // Weekly: bucket scores by ISO week start (using project weekUtils)
       const weekBuckets = new Map<number, { playerId: string; score: number }[]>();
       for (const p of players) {
         const list = p.scores?.[mName] || [];
@@ -133,7 +124,6 @@ export default function PlayerStats() {
       }
 
       for (const [ws, entries] of weekBuckets.entries()) {
-        // best per player for the week
         const map = new Map<string, number>();
         for (const e of entries) {
           map.set(e.playerId, Math.max(map.get(e.playerId) || 0, e.score));
@@ -150,7 +140,6 @@ export default function PlayerStats() {
       }
     }
 
-    // Sort for stable display: all-time by machine name; weekly by week then machine
     allTime.sort((a, b) => a.machine.localeCompare(b.machine));
     weekly.sort((a, b) => a.weekStart.getTime() - b.weekStart.getTime() || a.machine.localeCompare(b.machine));
 
@@ -171,7 +160,6 @@ export default function PlayerStats() {
     return color === "gold" ? "1st Place" : color === "silver" ? "2nd Place" : "3rd Place";
   }
 
-  // Small helper to add a bottom fade for scrollable medal lists
   function ScrollableWithBottomFade({
     className = "",
     fromColor = "rgba(26, 35, 47, 1)",
@@ -229,7 +217,6 @@ export default function PlayerStats() {
     <div className="space-y-4">
       <FormContainer title="Player Stats">
         <div className="flex flex-col md:flex-row gap-6">
-          {/* Left: main content */}
           <div className="flex-1 order-2 md:order-1">
             <div className="mb-3 hidden md:block">
               <Select
@@ -246,7 +233,6 @@ export default function PlayerStats() {
               <p className="text-gray-400">No scores recorded for {player?.name} yet.</p>
             ) : (
               <div className="space-y-4">
-                {/* Medals section */}
                 <div className="overflow-hidden rounded-xl border border-gray-700 bg-gradient-to-br from-gray-800/60 to-gray-900/60">
                   <div className="p-3 border-b border-gray-700/60">
                     <h3 className="text-sm font-bold text-amber-300">Medals</h3>
@@ -319,7 +305,6 @@ export default function PlayerStats() {
                     },
                     null as string | null,
                   );
-                  // median score for this machine (numeric)
                   const median = (() => {
                     if (!scores.length) return null;
                     const vals = scores.map((s) => s.score).sort((a, b) => a - b);
@@ -327,7 +312,6 @@ export default function PlayerStats() {
                     return vals.length % 2 === 0 ? Math.round((vals[mid - 1] + vals[mid]) / 2) : vals[mid];
                   })();
 
-                  // compute ranking among all players for this machine
                   const allPlayerBest = players
                     .map((p) => {
                       const list = p.scores?.[mName] || [];
@@ -340,7 +324,6 @@ export default function PlayerStats() {
                   const allIdx = allPlayerBest.findIndex((x) => x.playerId === playerId);
                   const allTimeRank = allIdx >= 0 ? allIdx + 1 : null;
 
-                  // compute weekly ranking (current week) among players for this machine
                   const weeklyPlayerBest = players
                     .map((p) => {
                       const list = (p.scores?.[mName] || []).filter((s) => s.timestamp && isInCurrentWeek(s.timestamp));
@@ -423,34 +406,9 @@ export default function PlayerStats() {
                           </div>
                         </div>
 
-                        {/* Collapse/expand control */}
-                        <div className="mt-3">
-                          <button
-                            type="button"
-                            className="w-full flex items-center gap-3 text-center"
-                            onClick={() => setExpandedMachines((prev) => ({ ...prev, [mName]: !prev[mName] }))}
-                          >
-                            <span className="flex-1 h-px bg-gray-700" />
-                            <span className="shrink-0 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-900/40 border border-gray-700 text-gray-200 text-sm font-semibold">
-                              <span className={`transition-transform ${expandedMachines[mName] ? "rotate-180" : ""}`}>
-                                ▾
-                              </span>
-                              {expandedMachines[mName] ? "Collapse Scores" : "Show Scores"}
-                            </span>
-                            <span className="flex-1 h-px bg-gray-700" />
-                          </button>
+                        <div className="mt-2">
+                          <ScoreList scores={scores} startRank={1} />
                         </div>
-
-                        {/* Scores list (collapsed by default) */}
-                        {expandedMachines[mName] && (
-                          <div className="mt-4">
-                            {scores.length ? (
-                              <ScoreList scores={scores} />
-                            ) : (
-                              <div className="text-sm text-gray-400">No scores for this machine.</div>
-                            )}
-                          </div>
-                        )}
                       </div>
                     </div>
                   );
@@ -459,111 +417,65 @@ export default function PlayerStats() {
             )}
           </div>
 
-          <div className="-mb-5 block md:hidden">
-            <Select
-              value={playerId}
-              onChange={(e) => setPlayerId(e.target.value)}
-              options={players.map((p) => ({ value: p.id, label: p.name }))}
-              placeholder="-- select player --"
-            />
-          </div>
-
-          {/* Right: stats panel */}
-          <aside className="order-1 md:order-2 md:w-72">
-            <div className="sticky top-6 space-y-4">
-              <div className="rounded-lg border border-blue-500/30 bg-blue-500/10 p-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-blue-300">Player Summary</h3>
-                </div>
-                {!player ? (
-                  <div className="text-sm text-gray-400 mt-3">No player selected.</div>
-                ) : (
-                  <div className="mt-3 space-y-3 text-sm">
-                    <div className="bg-gray-800/60 rounded p-3 border border-gray-700">
-                      <div className="text-xs text-gray-400">Total Plays</div>
-                      <div className="text-xl font-bold text-amber-300">{stats?.totalPlays ?? 0}</div>
-                    </div>
-
-                    <div className="bg-gray-800/60 rounded p-3 border border-gray-700">
-                      <div className="text-xs text-gray-400">Machines</div>
-                      <div className="text-xl font-bold text-amber-300">{Object.keys(player?.scores || {}).length}</div>
-                    </div>
-
-                    <div className="bg-gray-800/60 rounded p-3 border border-gray-700">
-                      <div className="text-xs text-gray-400">Medals</div>
-                      <div className="text-xl font-bold text-amber-300">
-                        {medals.allTime.length + medals.weekly.length}
-                      </div>
-                    </div>
-
-                    <div className="bg-gray-800/60 rounded p-3 border border-gray-700">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="text-xs text-gray-400">Plays / week (avg)</div>
-                          <div className="text-xl font-bold text-amber-300">{stats?.playsPerWeek ?? 0}</div>
-                        </div>
-
-                        <div className="ml-3 w-28 h-10">
-                          {stats?.weeklyCounts ? (
-                            <svg viewBox="0 0 120 40" className="w-full h-full" preserveAspectRatio="none">
-                              <polyline
-                                fill="none"
-                                stroke="#f6c84c"
-                                strokeWidth="2"
-                                points={stats.weeklyCounts
-                                  .map((v: number, i: number) => {
-                                    const max = Math.max(...stats.weeklyCounts);
-                                    const x = (i / (stats.weeklyCounts.length - 1)) * 120;
-                                    const y = max ? 40 - (v / max) * 36 : 40;
-                                    return `${x.toFixed(2)},${y.toFixed(2)}`;
-                                  })
-                                  .join(" ")}
-                                strokeLinejoin="round"
-                                strokeLinecap="round"
-                              />
-                            </svg>
-                          ) : (
-                            <div className="text-xs text-gray-400">No data</div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="bg-gray-800/60 rounded p-3 border border-gray-700">
-                      <div className="text-xs text-gray-400">Last Played</div>
-                      <div className="text-sm text-gray-300">
-                        {stats?.lastPlayed ? new Date(stats.lastPlayed).toLocaleString() : "—"}
-                      </div>
-                    </div>
-
-                    <div className="bg-gray-800/60 rounded p-3 border border-gray-700">
-                      <div className="text-xs text-gray-400">Top Machines</div>
-                      <div className="mt-2 space-y-1">
-                        {stats?.topMachines.length ? (
-                          stats.topMachines.map((m) => (
-                            <div key={m.name} className="flex items-center justify-between text-sm text-green-200">
-                              <button
-                                className="truncate text-left hover:underline"
-                                onClick={() => goToHighScoresForMachine(m.name)}
-                                title="View machine high scores"
-                              >
-                                {m.name}
-                              </button>
-                              <span className="text-gray-300">{m.count}</span>
-                            </div>
-                          ))
-                        ) : (
-                          <div className="text-gray-400">—</div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
+          <aside className="md:w-72 order-1 md:order-2">
+            <div className="sticky top-4">
+              <div className="md:hidden mb-3">
+                <Select
+                  value={playerId}
+                  onChange={(e) => setPlayerId(e.target.value)}
+                  options={players.map((p) => ({ value: p.id, label: p.name }))}
+                  placeholder="-- select player --"
+                />
               </div>
 
-              <div className="rounded-lg border border-gray-700 bg-gray-800 p-3">
-                <h4 className="text-sm font-semibold text-gray-200">Quick Actions</h4>
-                <div className="mt-3 flex flex-col gap-2">
+              {stats && (
+                <div className="rounded-lg border border-gray-700 bg-gray-800/60 p-3 space-y-2">
+                  <div className="text-sm font-semibold text-gray-300">Summary</div>
+                  <dl className="text-sm text-gray-300 grid grid-cols-2 gap-x-3 gap-y-1">
+                    <div>
+                      <dt className="text-gray-400">Total Plays</dt>
+                      <dd className="font-semibold">{stats.totalPlays}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-gray-400">Best Score</dt>
+                      <dd className="font-semibold">{stats.bestScore.toLocaleString()}</dd>
+                    </div>
+                    <div className="col-span-2">
+                      <dt className="text-gray-400">Last Played</dt>
+                      <dd className="font-semibold">
+                        {stats.lastPlayed ? <Timestamp timestamp={stats.lastPlayed} variant="full" as="span" /> : "—"}
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+              )}
+
+              {stats && (
+                <div className="mt-3 rounded-lg border border-gray-700 bg-gray-800/60 p-3">
+                  <div className="text-sm font-semibold text-gray-300">Plays per week</div>
+                  <div className="text-xs text-gray-400">avg last 4 wks</div>
+                  <div className="mt-1 font-bold text-amber-400">{stats.playsPerWeek}</div>
+                  <div className="mt-2 h-16 flex items-end gap-1">
+                    {stats.weekStarts.map((ws, i) => {
+                      const v = stats.weeklyCounts[i] || 0;
+                      const h = Math.max(6, Math.min(56, v * 6));
+                      const isThisWeek = ws.getTime() === getWeekStart(new Date()).getTime();
+                      return (
+                        <div key={ws.getTime()} className="flex-1 flex items-end">
+                          <div
+                            className={`w-full rounded-sm bg-amber-500 ${isThisWeek ? "ring-2 ring-amber-300" : ""}`}
+                            style={{ height: `${h}px` }}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-3 rounded-lg border border-gray-700 bg-gray-800/60 p-3">
+                <div className="text-sm font-semibold text-gray-300">Quick actions</div>
+                <div className="mt-2 flex gap-2">
                   <button
                     className="px-3 py-2 rounded bg-amber-500 text-black font-semibold hover:bg-amber-400"
                     onClick={() => {

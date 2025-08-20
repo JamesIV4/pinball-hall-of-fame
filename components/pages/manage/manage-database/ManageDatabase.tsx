@@ -1,10 +1,10 @@
 import { FormEvent, useState, useEffect } from "react";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { getFirebase } from "@/lib/firebase";
-import Toast from "./ui/Toast";
-import FormContainer from "./ui/FormContainer";
-import Input from "./ui/Input";
-import Button from "./ui/Button";
+import Button from "@/components/ui/Button";
+import FormContainer from "@/components/ui/FormContainer";
+import Input from "@/components/ui/Input";
+import Toast from "@/components/ui/Toast";
 
 export default function ManageDatabase() {
   const { db } = getFirebase();

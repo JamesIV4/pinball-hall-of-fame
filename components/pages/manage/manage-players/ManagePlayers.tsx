@@ -1,13 +1,13 @@
 import { FormEvent, useState } from "react";
-import Toast from "./ui/Toast";
-import FormContainer from "./ui/FormContainer";
-import Input from "./ui/Input";
-import Button from "./ui/Button";
-import DeleteButton from "./ui/DeleteButton";
-import { useFirebaseData } from "../hooks/useFirebaseData";
 import { getFirebase } from "@/lib/firebase";
 import { addDoc, collection, doc, updateDoc, deleteDoc } from "firebase/firestore";
-import { goToPlayerStatsForPlayer } from "../utils/navigation";
+import Button from "@/components/ui/Button";
+import DeleteButton from "@/components/ui/DeleteButton";
+import FormContainer from "@/components/ui/FormContainer";
+import Input from "@/components/ui/Input";
+import Toast from "@/components/ui/Toast";
+import { useFirebaseData } from "@/hooks/useFirebaseData";
+import { goToPlayerStatsForPlayer } from "@/utils/navigation";
 
 export default function ManagePlayers() {
   const { db } = getFirebase();

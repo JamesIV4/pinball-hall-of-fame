@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
-import Home from "../components/Home";
-import AddScore from "../components/AddScore";
-import ManageScores from "../components/ManageScores";
-import HighScores from "../components/HighScores";
-import PlayerStats from "../components/PlayerStats";
-import AllRecentScores from "../components/AllRecentScores";
-import ManageDatabase from "../components/ManageDatabase";
+import Home from "@/components/pages/home/Home";
+import AddScore from "@/components/pages/scores/add-score/AddScore";
+import ManageScores from "@/components/pages/manage/manage-scores/ManageScores";
+import HighScores from "@/components/pages/scores/high-scores/HighScores";
+import PlayerStats from "@/components/pages/scores/player-stats/PlayerStats";
+import AllRecentScores from "@/components/pages/scores/all-recent-scores/AllRecentScores";
+import ManageDatabase from "@/components/pages/manage/manage-database/ManageDatabase";
 import { View } from "../types/types";
 import NavBar from "@/components/ui/NavBar";
-import ManagePlayers from "@/components/ManagePlayers";
-import ManageMachines from "../components/ManageMachines";
-import ComparePlayers from "../components/ComparePlayers";
+import ManagePlayers from "@/components/pages/manage/manage-players/ManagePlayers";
+import ManageMachines from "@/components/pages/manage/manage-machines/ManageMachines";
+import ComparePlayers from "@/components/pages/scores/compare-players/ComparePlayers";
 import { useFirebaseData } from "../hooks/useFirebaseData";
 
 export default function IndexPage() {
