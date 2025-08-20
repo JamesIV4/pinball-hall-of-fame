@@ -174,7 +174,7 @@ export default function Home({ players, machines, setView }: Props) {
                   ⚡ Weekly
                 </button>
                 <button
-                  onClick={() => setView("highScores")}
+                  onClick={() => setView("machines")}
                   className="px-4 py-2 rounded-lg bg-gray-700 text-white font-semibold hover:bg-gray-600 transition-colors pl-3 md:pl-4"
                 >
                   🏆 All-Time
@@ -208,7 +208,7 @@ export default function Home({ players, machines, setView }: Props) {
         <StatTile
           label="Machines"
           value={totalMachines}
-          onClick={() => setView("highScores")}
+          onClick={() => setView("machines")}
           className="rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 transition-colors hover:border-amber-500/60 hover:from-gray-700 hover:to-gray-800"
           valueClassName="text-2xl font-bold text-amber-400"
         />
@@ -222,7 +222,7 @@ export default function Home({ players, machines, setView }: Props) {
         <StatTile
           label="Total Scores"
           value={totalScores.toLocaleString()}
-          onClick={() => setView("highScores")}
+          onClick={() => setView("machines")}
           className="rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 transition-colors hover:border-green-500/60 hover:from-gray-700 hover:to-gray-800"
           valueClassName="text-2xl font-bold text-green-400"
         />

@@ -9,6 +9,8 @@ import { safeGetItem, safeRemoveItem, safeSetItem } from "@/utils/storage";
 import { goToHighScoresForMachine, goToPlayerStatsForPlayer, PREFILL_PLAYER_KEY } from "@/utils/navigation";
 import { ScoreEntry } from "@/types/types";
 import { getWeekStart, isInCurrentWeek } from "@/utils/weekUtils";
+import PlayerSummaryPanel, { type PlayerSummaryMedals, type PlayerSummaryStats } from "./PlayerSummaryPanel";
+import PlayerQuickActions from "./PlayerQuickActions";
 
 export default function PlayerStats() {
   const { machines, players } = useFirebaseData();
@@ -418,8 +420,8 @@ export default function PlayerStats() {
           </div>
 
           <aside className="md:w-72 order-1 md:order-2">
-            <div className="sticky top-4">
-              <div className="md:hidden mb-3">
+            <div className="sticky top-4 flex flex-col gap-4">
+              <div className="md:hidden">
                 <Select
                   value={playerId}
                   onChange={(e) => setPlayerId(e.target.value)}
@@ -427,79 +429,22 @@ export default function PlayerStats() {
                   placeholder="-- select player --"
                 />
               </div>
-
-              {stats && (
-                <div className="rounded-lg border border-gray-700 bg-gray-800/60 p-3 space-y-2">
-                  <div className="text-sm font-semibold text-gray-300">Summary</div>
-                  <dl className="text-sm text-gray-300 grid grid-cols-2 gap-x-3 gap-y-1">
-                    <div>
-                      <dt className="text-gray-400">Total Plays</dt>
-                      <dd className="font-semibold">{stats.totalPlays}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-gray-400">Best Score</dt>
-                      <dd className="font-semibold">{stats.bestScore.toLocaleString()}</dd>
-                    </div>
-                    <div className="col-span-2">
-                      <dt className="text-gray-400">Last Played</dt>
-                      <dd className="font-semibold">
-                        {stats.lastPlayed ? <Timestamp timestamp={stats.lastPlayed} variant="full" as="span" /> : "—"}
-                      </dd>
-                    </div>
-                  </dl>
-                </div>
+              {player && stats && (
+                <PlayerSummaryPanel
+                  playerName={player.name}
+                  machineCount={Object.keys(player.scores || {}).length}
+                  stats={{
+                    totalPlays: stats.totalPlays,
+                    weeklyCounts: stats.weeklyCounts,
+                    playsPerWeek: stats.playsPerWeek,
+                    lastPlayed: stats.lastPlayed,
+                    topMachines: stats.topMachines,
+                  } as PlayerSummaryStats}
+                  medals={medals as PlayerSummaryMedals}
+                />
               )}
 
-              {stats && (
-                <div className="mt-3 rounded-lg border border-gray-700 bg-gray-800/60 p-3">
-                  <div className="text-sm font-semibold text-gray-300">Plays per week</div>
-                  <div className="text-xs text-gray-400">avg last 4 wks</div>
-                  <div className="mt-1 font-bold text-amber-400">{stats.playsPerWeek}</div>
-                  <div className="mt-2 h-16 flex items-end gap-1">
-                    {stats.weekStarts.map((ws, i) => {
-                      const v = stats.weeklyCounts[i] || 0;
-                      const h = Math.max(6, Math.min(56, v * 6));
-                      const isThisWeek = ws.getTime() === getWeekStart(new Date()).getTime();
-                      return (
-                        <div key={ws.getTime()} className="flex-1 flex items-end">
-                          <div
-                            className={`w-full rounded-sm bg-amber-500 ${isThisWeek ? "ring-2 ring-amber-300" : ""}`}
-                            style={{ height: `${h}px` }}
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              <div className="mt-3 rounded-lg border border-gray-700 bg-gray-800/60 p-3">
-                <div className="text-sm font-semibold text-gray-300">Quick actions</div>
-                <div className="mt-2 flex gap-2">
-                  <button
-                    className="px-3 py-2 rounded bg-amber-500 text-black font-semibold hover:bg-amber-400"
-                    onClick={() => {
-                      if (player) {
-                        safeSetItem("phof_prefill_player", player.id);
-                        window.location.hash = "addScore";
-                      }
-                    }}
-                  >
-                    Add Score for Player
-                  </button>
-                  <button
-                    className="px-3 py-2 rounded bg-blue-500 text-black font-semibold hover:bg-blue-400"
-                    onClick={() => {
-                      if (player) {
-                        safeSetItem("phof_compare_player1", player.id);
-                        window.location.hash = "comparePlayers";
-                      }
-                    }}
-                  >
-                    Compare Players
-                  </button>
-                </div>
-              </div>
+              <PlayerQuickActions playerId={player?.id} />
             </div>
           </aside>
         </div>

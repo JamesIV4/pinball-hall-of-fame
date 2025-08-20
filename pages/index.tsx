@@ -3,7 +3,9 @@ import Home from "@/components/pages/Home";
 import AddScore from "@/components/pages/scores/AddScore";
 import ManageScores from "@/components/pages/manage/ManageScores";
 import HighScores from "@/components/pages/scores/HighScores";
+import MachinesOverview from "@/components/pages/scores/MachinesOverview";
 import PlayerStats from "@/components/pages/scores/PlayerStats";
+import PlayersOverview from "@/components/pages/scores/PlayersOverview";
 import AllRecentScores from "@/components/pages/scores/AllRecentScores";
 import ManageDatabase from "@/components/pages/manage/ManageDatabase";
 import { View } from "../types/types";
@@ -32,6 +34,8 @@ export default function IndexPage() {
           "highScores",
           "highScoresWeekly",
           "allRecentScores",
+          "machines",
+          "players",
           "playerStats",
           "comparePlayers",
           "manageDatabase",
@@ -76,9 +80,11 @@ export default function IndexPage() {
       {view === "managePlayers" && <ManagePlayers />}
       {view === "addScore" && <AddScore />}
       {view === "manageScores" && <ManageScores />}
+      {view === "machines" && <MachinesOverview />}
       {view === "highScores" && <HighScores onNavigate={navigateToView} />}
       {view === "highScoresWeekly" && <HighScores initialViewMode="weekly" onNavigate={navigateToView} />}
       {view === "allRecentScores" && <AllRecentScores />}
+      {view === "players" && <PlayersOverview />}
       {view === "playerStats" && <PlayerStats />}
       {view === "comparePlayers" && <ComparePlayers />}
       {view === "manageDatabase" && <ManageDatabase />}

@@ -3,6 +3,7 @@ import { doc, updateDoc, arrayRemove, arrayUnion, deleteField } from "firebase/f
 import { getFirebase } from "@/lib/firebase";
 import ListHeader, { TimeFilter } from "@/components/ui/ListHeader";
 import PasswordModal from "@/components/ui/PasswordModal";
+import { isPasswordRemembered } from "@/utils/passwordUtils";
 import RecentEventList, { RecentEventItem } from "@/components/ui/RecentEventList";
 import Toast from "@/components/ui/Toast";
 import { useFirebaseData } from "@/hooks/useFirebaseData";
@@ -29,6 +30,7 @@ export default function ManageScores() {
     machineName: string;
     score: ScoreEntry;
   } | null>(null);
+  const [showEditPasswordModal, setShowEditPasswordModal] = useState(false);
 
   const [search, setSearch] = useState("");
   const [timeFilter, setTimeFilter] = useState<TimeFilter>("all");
@@ -153,6 +155,15 @@ export default function ManageScores() {
     }
   }
 
+  function requestSaveEdit() {
+    if (!editingScore) return;
+    if (isPasswordRemembered()) {
+      void saveEdit();
+    } else {
+      setShowEditPasswordModal(true);
+    }
+  }
+
   return (
     <>
       <Toast message={toast.msg} type={toast.type} clear={() => setToast({ msg: "" })} />
@@ -222,7 +233,7 @@ export default function ManageScores() {
 
             <div className="flex gap-2 mt-6">
               <button
-                onClick={saveEdit}
+                onClick={requestSaveEdit}
                 className="flex-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2"
               >
                 Save
@@ -241,9 +252,22 @@ export default function ManageScores() {
       <PasswordModal
         isOpen={!!deleteModal}
         title="Enter Password to Delete Score"
+        confirmTitle="Confirm Delete"
         onConfirm={confirmDeleteScore}
         onCancel={() => setDeleteModal(null)}
         confirmText="Delete Score"
+      />
+
+      <PasswordModal
+        isOpen={showEditPasswordModal}
+        title="Enter Password to Save Changes"
+        confirmTitle="Confirm Save"
+        onConfirm={() => {
+          setShowEditPasswordModal(false);
+          void saveEdit();
+        }}
+        onCancel={() => setShowEditPasswordModal(false)}
+        confirmText="Save Changes"
       />
     </>
   );

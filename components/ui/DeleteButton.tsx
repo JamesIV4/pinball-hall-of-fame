@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Button from "./Button";
 import PasswordModal from "./PasswordModal";
+import { isPasswordRemembered } from "@/utils/passwordUtils";
 
 interface DeleteButtonProps {
   onDelete: () => void;
@@ -14,9 +15,12 @@ export default function DeleteButton({ onDelete, itemName, itemType, size = "sm"
   const [showPasswordModal, setShowPasswordModal] = useState(false);
 
   const handleDelete = () => {
-    if (confirm(`Delete ${itemType} "${itemName}" and all associated data?`)) {
-      setShowPasswordModal(true);
+    if (!confirm(`Delete ${itemType} "${itemName}" and all associated data?`)) return;
+    if (isPasswordRemembered()) {
+      onDelete();
+      return;
     }
+    setShowPasswordModal(true);
   };
 
   const handleConfirm = () => {
@@ -33,6 +37,7 @@ export default function DeleteButton({ onDelete, itemName, itemType, size = "sm"
       <PasswordModal
         isOpen={showPasswordModal}
         title="Enter Password"
+        confirmTitle="Confirm Delete"
         onConfirm={handleConfirm}
         onCancel={() => setShowPasswordModal(false)}
         confirmText="Confirm Delete"

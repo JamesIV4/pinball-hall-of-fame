@@ -2,7 +2,7 @@ import { FormEvent, useState } from "react";
 import { getFirebase } from "@/lib/firebase";
 import { addDoc, collection, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import Button from "@/components/ui/Button";
-import DeleteButton from "@/components/ui/DeleteButton";
+import PasswordModal from "@/components/ui/PasswordModal";
 import FormContainer from "@/components/ui/FormContainer";
 import Input from "@/components/ui/Input";
 import Toast from "@/components/ui/Toast";
@@ -19,6 +19,8 @@ export default function ManagePlayers() {
     msg: string;
     type?: "success" | "error";
   }>({ msg: "" });
+  const [showEditPasswordModal, setShowEditPasswordModal] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -44,6 +46,10 @@ export default function ManagePlayers() {
       console.error(err);
       setToast({ msg: "Error updating player", type: "error" });
     }
+  }
+
+  function requestSaveEdit(id: string) {
+    setShowEditPasswordModal(true);
   }
 
   async function deletePlayer(id: string) {
@@ -79,7 +85,7 @@ export default function ManagePlayers() {
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
                   />
-                  <Button variant="success" size="sm" onClick={() => saveEdit(p.id)}>
+                  <Button variant="success" size="sm" onClick={() => requestSaveEdit(p.id)}>
                     Save
                   </Button>
                   <Button variant="cancel" size="sm" onClick={() => setEditingId("")}>
@@ -105,13 +111,44 @@ export default function ManagePlayers() {
                   >
                     Edit
                   </Button>
-                  <DeleteButton onDelete={() => deletePlayer(p.id)} itemName={p.name} itemType="player" />
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => setDeleteTarget({ id: p.id, name: p.name })}
+                  >
+                    Delete
+                  </Button>
                 </>
               )}
             </div>
           ))}
         </div>
       </FormContainer>
+
+      <PasswordModal
+        isOpen={showEditPasswordModal}
+        title="Enter Password to Save Changes"
+        confirmTitle="Confirm Save"
+        onConfirm={() => {
+          setShowEditPasswordModal(false);
+          if (editingId) void saveEdit(editingId);
+        }}
+        onCancel={() => setShowEditPasswordModal(false)}
+        confirmText="Save Changes"
+      />
+
+      <PasswordModal
+        isOpen={!!deleteTarget}
+        title="Enter Password to Delete Player"
+        confirmTitle="Confirm Delete"
+        onConfirm={() => {
+          const target = deleteTarget;
+          setDeleteTarget(null);
+          if (target) void deletePlayer(target.id);
+        }}
+        onCancel={() => setDeleteTarget(null)}
+        confirmText="Delete Player"
+      />
     </>
   );
 }

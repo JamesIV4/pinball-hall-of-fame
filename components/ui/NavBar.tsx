@@ -54,9 +54,10 @@ export default function NavBar({ view, setView }: Props) {
   const manageViews: View[] = ["manageScores", "managePlayers", "manageMachines", "manageDatabase"];
   const scoresViews: View[] = [
     "addScore",
-    "highScores",
+    "machines",
     "highScoresWeekly",
     "allRecentScores",
+    "players",
     "playerStats",
     "comparePlayers",
   ];
@@ -113,9 +114,9 @@ export default function NavBar({ view, setView }: Props) {
             <div className={panelClasses}>
               {btn("addScore", "star", "Add Score", scoresRef, "text-left")}
               {btn("allRecentScores", "clock", "Recent Scores", scoresRef, "text-left")}
-              {btn("highScores", "trophy", "High Scores", scoresRef, "text-left")}
+              {btn("machines", "trophy", "High Scores", scoresRef, "text-left")}
               {btn("highScoresWeekly", "bolt", "Weekly", scoresRef, "text-left")}
-              {btn("playerStats", "user-astronaut", "Player Stats", scoresRef, "text-left")}
+              {btn("players", "user-astronaut", "Player Stats", scoresRef, "text-left")}
               {btn("comparePlayers", "users", "Compare Players", scoresRef, "text-left")}
             </div>
           </details>
