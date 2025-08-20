@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { PREFILL_MACHINE_KEY } from "@/utils/navigation";
+import { safeSetItem } from "@/utils/storage";
 import Home from "@/components/pages/Home";
 import AddScore from "@/components/pages/scores/AddScore";
 import ManageScores from "@/components/pages/manage/ManageScores";
@@ -21,7 +23,13 @@ export default function IndexPage() {
 
   // Initialize view from URL on mount
   useEffect(() => {
-    const handlePopState = () => {
+    const handlePopState = (e?: PopStateEvent) => {
+      // Restore prefilled machine from history state when available
+      const state = (e && (e.state as any)) || null;
+      if (state?.prefillMachine) {
+        safeSetItem(PREFILL_MACHINE_KEY, String(state.prefillMachine));
+      }
+
       const hash = window.location.hash.slice(1) as View;
       if (
         hash &&
@@ -51,8 +59,8 @@ export default function IndexPage() {
     handlePopState();
 
     // Listen for browser back/forward
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
+    window.addEventListener("popstate", handlePopState as EventListener);
+    return () => window.removeEventListener("popstate", handlePopState as EventListener);
   }, []);
 
   // Enhanced setView that updates browser history

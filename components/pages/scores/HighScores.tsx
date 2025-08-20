@@ -5,7 +5,7 @@ import { useFirebaseData } from "@/hooks/useFirebaseData";
 import { Machine, ScoreEntry } from "@/types/types";
 import { getWeekStart, getWeekEnd, formatWeekRange } from "@/utils/weekUtils";
 import Select from "@/components/ui/Select";
-import { safeGetItem, safeRemoveItem } from "@/utils/storage";
+import { safeGetItem, safeRemoveItem, safeSetItem } from "@/utils/storage";
 import { goToHighScoresForMachine, goToPlayerStatsForPlayer, PREFILL_MACHINE_KEY } from "@/utils/navigation";
 import Timestamp from "@/components/ui/Timestamp";
 import WeekNavigator from "@/components/ui/WeekNavigator";
@@ -33,6 +33,19 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
       setMachine(machines[0].name);
     }
   }, [machines, machine]);
+
+  // Keep current machine selection in history state so Back/Forward restores it
+  useEffect(() => {
+    if (!machine) return;
+    if (typeof window === "undefined") return;
+    try {
+      const currentState = (window.history.state as any) || {};
+      const nextState = { ...currentState, prefillMachine: machine };
+      window.history.replaceState(nextState, "", window.location.href);
+      // Also persist for reloads and fresh mounts
+      safeSetItem(PREFILL_MACHINE_KEY, machine);
+    } catch {}
+  }, [machine]);
 
   const allScores = useMemo(() => {
     return players.flatMap((p) => {

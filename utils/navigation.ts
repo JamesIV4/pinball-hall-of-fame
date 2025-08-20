@@ -35,6 +35,18 @@ export function goToHighScoresForMachine(machineName: string, view: "highScores"
   if (!machineName) return;
   safeSetItem(PREFILL_MACHINE_KEY, machineName);
   if (typeof window !== "undefined") {
-    window.location.hash = view;
+    try {
+      const state = { prefillMachine: machineName };
+      window.history.pushState(state, "", `#${view}`);
+      // Ensure SPA listeners react immediately (our app listens to popstate only)
+      try {
+        window.dispatchEvent(new PopStateEvent("popstate", { state }));
+      } catch {
+        // Ignore if PopStateEvent is not constructible in this environment
+      }
+    } catch {
+      // Fallback if pushState is blocked
+      window.location.hash = view;
+    }
   }
 }
