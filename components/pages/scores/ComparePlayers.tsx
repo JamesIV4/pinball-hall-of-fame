@@ -3,6 +3,7 @@ import MachineInfo from "@/components/ui/MachineInfo";
 import Select from "@/components/ui/Select";
 import { useFirebaseData } from "@/hooks/useFirebaseData";
 import { safeGetItem, safeRemoveItem } from "@/utils/storage";
+import { COMPARE_PLAYER1_KEY } from "@/utils/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 export default function ComparePlayers() {
@@ -12,10 +13,10 @@ export default function ComparePlayers() {
 
   // prefill first player from local storage if available
   useEffect(() => {
-    const stored = safeGetItem("phof_compare_player1");
+    const stored = safeGetItem(COMPARE_PLAYER1_KEY);
     if (stored && players.some((p) => p.id === stored)) {
       setPlayer1Id(stored);
-      safeRemoveItem("phof_compare_player1");
+      safeRemoveItem(COMPARE_PLAYER1_KEY);
     }
   }, [players]);
 

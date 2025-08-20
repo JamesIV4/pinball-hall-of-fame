@@ -34,16 +34,18 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
     }
   }, [machines, machine]);
 
-  // Keep current machine selection in history state so Back/Forward restores it
+  // Seed history state with current machine once (so Back/Forward can restore it)
   useEffect(() => {
     if (!machine) return;
     if (typeof window === "undefined") return;
     try {
       const currentState = (window.history.state as any) || {};
-      const nextState = { ...currentState, prefillMachine: machine };
-      window.history.replaceState(nextState, "", window.location.href);
-      // Also persist for reloads and fresh mounts
-      safeSetItem(PREFILL_MACHINE_KEY, machine);
+      if (!currentState.prefillMachine) {
+        const nextState = { ...currentState, prefillMachine: machine };
+        window.history.replaceState(nextState, "", window.location.href);
+        // Persist for reloads and fresh mounts
+        safeSetItem(PREFILL_MACHINE_KEY, machine);
+      }
     } catch {}
   }, [machine]);
 
@@ -97,18 +99,6 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
   scores.sort((a, b) => b.score.score - a.score.score);
 
   const mInfo = machines.find((m) => m.name === machine);
-  const machineByName = useMemo(() => {
-    const map = new Map<string, Machine>();
-    for (const m of machines) map.set(m.name.toLowerCase(), m);
-    return map;
-  }, [machines]);
-
-  function getInitials(name: string) {
-    const parts = name.split(/\s+/).filter(Boolean);
-    if (parts.length === 0) return "?";
-    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-    return (parts[0][0] + parts[1][0]).toUpperCase();
-  }
 
   const medalOrder = useMemo(() => {
     const map = new Map<string, number>();

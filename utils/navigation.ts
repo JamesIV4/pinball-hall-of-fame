@@ -3,6 +3,24 @@ import { safeSetItem } from "./storage";
 // Keys used across pages to prefill dropdowns
 export const PREFILL_PLAYER_KEY = "phof_prefill_player"; // expects player id
 export const PREFILL_MACHINE_KEY = "phof_prefill_machine"; // expects machine name
+export const COMPARE_PLAYER1_KEY = "phof_compare_player1"; // expects player id
+
+/**
+ * Push a hash-based navigation entry and notify SPA listeners.
+ * Falls back to setting location.hash when pushState is unavailable.
+ */
+export function navigateToHash(view: string, state?: any) {
+  if (typeof window === "undefined") return;
+  try {
+    window.history.pushState(state ?? null, "", `#${view}`);
+    try {
+      // Some environments may not support constructing PopStateEvent
+      window.dispatchEvent(new PopStateEvent("popstate", state !== undefined ? { state } : undefined as any));
+    } catch {}
+  } catch {
+    window.location.hash = view;
+  }
+}
 
 /**
  * Navigate to Add Score prefilled for a player
@@ -10,9 +28,7 @@ export const PREFILL_MACHINE_KEY = "phof_prefill_machine"; // expects machine na
 export function goToAddScoreForPlayer(playerId: string) {
   if (!playerId) return;
   safeSetItem(PREFILL_PLAYER_KEY, playerId);
-  if (typeof window !== "undefined") {
-    window.location.hash = "addScore";
-  }
+  navigateToHash("addScore");
 }
 
 /**
@@ -21,9 +37,16 @@ export function goToAddScoreForPlayer(playerId: string) {
 export function goToPlayerStatsForPlayer(playerId: string) {
   if (!playerId) return;
   safeSetItem(PREFILL_PLAYER_KEY, playerId);
-  if (typeof window !== "undefined") {
-    window.location.hash = "playerStats";
-  }
+  navigateToHash("playerStats");
+}
+
+/**
+ * Navigate to Compare Players, preselecting the first player
+ */
+export function goToComparePlayersWithPlayer(playerId: string) {
+  if (!playerId) return;
+  safeSetItem(COMPARE_PLAYER1_KEY, playerId);
+  navigateToHash("comparePlayers");
 }
 
 /**
@@ -34,19 +57,5 @@ export function goToPlayerStatsForPlayer(playerId: string) {
 export function goToHighScoresForMachine(machineName: string, view: "highScores" | "highScoresWeekly" = "highScores") {
   if (!machineName) return;
   safeSetItem(PREFILL_MACHINE_KEY, machineName);
-  if (typeof window !== "undefined") {
-    try {
-      const state = { prefillMachine: machineName };
-      window.history.pushState(state, "", `#${view}`);
-      // Ensure SPA listeners react immediately (our app listens to popstate only)
-      try {
-        window.dispatchEvent(new PopStateEvent("popstate", { state }));
-      } catch {
-        // Ignore if PopStateEvent is not constructible in this environment
-      }
-    } catch {
-      // Fallback if pushState is blocked
-      window.location.hash = view;
-    }
-  }
+  navigateToHash(view, { prefillMachine: machineName });
 }
