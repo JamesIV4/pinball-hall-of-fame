@@ -102,18 +102,28 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
   return (
     <div className="space-y-4 mx-auto">
       <div className="overflow-hidden rounded-xl border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900">
-        {mInfo.image ? (
-          <div className="relative h-36 md:h-48 w-full">
-            <Image src={mInfo.image} alt={mInfo.name} fill className="object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-            <div className="absolute inset-0 hero-overlay" />
-            <div className="absolute inset-0 scanlines" />
-            <div className="absolute bottom-2 left-2 right-2 flex items-end justify-between">
+        <div className={`md:items-stretch ${mInfo.image ? "md:grid md:grid-cols-[28%,1fr] lg:grid-cols-[22%,1fr]" : ""}`}>
+          {mInfo.image && (
+            <div className="relative h-44 md:h-auto md:min-h-[220px] md:border-r md:border-gray-700">
+              <Image
+                src={mInfo.image}
+                alt={mInfo.name}
+                fill
+                className="object-cover"
+                sizes="(min-width: 1024px) 22vw, (min-width: 768px) 28vw, 100vw"
+              />
+              {/* Scanlines only; gradients removed per request */}
+              <div className="absolute inset-0 scanlines" />
+            </div>
+          )}
+
+          <div className="p-4 md:p-6 flex flex-col">
+            <div className="flex items-start justify-between gap-3">
               <div>
-                <div className="text-sm text-gray-300">High Scores</div>
-                <h2 className="text-2xl md:text-3xl font-bold text-amber-300">{mInfo.name}</h2>
+                <div className="text-xs md:text-sm text-gray-300">High Scores</div>
+                <h2 className="text-2xl md:text-3xl font-bold text-amber-300 leading-tight">{mInfo.name}</h2>
               </div>
-              <div className="hidden md:flex items-center gap-2">
+              <div className="hidden md:flex items-center gap-2 self-start">
                 {(() => {
                   const totalPlays = allScores.length;
                   const uniquePlayers = new Set(allScores.map((s) => s.playerId)).size;
@@ -129,64 +139,63 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
                 })()}
               </div>
             </div>
-          </div>
-        ) : (
-          <div className="p-4">
-            <h2 className="text-2xl font-bold text-amber-300">High Scores</h2>
-          </div>
-        )}
-        <div className="p-4 pb-0 pt-0 grid md:grid-cols-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <Select
-              value={machine}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setMachine(e.target.value)}
-              options={machines.map((m) => ({ value: m.name, label: m.name }))}
-              placeholder="-- select --"
-              className="h-[40px] mt-4"
-            />
-            <div className="flex items-center rounded-lg border border-gray-600 overflow-hidden">
-              <button
-                className={`px-3 py-[10px] text-sm ${viewMode === "allTime" ? "bg-amber-500 text-black" : "bg-gray-800 text-gray-300"}`}
-                onClick={() => onNavigate?.("highScores")}
-              >
-                All Time
-              </button>
-              <button
-                className={`px-3 py-[10px] text-sm ${viewMode === "weekly" ? "bg-amber-500 text-black" : "bg-gray-800 text-gray-300"}`}
-                onClick={() => onNavigate?.("highScoresWeekly")}
-              >
-                Weekly
-              </button>
-            </div>
-          </div>
-          <label className="my-4 md:my-0 flex items-center gap-2 justify-start md:justify-end text-gray-200">
-            <input
-              type="checkbox"
-              className="h-4 w-4 accent-amber-500"
-              checked={bestOnly}
-              onChange={(e) => setBestOnly(e.target.checked)}
-            />
-            Show best score per player only
-          </label>
 
-          {viewMode === "weekly" && (
-            <div className="md:col-span-2">
-              <WeekNavigator
-                label={formatWeekRange(selectedWeek)}
-                onPrev={() => {
-                  const prevWeek = new Date(selectedWeek);
-                  prevWeek.setDate(prevWeek.getDate() - 7);
-                  setSelectedWeek(prevWeek);
-                }}
-                onNext={() => {
-                  const nextWeek = new Date(selectedWeek);
-                  nextWeek.setDate(nextWeek.getDate() + 7);
-                  setSelectedWeek(nextWeek);
-                }}
-                isNextDisabled={selectedWeek >= getWeekStart(new Date())}
-              />
+            <div className="grid md:grid-cols-2 gap-3 mt-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <Select
+                  value={machine}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setMachine(e.target.value)}
+                  options={machines.map((m) => ({ value: m.name, label: m.name }))}
+                  placeholder="-- select --"
+                  className="h-[40px]"
+                />
+                <div className="flex items-center rounded-lg border border-gray-600 overflow-hidden">
+                  <button
+                    className={`px-3 py-[10px] text-sm ${viewMode === "allTime" ? "bg-amber-500 text-black" : "bg-gray-800 text-gray-300"}`}
+                    onClick={() => onNavigate?.("highScores")}
+                  >
+                    All Time
+                  </button>
+                  <button
+                    className={`px-3 py-[10px] text-sm ${viewMode === "weekly" ? "bg-amber-500 text-black" : "bg-gray-800 text-gray-300"}`}
+                    onClick={() => onNavigate?.("highScoresWeekly")}
+                  >
+                    Weekly
+                  </button>
+                </div>
+              </div>
+              <div className="flex items-end mb-1 justify-start md:justify-end">
+                <label className="flex items-center gap-2 text-gray-200 text-sm whitespace-nowrap">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 accent-amber-500"
+                    checked={bestOnly}
+                    onChange={(e) => setBestOnly(e.target.checked)}
+                  />
+                  Show best score per player only
+                </label>
+              </div>
+
+              {viewMode === "weekly" && (
+                <div className="md:col-span-2">
+                  <WeekNavigator
+                    label={formatWeekRange(selectedWeek)}
+                    onPrev={() => {
+                      const prevWeek = new Date(selectedWeek);
+                      prevWeek.setDate(prevWeek.getDate() - 7);
+                      setSelectedWeek(prevWeek);
+                    }}
+                    onNext={() => {
+                      const nextWeek = new Date(selectedWeek);
+                      nextWeek.setDate(nextWeek.getDate() + 7);
+                      setSelectedWeek(nextWeek);
+                    }}
+                    isNextDisabled={selectedWeek >= getWeekStart(new Date())}
+                  />
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
 
