@@ -1,71 +1,85 @@
 import FormContainer from "@/components/ui/FormContainer";
-import Timestamp from "@/components/ui/Timestamp";
 import { useFirebaseData } from "@/hooks/useFirebaseData";
-import { Player, ScoreEntry } from "@/types/types";
-import { getWeekStart } from "@/utils/weekUtils";
+import { Player } from "@/types/types";
 import { goToPlayerStatsForPlayer } from "@/utils/navigation";
+import { getWeekStart } from "@/utils/weekUtils";
 import { useMemo } from "react";
 
 type PlayerCardData = {
   id: string;
   name: string;
-  totalPlays: number;
-  machinesCount: number;
-  lastPlayed: string | null;
-  playsPerWeek: number;
-  weeklyCounts: number[];
+  totalScores: number;
+  medals: number;
 };
 
-function summarizePlayer(p: Player): PlayerCardData {
+function summarizePlayer(p: Player): Omit<PlayerCardData, "medals"> {
   const scoresByMachine = p.scores || {};
-  const machinesCount = Object.keys(scoresByMachine).length;
-  let totalPlays = 0;
-  let lastPlayed: string | null = null;
-  const allTimestamps: string[] = [];
+  const totalScores = Object.values(scoresByMachine).reduce((sum, scores) => sum + scores.length, 0);
 
-  for (const scores of Object.values(scoresByMachine)) {
-    totalPlays += scores.length;
-    for (const s of scores) {
-      if (s.timestamp) {
-        allTimestamps.push(s.timestamp);
-        if (!lastPlayed || new Date(s.timestamp) > new Date(lastPlayed)) lastPlayed = s.timestamp;
-      }
-    }
-  }
-
-  // 12-week sparkline counts
-  const weeks = 12;
-  const currentWeekStart = getWeekStart(new Date());
-  const weekStarts: Date[] = [];
-  for (let i = 0; i < weeks; i++) {
-    const d = new Date(currentWeekStart);
-    d.setDate(d.getDate() - (weeks - 1 - i) * 7);
-    weekStarts.push(d);
-  }
-  const weeklyCounts = new Array(weeks).fill(0);
-  for (const ts of allTimestamps) {
-    const ws = getWeekStart(new Date(ts));
-    const idx = weekStarts.findIndex((w) => w.getTime() === ws.getTime());
-    if (idx >= 0) weeklyCounts[idx] += 1;
-  }
-  const last4 = weeklyCounts.slice(-4);
-  const playsPerWeek = last4.length ? Math.round((last4.reduce((a, b) => a + b, 0) / last4.length) * 10) / 10 : 0;
-
-  return {
-    id: p.id,
-    name: p.name,
-    totalPlays,
-    machinesCount,
-    lastPlayed,
-    playsPerWeek,
-    weeklyCounts,
-  };
+  return { id: p.id, name: p.name, totalScores };
 }
 
 export default function PlayersOverview() {
-  const { players } = useFirebaseData();
+  const { players, machines } = useFirebaseData();
 
-  const cards = useMemo(() => players.map(summarizePlayer), [players]);
+  const cards = useMemo(() => {
+    // Base card info (scores count)
+    const base = players.map(summarizePlayer);
+
+    // Build set of machine names from machines and player score keys
+    const allMachineNames = new Set<string>();
+    for (const m of machines) allMachineNames.add(m.name);
+    for (const p of players) for (const key of Object.keys(p.scores || {})) allMachineNames.add(key);
+
+    // Initialize medal counts per player
+    const medalCounts = new Map<string, number>();
+    for (const p of players) medalCounts.set(p.id, 0);
+
+    // All-time medals per machine
+    for (const mName of Array.from(allMachineNames)) {
+      const bestByPlayer = players
+        .map((p) => {
+          const list = p.scores?.[mName] || [];
+          const best = list.reduce((mx, s) => (s.score > mx ? s.score : mx), 0);
+          return { playerId: p.id, best };
+        })
+        .filter((x) => x.best > 0)
+        .sort((a, b) => b.best - a.best);
+
+      for (let i = 0; i < Math.min(3, bestByPlayer.length); i++) {
+        medalCounts.set(bestByPlayer[i].playerId, (medalCounts.get(bestByPlayer[i].playerId) || 0) + 1);
+      }
+    }
+
+    // Weekly medals per machine/week
+    for (const mName of Array.from(allMachineNames)) {
+      const weekBuckets = new Map<number, { playerId: string; score: number }[]>();
+      for (const p of players) {
+        const list = p.scores?.[mName] || [];
+        for (const s of list) {
+          if (!s.timestamp) continue;
+          const ws = getWeekStart(new Date(s.timestamp)).getTime();
+          if (!weekBuckets.has(ws)) weekBuckets.set(ws, []);
+          weekBuckets.get(ws)!.push({ playerId: p.id, score: s.score });
+        }
+      }
+
+      for (const [, entries] of weekBuckets.entries()) {
+        const map = new Map<string, number>();
+        for (const e of entries) map.set(e.playerId, Math.max(map.get(e.playerId) || 0, e.score));
+        const ranked = Array.from(map.entries())
+          .map(([pid, best]) => ({ playerId: pid, best }))
+          .filter((x) => x.best > 0)
+          .sort((a, b) => b.best - a.best);
+        for (let i = 0; i < Math.min(3, ranked.length); i++) {
+          medalCounts.set(ranked[i].playerId, (medalCounts.get(ranked[i].playerId) || 0) + 1);
+        }
+      }
+    }
+
+    // Merge medal counts into base cards
+    return base.map((c) => ({ ...c, medals: medalCounts.get(c.id) || 0 }));
+  }, [players, machines]);
 
   return (
     <FormContainer title="Players">
@@ -79,58 +93,21 @@ export default function PlayersOverview() {
               onClick={() => goToPlayerStatsForPlayer(c.id)}
               className="text-left rounded-xl border border-gray-700 bg-gradient-to-br from-gray-800/60 to-gray-900/60 p-4 hover:border-amber-500/60 hover:shadow-md transition"
             >
-              <div className="flex items-start justify-between gap-2">
+              <div className="flex items-center justify-between">
                 <div className="text-lg font-bold text-amber-300 truncate" title={c.name}>
                   {c.name}
                 </div>
-                <div className="ml-2 text-xs text-gray-400">click for details →</div>
+                <div className="ml-2 text-xs text-gray-400">details →</div>
               </div>
 
-              <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
-                <div className="rounded border border-gray-700 bg-gray-800/50 p-2">
-                  <div className="text-xs text-gray-400">Total Plays</div>
-                  <div className="text-amber-300 font-semibold text-base">{c.totalPlays}</div>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <div className="rounded border border-gray-700 bg-gray-800/50 p-3">
+                  <div className="text-xs text-gray-400">Scores</div>
+                  <div className="text-2xl font-extrabold text-amber-300 leading-none">{c.totalScores}</div>
                 </div>
-                <div className="rounded border border-gray-700 bg-gray-800/50 p-2">
-                  <div className="text-xs text-gray-400">Machines</div>
-                  <div className="text-amber-300 font-semibold text-base">{c.machinesCount}</div>
-                </div>
-                <div className="rounded border border-gray-700 bg-gray-800/50 p-2 col-span-2">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-xs text-gray-400">Plays / week (avg)</div>
-                      <div className="text-amber-300 font-semibold text-base">{c.playsPerWeek}</div>
-                    </div>
-                    <div className="ml-3 w-28 h-10">
-                      {c.weeklyCounts.length ? (
-                        <svg viewBox="0 0 120 40" className="w-full h-full" preserveAspectRatio="none">
-                          <polyline
-                            fill="none"
-                            stroke="#f6c84c"
-                            strokeWidth="2"
-                            points={c.weeklyCounts
-                              .map((v: number, i: number) => {
-                                const max = Math.max(...c.weeklyCounts);
-                                const x = (i / (c.weeklyCounts.length - 1)) * 120;
-                                const y = max ? 40 - (v / max) * 36 : 40;
-                                return `${x.toFixed(2)},${y.toFixed(2)}`;
-                              })
-                              .join(" ")}
-                            strokeLinejoin="round"
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                      ) : (
-                        <div className="text-xs text-gray-400">No data</div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="rounded border border-gray-700 bg-gray-800/50 p-2 col-span-2">
-                  <div className="text-xs text-gray-400">Last Played</div>
-                  <div className="text-gray-300 text-sm">
-                    {c.lastPlayed ? new Date(c.lastPlayed).toLocaleString() : "—"}
-                  </div>
+                <div className="rounded border border-gray-700 bg-gray-800/50 p-3">
+                  <div className="text-xs text-gray-400">Medals</div>
+                  <div className="text-2xl font-extrabold text-amber-300 leading-none">{c.medals}</div>
                 </div>
               </div>
             </button>
@@ -140,4 +117,3 @@ export default function PlayersOverview() {
     </FormContainer>
   );
 }
-
