@@ -32,7 +32,7 @@ export default function ScoreList({ scores, showActions = false, onEdit, onDelet
         return (
           <li
             key={`${score.timestamp ?? "no-ts"}-${score.score}-${i}`}
-            className="relative p-3 md:p-4 flex items-center gap-4 row-underlay-diag hover:bg-gray-800/80 transition-colors transition-transform duration-150 hover:translate-x-[2px] overflow-hidden group"
+            className="relative p-3 md:p-4 flex items-center gap-4 row-underlay-diag hover:bg-gray-800/80 transition-colors transition-transform duration-150 hover:translate-x-[2px] group"
           >
             <div className="absolute inset-y-0 left-0 strength-bar" style={barStyle} />
             <div className="absolute left-0 top-0 bottom-0 w-1 bg-gray-700" />

@@ -88,7 +88,11 @@ export default function MachinesOverview() {
                       <div className="inline-flex items-center gap-1 truncate">
                         <span className="text-gray-400">Last:</span>
                         <span className="text-gray-200">
-                          {s.lastPlayed ? <Timestamp as="span" variant="date" timestamp={s.lastPlayed} /> : "—"}
+                          {s.lastPlayed ? (
+                            <Timestamp as="span" variant="date" timestamp={s.lastPlayed} showTime={false} />
+                          ) : (
+                            "—"
+                          )}
                         </span>
                       </div>
                     </div>

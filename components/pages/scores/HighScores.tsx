@@ -7,7 +7,7 @@ import { getWeekStart, getWeekEnd, formatWeekRange } from "@/utils/weekUtils";
 import Select from "@/components/ui/Select";
 import { safeGetItem, safeRemoveItem, safeSetItem } from "@/utils/storage";
 import { goToHighScoresForMachine, goToPlayerStatsForPlayer, PREFILL_MACHINE_KEY } from "@/utils/navigation";
-import Timestamp from "@/components/ui/Timestamp";
+import PlayerTimestamp from "@/components/ui/PlayerTimestamp";
 import WeekNavigator from "@/components/ui/WeekNavigator";
 
 interface HighScoresProps {
@@ -294,7 +294,7 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
               return (
                 <li
                   key={`${s.player}-${s.score.timestamp}-${s.score.score}-${i}`}
-                  className="relative p-3 md:p-4 flex items-center gap-4 row-underlay-diag hover:bg-gray-800/80 transition-colors transition-transform duration-150 hover:translate-x-[2px] overflow-hidden group"
+                  className="relative p-3 md:p-4 flex items-center gap-4 row-underlay-diag hover:bg-gray-800/80 transition-colors transition-transform duration-150 hover:translate-x-[2px] group"
                 >
                   <div
                     className={`absolute inset-y-0 left-0 strength-bar ${medalClass} ${barClass}`}
@@ -303,19 +303,15 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
                   <div className={`absolute left-0 top-0 bottom-0 w-1 ${accentClass}`} />
                   <span className={`${chipBase} ${chipClass}`}>{i + 1}</span>
                   <div className="min-w-0">
-                    <div className="text-sm text-gray-200 truncate">
-                      <button
-                        className="font-semibold text-blue-200 hover:underline"
-                        onClick={() => s.playerId && goToPlayerStatsForPlayer(s.playerId)}
-                        title="View player stats"
-                      >
-                        {s.player}
-                      </button>
-                    </div>
                     {s.score.timestamp && (
                       <div className="mt-0.5 text-xs text-gray-400">
                         <span className="px-2 py-0.5 rounded-full bg-black/30 border border-gray-700">
-                          <Timestamp timestamp={s.score.timestamp} variant="date" as="span" />
+                          <PlayerTimestamp
+                            playerName={s.player}
+                            playerId={s.playerId}
+                            timestamp={s.score.timestamp}
+                            variant="date"
+                          />
                         </span>
                       </div>
                     )}
