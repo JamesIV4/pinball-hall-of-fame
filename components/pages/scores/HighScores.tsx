@@ -6,7 +6,7 @@ import { Machine, ScoreEntry } from "@/types/types";
 import { getWeekStart, getWeekEnd, formatWeekRange } from "@/utils/weekUtils";
 import Select from "@/components/ui/Select";
 import { safeGetItem, safeRemoveItem } from "@/utils/storage";
-import { goToPlayerStatsForPlayer, PREFILL_MACHINE_KEY } from "@/utils/navigation";
+import { goToHighScoresForMachine, goToPlayerStatsForPlayer, PREFILL_MACHINE_KEY } from "@/utils/navigation";
 import Timestamp from "@/components/ui/Timestamp";
 import WeekNavigator from "@/components/ui/WeekNavigator";
 
@@ -102,7 +102,9 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
   return (
     <div className="space-y-4 mx-auto">
       <div className="overflow-hidden rounded-xl border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900">
-        <div className={`md:items-stretch ${mInfo.image ? "md:grid md:grid-cols-[28%,1fr] lg:grid-cols-[22%,1fr]" : ""}`}>
+        <div
+          className={`md:items-stretch ${mInfo.image ? "md:grid md:grid-cols-[28%,1fr] lg:grid-cols-[22%,1fr]" : ""}`}
+        >
           {mInfo.image && (
             <div className="relative h-44 md:h-auto md:min-h-[220px] md:border-r md:border-gray-700">
               <Image
@@ -152,13 +154,13 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
                 <div className="flex items-center rounded-lg border border-gray-600 overflow-hidden">
                   <button
                     className={`px-3 py-[10px] text-sm ${viewMode === "allTime" ? "bg-amber-500 text-black" : "bg-gray-800 text-gray-300"}`}
-                    onClick={() => onNavigate?.("highScores")}
+                    onClick={() => machine && goToHighScoresForMachine(machine, "highScores")}
                   >
                     All Time
                   </button>
                   <button
                     className={`px-3 py-[10px] text-sm ${viewMode === "weekly" ? "bg-amber-500 text-black" : "bg-gray-800 text-gray-300"}`}
-                    onClick={() => onNavigate?.("highScoresWeekly")}
+                    onClick={() => machine && goToHighScoresForMachine(machine, "highScoresWeekly")}
                   >
                     Weekly
                   </button>

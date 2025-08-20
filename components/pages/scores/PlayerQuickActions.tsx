@@ -35,4 +35,3 @@ export default function PlayerQuickActions({ playerId }: PlayerQuickActionsProps
     </div>
   );
 }
-

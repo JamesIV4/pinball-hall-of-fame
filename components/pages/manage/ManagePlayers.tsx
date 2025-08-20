@@ -111,11 +111,7 @@ export default function ManagePlayers() {
                   >
                     Edit
                   </Button>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => setDeleteTarget({ id: p.id, name: p.name })}
-                  >
+                  <Button variant="danger" size="sm" onClick={() => setDeleteTarget({ id: p.id, name: p.name })}>
                     Delete
                   </Button>
                 </>

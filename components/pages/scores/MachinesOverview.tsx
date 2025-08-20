@@ -68,7 +68,9 @@ export default function MachinesOverview() {
 
               {/* Bottom bar with metrics */}
               <div className="px-4 pt-2 pb-3 bg-gray-900/70 border-t border-gray-700/60">
-                <div className="h-5 flex items-center justify-center text-center text-xs text-gray-400">Click to view high scores</div>
+                <div className="h-5 flex items-center justify-center text-center text-xs text-gray-400">
+                  Click to view high scores
+                </div>
                 <div className="mt-2 h-px bg-gray-700/60" />
                 {(() => {
                   const s = machineStats.get(m.name);

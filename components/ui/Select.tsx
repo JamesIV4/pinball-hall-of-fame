@@ -5,7 +5,14 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   containerClassName?: string;
 }
 
-export default function Select({ label, options, placeholder, className = "", containerClassName, ...props }: SelectProps) {
+export default function Select({
+  label,
+  options,
+  placeholder,
+  className = "",
+  containerClassName,
+  ...props
+}: SelectProps) {
   return (
     <div className={containerClassName ?? "mb-4"}>
       {label && <label className="block mb-2">{label}</label>}
