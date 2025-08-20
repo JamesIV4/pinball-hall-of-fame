@@ -47,6 +47,20 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
     } catch {}
   }, [machine]);
 
+  // Respond to browser Back/Forward by switching machines when state includes prefillMachine
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onPopState = (e: PopStateEvent) => {
+      const state = (e.state as any) || {};
+      const name = state.prefillMachine as string | undefined;
+      if (name && machines.some((m) => m.name === name)) {
+        setMachine(name);
+      }
+    };
+    window.addEventListener("popstate", onPopState as EventListener);
+    return () => window.removeEventListener("popstate", onPopState as EventListener);
+  }, [machines]);
+
   const allScores = useMemo(() => {
     return players.flatMap((p) => {
       const list = p.scores?.[machine] || [];
@@ -159,7 +173,11 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
               <div className="flex flex-wrap items-center gap-2">
                 <Select
                   value={machine}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setMachine(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                    const next = e.target.value;
+                    setMachine(next);
+                    goToHighScoresForMachine(next, viewMode === "weekly" ? "highScoresWeekly" : "highScores");
+                  }}
                   options={machines.map((m) => ({ value: m.name, label: m.name }))}
                   placeholder="-- select --"
                   className="h-[40px]"
