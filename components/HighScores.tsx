@@ -7,6 +7,8 @@ import { getWeekStart, getWeekEnd, formatWeekRange } from "../utils/weekUtils";
 import Select from "./ui/Select";
 import { safeGetItem, safeRemoveItem } from "../utils/storage";
 import { goToPlayerStatsForPlayer, PREFILL_MACHINE_KEY } from "../utils/navigation";
+import Timestamp from "./ui/Timestamp";
+import WeekNavigator from "./ui/WeekNavigator";
 
 interface HighScoresProps {
   initialViewMode?: "allTime" | "weekly";
@@ -78,15 +80,6 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
     for (const m of machines) map.set(m.name.toLowerCase(), m);
     return map;
   }, [machines]);
-
-  function formatStamp(ts?: string) {
-    if (!ts) return "";
-    try {
-      return new Date(ts).toLocaleString();
-    } catch {
-      return "";
-    }
-  }
 
   function getInitials(name: string) {
     const parts = name.split(/\s+/).filter(Boolean);
@@ -185,36 +178,20 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
 
           {viewMode === "weekly" && (
             <div className="md:col-span-2">
-              <div className="mb-4 bg-gray-800 border border-gray-700 rounded-lg p-3 flex flex-wrap items-center justify-between gap-2">
-                <div className="text-sm text-gray-200">{formatWeekRange(selectedWeek)}</div>
-                <div className="flex gap-2">
-                  <button
-                    className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 rounded text-gray-200 text-sm"
-                    onClick={() => {
-                      const prevWeek = new Date(selectedWeek);
-                      prevWeek.setDate(prevWeek.getDate() - 7);
-                      setSelectedWeek(prevWeek);
-                    }}
-                  >
-                    ← Previous
-                  </button>
-                  <button
-                    className={`px-3 py-1.5 rounded text-sm ${
-                      selectedWeek >= getWeekStart(new Date())
-                        ? "bg-gray-900 text-gray-500 cursor-not-allowed"
-                        : "bg-gray-700 hover:bg-gray-600 text-gray-200"
-                    }`}
-                    disabled={selectedWeek >= getWeekStart(new Date())}
-                    onClick={() => {
-                      const nextWeek = new Date(selectedWeek);
-                      nextWeek.setDate(nextWeek.getDate() + 7);
-                      setSelectedWeek(nextWeek);
-                    }}
-                  >
-                    Next →
-                  </button>
-                </div>
-              </div>
+              <WeekNavigator
+                label={formatWeekRange(selectedWeek)}
+                onPrev={() => {
+                  const prevWeek = new Date(selectedWeek);
+                  prevWeek.setDate(prevWeek.getDate() - 7);
+                  setSelectedWeek(prevWeek);
+                }}
+                onNext={() => {
+                  const nextWeek = new Date(selectedWeek);
+                  nextWeek.setDate(nextWeek.getDate() + 7);
+                  setSelectedWeek(nextWeek);
+                }}
+                isNextDisabled={selectedWeek >= getWeekStart(new Date())}
+              />
             </div>
           )}
         </div>
@@ -318,7 +295,7 @@ export default function HighScores({ initialViewMode = "allTime", onNavigate }: 
                     {s.score.timestamp && (
                       <div className="mt-0.5 text-xs text-gray-400">
                         <span className="px-2 py-0.5 rounded-full bg-black/30 border border-gray-700">
-                          {formatStamp(s.score.timestamp)}
+                          <Timestamp timestamp={s.score.timestamp} variant="date" as="span" />
                         </span>
                       </div>
                     )}

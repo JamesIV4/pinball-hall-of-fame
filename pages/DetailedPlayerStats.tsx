@@ -170,11 +170,7 @@ export default function DetailedPlayerStatsPage() {
     const totalPlays = filteredPlays.length;
     const machinesPlayed = new Set(filteredPlays.map((p) => p.machine)).size;
 
-    const dateSet = new Set(
-      filteredPlays
-        .filter((p) => p.date)
-        .map((p) => dateKey(p.date as Date)),
-    );
+    const dateSet = new Set(filteredPlays.filter((p) => p.date).map((p) => dateKey(p.date as Date)));
     const activeDays = dateSet.size;
 
     const lastPlayed = filteredPlays.reduce<Date | null>((acc, p) => {
@@ -233,8 +229,7 @@ export default function DetailedPlayerStatsPage() {
       }
     }
 
-    const daysSinceLast =
-      lastPlayed ? Math.floor((Date.now() - lastPlayed.getTime()) / (1000 * 60 * 60 * 24)) : null;
+    const daysSinceLast = lastPlayed ? Math.floor((Date.now() - lastPlayed.getTime()) / (1000 * 60 * 60 * 24)) : null;
 
     return { totalPlays, machinesPlayed, activeDays, lastPlayed, currentStreak, bestStreak, daysSinceLast };
   }, [filteredPlays]);
@@ -288,7 +283,8 @@ export default function DetailedPlayerStatsPage() {
         ? filteredPlays.map((p) => p.score)
         : filteredPlays.filter((p) => p.machine === distMachine).map((p) => p.score);
     const filtered = values.filter((v) => Number.isFinite(v));
-    if (!filtered.length) return { bins: [] as { x0: number; x1: number; n: number }[], min: 0, max: 0, p50: 0, p90: 0, p99: 0 };
+    if (!filtered.length)
+      return { bins: [] as { x0: number; x1: number; n: number }[], min: 0, max: 0, p50: 0, p90: 0, p99: 0 };
     const sorted = [...filtered].sort((a, b) => a - b);
     const min = sorted[0];
     const max = sorted[sorted.length - 1];
@@ -324,8 +320,7 @@ export default function DetailedPlayerStatsPage() {
       const prev10 = sortedByDate.slice(-20, -10).map((x) => x.score);
       const recentAvg = last10.length ? meanOf(last10) : undefined;
       const previousAvg = prev10.length ? meanOf(prev10) : undefined;
-      const improvement =
-        recentAvg !== undefined && previousAvg !== undefined ? recentAvg - previousAvg : undefined;
+      const improvement = recentAvg !== undefined && previousAvg !== undefined ? recentAvg - previousAvg : undefined;
 
       out.push({
         machine,
@@ -345,7 +340,14 @@ export default function DetailedPlayerStatsPage() {
 
   // Competitive: share of top-3 across machines + head-to-head win rate vs field (best score basis)
   const competitive = useMemo(() => {
-    if (!players.length) return { top3Count: 0, machineCount: 0, share: 0, headToHeadOverall: 0, perMachine: [] as { machine: string; winRate: number; rank: number | null; fieldSize: number }[] };
+    if (!players.length)
+      return {
+        top3Count: 0,
+        machineCount: 0,
+        share: 0,
+        headToHeadOverall: 0,
+        perMachine: [] as { machine: string; winRate: number; rank: number | null; fieldSize: number }[],
+      };
     const machinesSet = new Set<string>();
     for (const p of players) {
       for (const m of Object.keys(p.scores || {})) machinesSet.add(m);
@@ -383,8 +385,7 @@ export default function DetailedPlayerStatsPage() {
     const share = machineCount ? top3Count / machineCount : 0;
 
     // overall head-to-head = average of per-machine
-    const headToHeadOverall =
-      perMachine.length ? perMachine.reduce((a, b) => a + b.winRate, 0) / perMachine.length : 0;
+    const headToHeadOverall = perMachine.length ? perMachine.reduce((a, b) => a + b.winRate, 0) / perMachine.length : 0;
 
     // sort per-machine by win rate desc
     perMachine.sort((a, b) => b.winRate - a.winRate);
@@ -447,9 +448,7 @@ export default function DetailedPlayerStatsPage() {
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-950 to-black">
       <div className="mx-auto max-w-7xl p-4 md:p-6">
         <header className="mb-6 md:mb-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-wide text-amber-400">
-            Detailed Player Stats
-          </h1>
+          <h1 className="text-4xl md:text-5xl font-bold tracking-wide text-amber-400">Detailed Player Stats</h1>
           <p className="text-gray-400 mt-2">Dive deep into your pinball performance analytics</p>
         </header>
 
@@ -529,7 +528,11 @@ export default function DetailedPlayerStatsPage() {
               <div className="mt-3 text-sm text-gray-400">
                 Avg last 4 weeks:{" "}
                 <span className="text-gray-200 font-semibold">
-                  {Math.round((weeklyTrend.counts.slice(-4).reduce((a, b) => a + b, 0) / Math.max(1, Math.min(4, weeklyTrend.counts.slice(-4).length))) * 10) / 10}
+                  {Math.round(
+                    (weeklyTrend.counts.slice(-4).reduce((a, b) => a + b, 0) /
+                      Math.max(1, Math.min(4, weeklyTrend.counts.slice(-4).length))) *
+                      10,
+                  ) / 10}
                 </span>
               </div>
             </section>
@@ -544,7 +547,9 @@ export default function DetailedPlayerStatsPage() {
 
               {/* Distribution */}
               <div className="rounded-xl border border-gray-800 bg-gray-900/60 p-4">
-                <h2 className="text-lg font-semibold text-amber-300 mb-3">Score Distribution ({distMachine === "ALL" ? "All" : distMachine})</h2>
+                <h2 className="text-lg font-semibold text-amber-300 mb-3">
+                  Score Distribution ({distMachine === "ALL" ? "All" : distMachine})
+                </h2>
                 {dist.bins.length ? (
                   <Histogram bins={dist.bins} />
                 ) : (
@@ -583,10 +588,7 @@ export default function DetailedPlayerStatsPage() {
                   .slice(0, 8)
                   .map((m) => ({
                     label: m.machine,
-                    value:
-                      m.improvement !== undefined
-                        ? `${Math.round(m.improvement).toLocaleString()}`
-                        : "—",
+                    value: m.improvement !== undefined ? `${Math.round(m.improvement).toLocaleString()}` : "—",
                     sub: `recent: ${Math.round(m.recentAvg || 0).toLocaleString()} prev: ${Math.round(m.previousAvg || 0).toLocaleString()}`,
                     color: "green",
                   }))}
@@ -632,12 +634,11 @@ export default function DetailedPlayerStatsPage() {
                     </span>
                   </span>
                   <span className="px-2 py-1 rounded bg-gray-800 border border-gray-700 text-gray-200">
-                    Share: <span className="text-blue-300 font-semibold">
-                      {(competitive.share * 100).toFixed(1)}%
-                    </span>
+                    Share: <span className="text-blue-300 font-semibold">{(competitive.share * 100).toFixed(1)}%</span>
                   </span>
                   <span className="px-2 py-1 rounded bg-gray-800 border border-gray-700 text-gray-200">
-                    H2H overall: <span className="text-green-300 font-semibold">
+                    H2H overall:{" "}
+                    <span className="text-green-300 font-semibold">
                       {(competitive.headToHeadOverall * 100).toFixed(1)}%
                     </span>
                   </span>
@@ -699,7 +700,9 @@ export default function DetailedPlayerStatsPage() {
                       <td className="py-2 pr-3 text-gray-300">{Math.round(m.mean).toLocaleString()}</td>
                       <td className="py-2 pr-3">{m.best.toLocaleString()}</td>
                       <td className="py-2 pr-3">{(m.cv * 100).toFixed(1)}%</td>
-                      <td className="py-2 pr-3">{m.recentAvg !== undefined ? Math.round(m.recentAvg).toLocaleString() : "—"}</td>
+                      <td className="py-2 pr-3">
+                        {m.recentAvg !== undefined ? Math.round(m.recentAvg).toLocaleString() : "—"}
+                      </td>
                       <td className="py-2 pr-3">
                         {m.improvement !== undefined ? (
                           <span className={m.improvement >= 0 ? "text-green-400" : "text-red-400"}>
@@ -730,7 +733,11 @@ export default function DetailedPlayerStatsPage() {
 
 /* ---------- UI Bits ---------- */
 
-function SummaryTile(props: { label: string; value: string; accent?: "amber" | "blue" | "green" | "indigo" | "pink" | "violet" }) {
+function SummaryTile(props: {
+  label: string;
+  value: string;
+  accent?: "amber" | "blue" | "green" | "indigo" | "pink" | "violet";
+}) {
   const { label, value, accent = "amber" } = props;
   const colors: Record<NonNullable<typeof accent>, string> = {
     amber: "from-amber-500/10 border-amber-500/30",
@@ -792,9 +799,23 @@ function TrendChart({ weeks, counts, avg }: { weeks: Date[]; counts: number[]; a
       {/* axis */}
       <line x1={pad} y1={h - pad} x2={w - pad} y2={h - pad} stroke="#374151" />
       {/* counts */}
-      <polyline fill="none" stroke="#f6c84c" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" points={linePoints} />
+      <polyline
+        fill="none"
+        stroke="#f6c84c"
+        strokeWidth="2.5"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        points={linePoints}
+      />
       {/* avg */}
-      <polyline fill="none" stroke="#60a5fa" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" points={avgPoints} />
+      <polyline
+        fill="none"
+        stroke="#60a5fa"
+        strokeWidth="2"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        points={avgPoints}
+      />
       {/* ticks */}
       {xTicks.map((t, i) => (
         <g key={i}>
@@ -920,17 +941,7 @@ function RecentScoresBar({
           const bh = Math.max(1, Math.round((p.score / maxY) * (h - 2 * pad)));
           const y = h - pad - bh;
           return (
-            <rect
-              key={i}
-              x={x}
-              y={y}
-              width={barW - 4}
-              height={bh}
-              fill="#f6c84c"
-              opacity="0.9"
-              rx="3"
-              ry="3"
-            >
+            <rect key={i} x={x} y={y} width={barW - 4} height={bh} fill="#f6c84c" opacity="0.9" rx="3" ry="3">
               <title>
                 {p.score.toLocaleString()} • {p.date ? p.date.toLocaleString() : ""}
               </title>
@@ -966,19 +977,7 @@ function Histogram({ bins }: { bins: { x0: number; x1: number; n: number }[] }) 
         const x = pad + i * barW + 2;
         const bh = ((b.n / maxN) * (h - 2 * pad)) | 0;
         const y = h - pad - bh;
-        return (
-          <rect
-            key={i}
-            x={x}
-            y={y}
-            width={barW - 4}
-            height={bh}
-            fill="#f6c84c"
-            opacity="0.9"
-            rx="3"
-            ry="3"
-          />
-        );
+        return <rect key={i} x={x} y={y} width={barW - 4} height={bh} fill="#f6c84c" opacity="0.9" rx="3" ry="3" />;
       })}
       {bins.map((b, i) => {
         if (i % Math.ceil(bins.length / 6) !== 0) return null;

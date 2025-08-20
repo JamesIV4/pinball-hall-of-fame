@@ -13,13 +13,29 @@ function formatTimeAgo(timestamp?: string): string {
   return `${day}d ago`;
 }
 
-export default function Timestamp({ timestamp, className = "" }: { timestamp?: string; className?: string }) {
+type Variant = "full" | "ago" | "date";
+type AsTag = "div" | "span";
+
+export default function Timestamp({
+  timestamp,
+  className = "",
+  variant = "full",
+  as = "div",
+}: {
+  timestamp?: string;
+  className?: string;
+  variant?: Variant;
+  as?: AsTag;
+}) {
   if (!timestamp) return null;
   const date = new Date(timestamp);
-  return (
-    <div className={`text-xs text-gray-400 ${className}`}>
-      {date.toLocaleString()} • {formatTimeAgo(timestamp)}
-    </div>
-  );
-}
+  const content =
+    variant === "ago"
+      ? formatTimeAgo(timestamp)
+      : variant === "date"
+        ? date.toLocaleDateString()
+        : `${date.toLocaleString()} • ${formatTimeAgo(timestamp)}`;
 
+  const Tag = as as any;
+  return <Tag className={`text-xs text-gray-400 ${className}`}>{content}</Tag>;
+}

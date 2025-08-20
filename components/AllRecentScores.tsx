@@ -26,9 +26,7 @@ export default function AllRecentScores() {
     }
     return list
       .filter((e) => e.entry.timestamp)
-      .sort(
-        (a, b) => new Date(b.entry.timestamp!).getTime() - new Date(a.entry.timestamp!).getTime(),
-      );
+      .sort((a, b) => new Date(b.entry.timestamp!).getTime() - new Date(a.entry.timestamp!).getTime());
   }, [players]);
 
   const filtered = useMemo(() => {

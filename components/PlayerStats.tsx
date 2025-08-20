@@ -3,6 +3,7 @@ import FormContainer from "./ui/FormContainer";
 import Select from "./ui/Select";
 import MachineInfo from "./ui/MachineInfo";
 import ScoreList from "./ui/ScoreList";
+import Timestamp from "./ui/Timestamp";
 import { useFirebaseData } from "../hooks/useFirebaseData";
 import { safeGetItem, safeRemoveItem, safeSetItem } from "../utils/storage";
 import { goToHighScoresForMachine, goToPlayerStatsForPlayer, PREFILL_PLAYER_KEY } from "../utils/navigation";
@@ -385,9 +386,16 @@ export default function PlayerStats() {
                                 <span className="hidden sm:inline">•</span>
                                 <span className="block">
                                   Last:{" "}
-                                  <span className="text-gray-200">
-                                    {lastPlayed ? new Date(lastPlayed).toLocaleDateString() : "—"}
-                                  </span>
+                                  {lastPlayed ? (
+                                    <Timestamp
+                                      timestamp={lastPlayed}
+                                      variant="date"
+                                      as="span"
+                                      className="text-gray-200"
+                                    />
+                                  ) : (
+                                    <span className="text-gray-200">—</span>
+                                  )}
                                 </span>
                                 {median !== null && (
                                   <span className="mt-1 sm:mt-0 inline-flex items-center ml-0 sm:ml-1 px-2 py-0.5 rounded-full bg-amber-500 text-black text-xs font-semibold">

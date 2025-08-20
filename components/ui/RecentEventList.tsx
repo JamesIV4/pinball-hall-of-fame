@@ -58,7 +58,13 @@ export default function RecentEventList({
                     title="Edit score"
                     className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-blue-600 hover:bg-blue-500 text-white border border-blue-700 shadow-sm"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      aria-hidden
+                    >
                       <path d="M17.414 2.586a2 2 0 010 2.828l-9.9 9.9a1 1 0 01-.465.263l-4 1a1 1 0 01-1.213-1.213l1-4a1 1 0 01.263-.465l9.9-9.9a2 2 0 012.828 0z" />
                     </svg>
                   </button>
@@ -69,8 +75,18 @@ export default function RecentEventList({
                     title="Delete score"
                     className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-red-600 hover:bg-red-500 text-white border border-red-700 shadow-sm"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      aria-hidden
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   </button>
                 )}
@@ -114,14 +130,23 @@ export default function RecentEventList({
                     title="Actions"
                     className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-gray-700 hover:bg-gray-600 text-white border border-gray-600 shadow-sm"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden
+                    >
                       <circle cx="6" cy="12" r="1.5" />
                       <circle cx="12" cy="12" r="1.5" />
                       <circle cx="18" cy="12" r="1.5" />
                     </svg>
                   </button>
                   {openMenuKey === key && (
-                    <div onClick={(ev) => ev.stopPropagation()} className="absolute z-10 mt-2 right-0 rounded-md border border-gray-700 bg-gray-800 shadow-lg overflow-hidden min-w-max">
+                    <div
+                      onClick={(ev) => ev.stopPropagation()}
+                      className="absolute z-10 mt-2 right-0 rounded-md border border-gray-700 bg-gray-800 shadow-lg overflow-hidden min-w-max"
+                    >
                       {onEdit && (
                         <button
                           onClick={() => {
@@ -130,7 +155,13 @@ export default function RecentEventList({
                           }}
                           className="w-full text-left px-3 py-2 text-sm hover:bg-gray-700 flex items-center gap-2"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4 text-blue-400"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            aria-hidden
+                          >
                             <path d="M17.414 2.586a2 2 0 010 2.828l-9.9 9.9a1 1 0 01-.465.263l-4 1a1 1 0 01-1.213-1.213l1-4a1 1 0 01.263-.465l9.9-9.9a2 2 0 012.828 0z" />
                           </svg>
                           Edit
@@ -144,8 +175,18 @@ export default function RecentEventList({
                           }}
                           className="w-full text-left px-3 py-2 text-sm hover:bg-gray-700 flex items-center gap-2"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-                            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4 text-red-400"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            aria-hidden
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                              clipRule="evenodd"
+                            />
                           </svg>
                           Delete
                         </button>
@@ -161,4 +202,3 @@ export default function RecentEventList({
     </ul>
   );
 }
-

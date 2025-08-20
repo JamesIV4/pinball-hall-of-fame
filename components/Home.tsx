@@ -3,6 +3,9 @@ import { Dispatch, SetStateAction, useMemo } from "react";
 import { Machine, Player, View } from "../types/types";
 import { goToHighScoresForMachine, goToPlayerStatsForPlayer } from "../utils/navigation";
 import { formatWeekRange, getCurrentWeek, isInCurrentWeek } from "../utils/weekUtils";
+import Timestamp from "./ui/Timestamp";
+import Leaderboard from "./ui/Leaderboard";
+import StatTile from "./ui/StatTile";
 
 interface Props {
   players: Player[];
@@ -202,34 +205,34 @@ export default function Home({ players, machines, setView }: Props) {
 
       {/* Highlights */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div
+        <StatTile
+          label="Machines"
+          value={totalMachines}
           onClick={() => setView("highScores")}
-          className="cursor-pointer rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 transition-colors hover:border-amber-500/60 hover:from-gray-700 hover:to-gray-800"
-        >
-          <div className="text-xs text-gray-400">Machines</div>
-          <div className="text-2xl font-bold text-amber-400">{totalMachines}</div>
-        </div>
-        <div
+          className="rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 transition-colors hover:border-amber-500/60 hover:from-gray-700 hover:to-gray-800"
+          valueClassName="text-2xl font-bold text-amber-400"
+        />
+        <StatTile
+          label="Players"
+          value={totalPlayers}
           onClick={() => setView("playerStats")}
-          className="cursor-pointer rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 transition-colors hover:border-blue-500/60 hover:from-gray-700 hover:to-gray-800"
-        >
-          <div className="text-xs text-gray-400">Players</div>
-          <div className="text-2xl font-bold text-blue-400">{totalPlayers}</div>
-        </div>
-        <div
+          className="rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 transition-colors hover:border-blue-500/60 hover:from-gray-700 hover:to-gray-800"
+          valueClassName="text-2xl font-bold text-blue-400"
+        />
+        <StatTile
+          label="Total Scores"
+          value={totalScores.toLocaleString()}
           onClick={() => setView("highScores")}
-          className="cursor-pointer rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 transition-colors hover:border-green-500/60 hover:from-gray-700 hover:to-gray-800"
-        >
-          <div className="text-xs text-gray-400">Total Scores</div>
-          <div className="text-2xl font-bold text-green-400">{totalScores.toLocaleString()}</div>
-        </div>
-        <div
+          className="rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 transition-colors hover:border-green-500/60 hover:from-gray-700 hover:to-gray-800"
+          valueClassName="text-2xl font-bold text-green-400"
+        />
+        <StatTile
+          label="This Week"
+          value={weeklyCount}
           onClick={() => setView("highScoresWeekly")}
-          className="cursor-pointer rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 transition-colors hover:border-purple-500/60 hover:from-gray-700 hover:to-gray-800"
-        >
-          <div className="text-xs text-gray-400">This Week</div>
-          <div className="text-2xl font-bold text-purple-400">{weeklyCount}</div>
-        </div>
+          className="rounded-lg border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-4 transition-colors hover:border-purple-500/60 hover:from-gray-700 hover:to-gray-800"
+          valueClassName="text-2xl font-bold text-purple-400"
+        />
       </div>
 
       {/* Hall of Fame: single row of 4 tiles (no scrolling) */}
@@ -295,33 +298,46 @@ export default function Home({ players, machines, setView }: Props) {
           <div className="text-xs text-blue-200">{weekRangeLabel}</div>
         </div>
         <div className="mt-4 grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
-          <div className="text-center rounded bg-gray-800/60 p-3 border border-gray-700">
-            <div className="text-gray-400">Weekly High</div>
-            <div className="text-xl font-bold text-blue-200">{weeklyHigh ? weeklyHigh.value.toLocaleString() : 0}</div>
-          </div>
-          <div className="text-center rounded bg-gray-800/60 p-3 border border-gray-700">
-            <div className="text-gray-400">Avg Score</div>
-            <div className="text-xl font-bold text-green-200">{weeklyAvg.toLocaleString()}</div>
-          </div>
-          <div className="text-center rounded bg-gray-800/60 p-3 border border-gray-700">
-            <div className="text-gray-400">Active Players</div>
-            <div className="text-xl font-bold text-purple-200">{weeklyPlayerCount}</div>
-          </div>
-          <div className="text-center rounded bg-gray-800/60 p-3 border border-gray-700">
-            <div className="text-gray-400">Machines Played</div>
-            <div className="text-xl font-bold text-yellow-200">{weeklyMachineCount}</div>
-          </div>
-          <div
-            onClick={() => weeklyTopMachine && goToHighScoresForMachine(weeklyTopMachine)}
+          <StatTile
+            label="Weekly High"
+            value={weeklyHigh ? weeklyHigh.value.toLocaleString() : 0}
+            className="text-center rounded bg-gray-800/60 p-3 border border-gray-700"
+            labelClassName="text-gray-400"
+            valueClassName="text-xl font-bold text-blue-200"
+          />
+          <StatTile
+            label="Avg Score"
+            value={weeklyAvg.toLocaleString()}
+            className="text-center rounded bg-gray-800/60 p-3 border border-gray-700"
+            labelClassName="text-gray-400"
+            valueClassName="text-xl font-bold text-green-200"
+          />
+          <StatTile
+            label="Active Players"
+            value={weeklyPlayerCount}
+            className="text-center rounded bg-gray-800/60 p-3 border border-gray-700"
+            labelClassName="text-gray-400"
+            valueClassName="text-xl font-bold text-purple-200"
+          />
+          <StatTile
+            label="Machines Played"
+            value={weeklyMachineCount}
+            className="text-center rounded bg-gray-800/60 p-3 border border-gray-700"
+            labelClassName="text-gray-400"
+            valueClassName="text-xl font-bold text-yellow-200"
+          />
+          <StatTile
+            label="Hottest Machine"
+            value={weeklyTopMachine ? weeklyTopMachine : "—"}
+            onClick={weeklyTopMachine ? () => goToHighScoresForMachine(weeklyTopMachine) : undefined}
             className={`text-center rounded p-3 border col-span-2 md:col-span-1 transition-colors ${
               weeklyTopMachine
-                ? "cursor-pointer bg-gray-800/60 border-gray-700 hover:border-orange-400/60 hover:bg-gray-800"
+                ? "bg-gray-800/60 border-gray-700 hover:border-orange-400/60 hover:bg-gray-800"
                 : "bg-gray-800/60 border-gray-700"
             }`}
-          >
-            <div className="text-gray-400">Hottest Machine</div>
-            <div className="text-xl font-bold text-orange-200">{weeklyTopMachine ? weeklyTopMachine : "—"}</div>
-          </div>
+            labelClassName="text-gray-400"
+            valueClassName="text-xl font-bold text-orange-200"
+          />
         </div>
       </div>
 
@@ -368,7 +384,7 @@ export default function Home({ players, machines, setView }: Props) {
                           {ev.machineName}
                         </button>
                       </div>
-                      {ev.timestamp && <div className="text-xs text-gray-400">{formatTimeAgo(ev.timestamp)}</div>}
+                      {ev.timestamp && <Timestamp timestamp={ev.timestamp} variant="ago" />}
                     </div>
                   </div>
                 </li>
@@ -379,76 +395,32 @@ export default function Home({ players, machines, setView }: Props) {
 
         {/* Leaderboards */}
         <div className="rounded-lg border border-gray-700 bg-gray-800 p-4 space-y-4">
-          <div>
-            <h3 className="text-lg font-bold text-gray-200">🏅 Top Players (This Week)</h3>
-            {topPlayersWeekly.length === 0 ? (
-              <div className="text-sm text-gray-400 mt-2">No plays yet this week.</div>
-            ) : (
-              <ul className="mt-2 space-y-2">
-                {topPlayersWeekly.map(([name, count], idx) => {
-                  const max = topPlayersWeekly[0][1] || 1;
-                  const pct = Math.round((count / max) * 100);
-                  return (
-                    <li key={name} className="text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-blue-200">
-                          {idx + 1}.{" "}
-                          <button
-                            className="hover:underline"
-                            onClick={() => {
-                              const player = players.find((p) => p.name === name);
-                              if (player) goToPlayerStatsForPlayer(player.id);
-                            }}
-                            title="View player stats"
-                          >
-                            {name}
-                          </button>
-                        </span>
-                        <span className="text-gray-400">{count}</span>
-                      </div>
-                      <div className="mt-1 h-1.5 rounded bg-gray-700">
-                        <div className="h-1.5 rounded bg-blue-500" style={{ width: `${pct}%` }} />
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </div>
+          <Leaderboard
+            title="🏅 Top Players (This Week)"
+            items={topPlayersWeekly.map(([name, count]) => ({
+              name,
+              count,
+              onClick: () => {
+                const player = players.find((p) => p.name === name);
+                if (player) goToPlayerStatsForPlayer(player.id);
+              },
+            }))}
+            emptyMessage="No plays yet this week."
+            nameColorClass="text-blue-200"
+            barColorClass="bg-blue-500"
+          />
 
-          <div>
-            <h3 className="text-lg font-bold text-gray-200">🔥 Trending Machines</h3>
-            {topMachinesWeekly.length === 0 ? (
-              <div className="text-sm text-gray-400 mt-2">No plays yet this week.</div>
-            ) : (
-              <ul className="mt-2 space-y-2">
-                {topMachinesWeekly.map(([name, count], idx) => {
-                  const max = topMachinesWeekly[0][1] || 1;
-                  const pct = Math.round((count / max) * 100);
-                  return (
-                    <li key={name} className="text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-green-200">
-                          {idx + 1}.{" "}
-                          <button
-                            className="hover:underline"
-                            onClick={() => goToHighScoresForMachine(name)}
-                            title="View machine high scores"
-                          >
-                            {name}
-                          </button>
-                        </span>
-                        <span className="text-gray-400">{count}</span>
-                      </div>
-                      <div className="mt-1 h-1.5 rounded bg-gray-700">
-                        <div className="h-1.5 rounded bg-green-500" style={{ width: `${pct}%` }} />
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </div>
+          <Leaderboard
+            title="🔥 Trending Machines"
+            items={topMachinesWeekly.map(([name, count]) => ({
+              name,
+              count,
+              onClick: () => goToHighScoresForMachine(name),
+            }))}
+            emptyMessage="No plays yet this week."
+            nameColorClass="text-green-200"
+            barColorClass="bg-green-500"
+          />
         </div>
       </div>
     </div>
