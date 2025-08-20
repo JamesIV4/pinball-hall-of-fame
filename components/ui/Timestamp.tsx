@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 
 function formatTimeAgo(timestamp?: string): string {
   if (!timestamp) return "";
@@ -43,20 +43,6 @@ export default function Timestamp({
   // - ago: show relative time only
   // - full: show date + time + relative time
   if (variant === "date") {
-    const anchorRef = useRef<HTMLSpanElement | null>(null);
-    const dispatchShow = () => {
-      const a = anchorRef.current;
-      if (!a || typeof window === "undefined") return;
-      const rect = a.getBoundingClientRect();
-      window.dispatchEvent(
-        new CustomEvent("timestamp-overlay", { detail: { type: "show", rect, text: fullDateTime } })
-      );
-    };
-    const dispatchHide = () => {
-      if (typeof window === "undefined") return;
-      window.dispatchEvent(new CustomEvent("timestamp-overlay", { detail: { type: "hide" } }));
-    };
-
     if (!showTime) {
       return (
         <Tag className={`inline-flex text-xs text-gray-400 ${className}`}>
@@ -67,26 +53,14 @@ export default function Timestamp({
 
     return (
       <Tag className={`inline-flex text-xs text-gray-400 ${className}`}>
-        {/* Mobile: date only for brevity, acts as anchor for tooltip */}
-        <span
-          ref={anchorRef}
-          className="md:hidden"
-          tabIndex={0}
-          onMouseEnter={dispatchShow}
-          onMouseLeave={dispatchHide}
-          onFocus={dispatchShow}
-          onBlur={dispatchHide}
-          onClick={(e) => {
-            e.stopPropagation();
-            dispatchShow();
-          }}
-          onTouchStart={(e) => {
-            e.stopPropagation();
-            dispatchShow();
-          }}
-          onTouchEnd={dispatchHide}
-        >
-          {dateOnly}
+        {/* Mobile: date as anchor with CSS-only tooltip */}
+        <span className="relative md:hidden inline-flex group" tabIndex={0}>
+          <span>{dateOnly}</span>
+          <span
+            className="absolute left-1/2 -translate-x-1/2 -top-7 whitespace-nowrap rounded bg-gray-900 text-white px-2 py-1 text-[10px] opacity-0 pointer-events-none group-hover:opacity-100 group-focus-within:opacity-100 group-active:opacity-100 transition-opacity z-50 shadow-lg"
+          >
+            {fullDateTime}
+          </span>
         </span>
         {/* Desktop: full datetime */}
         <span className="hidden md:inline">{fullDateTime}</span>
