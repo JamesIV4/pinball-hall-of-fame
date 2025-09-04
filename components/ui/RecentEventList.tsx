@@ -38,7 +38,7 @@ export default function RecentEventList({
   }
 
   return (
-    <ul className="rounded-xl border border-gray-700 bg-gray-800/60 divide-y divide-gray-700/60">
+    <ul className="rounded-xl overflow-hidden border border-gray-700 bg-gray-800/60 divide-y divide-gray-700/60">
       {items.map((e, idx) => {
         const key = `${e.playerId}-${e.entry.timestamp ?? "no-ts"}-${e.entry.score}-${idx}`;
         return (
