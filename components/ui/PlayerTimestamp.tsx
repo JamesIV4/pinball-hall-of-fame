@@ -20,10 +20,10 @@ export default function PlayerTimestamp({
   if (!timestamp) return null;
 
   return (
-    <div className={`text-xs text-gray-400 inline-flex items-center gap-1 ${className}`}>
+    <div className={`text-xs text-gray-400 inline-flex items-center gap-1 relative z-10 ${className}`}>
       {playerId ? (
         <button
-          className="font-semibold text-blue-200 hover:underline"
+          className="font-semibold text-blue-200 hover:underline relative z-10 pointer-events-auto"
           onClick={(e) => {
             e.stopPropagation();
             goToPlayerStatsForPlayer(playerId);
@@ -33,11 +33,10 @@ export default function PlayerTimestamp({
           {playerName}
         </button>
       ) : (
-        <span className="font-semibold text-blue-200">{playerName}</span>
+        <span className="font-semibold text-blue-200 relative z-10">{playerName}</span>
       )}
       <span className="text-gray-500">•</span>
       <Timestamp as="span" variant={variant} timestamp={timestamp} />
     </div>
   );
 }
-
