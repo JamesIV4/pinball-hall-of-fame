@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { getFirebase } from "@/lib/firebase";
 import { useFirebaseData } from "@/hooks/useFirebaseData";
@@ -17,6 +17,13 @@ export default function AddScore() {
   const [player, setPlayer] = useState("");
   const [score, setScore] = useState("");
   const scoreRef = useRef<HTMLInputElement | null>(null);
+  const isIOS = useMemo(
+    () =>
+      typeof navigator !== "undefined" &&
+      (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)),
+    [],
+  );
   const [toast, setToast] = useState<{
     msg: string;
     type?: "success" | "error";
@@ -54,12 +61,12 @@ export default function AddScore() {
 
   // Focus the score input once machine & player are available
   useEffect(() => {
-    if (typeof window !== "undefined" && scoreRef.current) {
+    if (!isIOS && typeof window !== "undefined" && scoreRef.current) {
       if (machine && player) {
         scoreRef.current.focus();
       }
     }
-  }, [machine, player]);
+  }, [machine, player, isIOS]);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -101,7 +108,13 @@ export default function AddScore() {
           <Select
             label="Player"
             value={player}
-            onChange={(e) => setPlayer(e.target.value)}
+            onChange={(e) => {
+              const next = e.target.value;
+              setPlayer(next);
+              if (next) {
+                scoreRef.current?.focus();
+              }
+            }}
             options={players.map((p) => ({ value: p.id, label: p.name }))}
             placeholder="-- select --"
             required
